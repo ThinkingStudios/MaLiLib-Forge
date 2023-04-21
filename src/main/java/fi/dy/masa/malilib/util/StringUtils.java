@@ -7,6 +7,7 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.annotation.Nullable;
+
 import net.minecraft.text.ClickEvent;
 import net.minecraft.text.Text;
 import fi.dy.masa.malilib.MaLiLibConfigs;
@@ -15,11 +16,11 @@ public class StringUtils
 {
     public static String getModVersionString(String modId)
     {
-        for (net.minecraftforge.fml.javafmlmod.FMLModContainer container : net.fabricmc.loader.api.FabricLoader.getInstance().getAllMods())
+        for (net.fabricmc.loader.api.ModContainer container : net.fabricmc.loader.api.FabricLoader.getInstance().getAllMods())
         {
-            if (container.getModId().equals(modId))
+            if (container.getMetadata().getModId().equals(modId))
             {
-                return container.getModInfo().getVersion().toString();
+                return container.getMetadata().getVersion().toString();
             }
         }
 
