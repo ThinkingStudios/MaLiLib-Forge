@@ -33,6 +33,6 @@ side = "BOTH"
 [[dependencies.malilib]]
 modId = "forgedfabricloader"
 mandatory = true
-versionRange = "[0.1.2,)"
+versionRange = "[0.1.1,)"
 ordering = "NONE"
 side = "BOTH"
