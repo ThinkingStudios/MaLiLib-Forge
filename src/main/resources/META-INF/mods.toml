@@ -29,3 +29,10 @@ mandatory = true
 versionRange = "[1.19,)"
 ordering = "NONE"
 side = "BOTH"
+
+[[dependencies.malilib]]
+modId = "forgedfabricloader"
+mandatory = true
+versionRange = "[0.1.2,)"
+ordering = "NONE"
+side = "BOTH"
