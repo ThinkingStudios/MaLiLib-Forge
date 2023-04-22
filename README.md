@@ -1,3 +1,3 @@
-# ArchitecturyTemplateMod-Forge
+# MaLiLib-Forge
 
-These Templates are [Architectury Templates](https://github.com/architectury/architectury-templates) Fork (Only Forge).
+MaLiLib unofficial forge port.
