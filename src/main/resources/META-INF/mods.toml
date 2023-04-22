@@ -5,13 +5,13 @@ license = "LGPLv3"
 [[mods]]
 modId = "malilib"
 version = "${version}"
-displayName = "MaLiLib"
+displayName = "MaLiLib-Forge"
 displayURL="https://github.com/ThinkingStudios/MaLiLib-Forge" #optional
 logoFile="assets/malilib/icon.png" #optional
 credits="masa" #optional
 authors="TexTrue, ThinkingStudio" #optional
 description = '''
-MaLiLib unoffical Forge port.
+MaLiLib unoffcial Forge port.
 
 A library mod required by masa's client-side mods.
 '''
