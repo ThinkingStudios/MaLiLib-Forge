@@ -11,7 +11,7 @@ import fi.dy.masa.malilib.event.InitializationHandler;
 public class MaLiLib {
     public static final Logger logger = LogManager.getLogger(MaLiLibReference.MOD_ID);
 
-    public void MaLiLib() {
+    public MaLiLib() {
         InitializationHandler.getInstance().registerInitializationHandler(new MaLiLibInitHandler());
 
         ModLoadingContext.get().registerExtensionPoint(
