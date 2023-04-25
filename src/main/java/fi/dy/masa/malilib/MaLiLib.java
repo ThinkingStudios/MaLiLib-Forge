@@ -1,8 +1,6 @@
 package fi.dy.masa.malilib;
 
 import fi.dy.masa.malilib.compat.forge.ForgePlatformCompat;
-import net.minecraftforge.client.ConfigGuiHandler;
-import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -20,14 +18,5 @@ public class MaLiLib {
             gui.setParent(screen);
             return gui;
         });
-
-        ModLoadingContext.get().registerExtensionPoint(
-                ConfigGuiHandler.ConfigGuiFactory.class,
-                () -> new ConfigGuiHandler.ConfigGuiFactory((minecraftClient, screen) -> {
-                    MaLiLibConfigGui gui = new MaLiLibConfigGui();
-                    gui.setParent(screen);
-                    return gui;
-                })
-        );
     }
 }
