@@ -1,5 +1,8 @@
 package fi.dy.masa.malilib.compat.forge;
 
+import fi.dy.masa.malilib.compat.forge.register.ModConfigScreenRegister;
+import fi.dy.masa.malilib.compat.forge.register.impl.ModConfigScreenRegisterImpl;
+
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 

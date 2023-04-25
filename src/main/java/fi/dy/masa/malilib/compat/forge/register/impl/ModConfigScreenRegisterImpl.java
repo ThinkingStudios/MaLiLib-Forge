@@ -1,5 +1,6 @@
-package fi.dy.masa.malilib.compat.forge;
+package fi.dy.masa.malilib.compat.forge.register.impl;
 
+import fi.dy.masa.malilib.compat.forge.register.ModConfigScreenRegister;
 import net.minecraftforge.fml.ExtensionPoint;
 import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.ModList;

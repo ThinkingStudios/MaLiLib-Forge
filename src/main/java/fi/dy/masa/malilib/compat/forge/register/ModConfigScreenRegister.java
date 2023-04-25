@@ -1,4 +1,4 @@
-package fi.dy.masa.malilib.compat.forge;
+package fi.dy.masa.malilib.compat.forge.register;
 
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraftforge.api.distmarker.Dist;
