@@ -73,6 +73,7 @@
     "malilib.gui.title.keybind_settings.advanced": "高级按键设置 %s",
     "malilib.gui.title.string_list_edit": "编辑字符串列表为 '%s'",
 
+    "malilib.hover.color_indicator.open_color_editor": "打开颜色编辑器",
     "malilib.label.active_mode.always": "总是",
     "malilib.label.active_mode.never": "从不",
     "malilib.label.active_mode.with_key": "按键",
