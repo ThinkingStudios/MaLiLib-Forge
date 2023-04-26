@@ -1,4 +1,4 @@
-# MaLiLib-Forge
+# MaFgLib
 
 MaLiLib unofficial forge port.
 
