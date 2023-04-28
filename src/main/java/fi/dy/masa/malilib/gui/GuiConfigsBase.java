@@ -109,7 +109,15 @@ public abstract class GuiConfigsBase extends GuiListBase<ConfigOptionWrapper, Wi
     protected WidgetListConfigOptions createListWidget(int listX, int listY)
     {
         return new WidgetListConfigOptions(listX, listY,
-                this.getBrowserWidth(), this.getBrowserHeight(), this.getConfigWidth(), 0.f, this.useKeybindSearch(), this);
+                this.getBrowserWidth(), this.getBrowserHeight(), this.getConfigWidth(), this.getZOffset(), this.useKeybindSearch(), this);
+    }
+
+    @Override
+    public void initGui()
+    {
+        super.initGui();
+
+        this.client.keyboard.setRepeatEvents(true);
     }
 
     @Override
@@ -121,6 +129,8 @@ public abstract class GuiConfigsBase extends GuiListBase<ConfigOptionWrapper, Wi
             this.onSettingsChanged();
             this.getListWidget().clearConfigsModifiedFlag();
         }
+
+        this.client.keyboard.setRepeatEvents(false);
     }
 
     protected void onSettingsChanged()

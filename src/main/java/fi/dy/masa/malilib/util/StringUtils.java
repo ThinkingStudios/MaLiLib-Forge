@@ -7,7 +7,6 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.annotation.Nullable;
-
 import net.minecraft.text.ClickEvent;
 import net.minecraft.text.Text;
 import fi.dy.masa.malilib.MaLiLibConfigs;

@@ -474,7 +474,7 @@ public class GuiColorEditorHSV extends GuiDialogBase
         int y = this.yH - 1;
         int w = this.widthSlider + 2;
         int h = this.heightSlider + 2;
-        int z = 0;
+        int z = this.getZOffset();
         int yd = this.heightSlider + this.gapSlider;
         int cx = this.xHS;
         int cy = this.yHS + this.sizeHS + 8;
@@ -507,6 +507,7 @@ public class GuiColorEditorHSV extends GuiDialogBase
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder buffer = tessellator.getBuffer();
 
+        RenderSystem.disableTexture();
         RenderUtils.setupBlend();
 
         RenderUtils.color(1, 1, 1, 1);
@@ -523,7 +524,7 @@ public class GuiColorEditorHSV extends GuiDialogBase
 
         tessellator.draw();
 
-        RenderSystem.setShader(GameRenderer::getPositionColorProgram);
+        RenderSystem.setShader(GameRenderer::getPositionColorShader);
         buffer.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
 
         int r = (int) (this.relR * 255f);
@@ -612,6 +613,7 @@ public class GuiColorEditorHSV extends GuiDialogBase
         tessellator.draw();
 
         RenderSystem.disableBlend();
+        RenderSystem.enableTexture();
     }
 
     public static void renderGradientColorBar(int x, int y, float z, int width, int height, int colorStart, int colorEnd, BufferBuilder buffer)
