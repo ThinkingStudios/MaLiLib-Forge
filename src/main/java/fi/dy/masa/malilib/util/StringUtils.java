@@ -13,11 +13,11 @@ public class StringUtils
 {
     public static String getModVersionString(String modId)
     {
-        for (net.fabricmc.loader.api.ModContainer container : net.fabricmc.loader.api.FabricLoader.getInstance().getAllMods())
+        for (org.portinglab.fabricloader.loader.api.ModContainer container : org.portinglab.fabricloader.loader.api.FabricLoader.getInstance().getAllMods())
         {
-            if (container.getMetadata().getModId().equals(modId))
+            if (container.getMetadata().getId().equals(modId))
             {
-                return container.getMetadata().getVersion().toString();
+                return container.getMetadata().getVersion();
             }
         }
 
