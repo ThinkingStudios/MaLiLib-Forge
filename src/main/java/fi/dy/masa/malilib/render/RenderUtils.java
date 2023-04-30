@@ -3,6 +3,7 @@ package fi.dy.masa.malilib.render;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
 import javax.annotation.Nullable;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -365,9 +366,7 @@ public class RenderUtils
         }
     }
 
-    public static int renderText(int xOff, int yOff, double scale, int textColor, int bgColor,
-            HudAlignment alignment, boolean useBackground, boolean useShadow, List<String> lines,
-            MatrixStack matrixStack)
+    public static int renderText(int xOff, int yOff, double scale, int textColor, int bgColor, HudAlignment alignment, boolean useBackground, boolean useShadow, List<String> lines, MatrixStack matrixStack)
     {
         TextRenderer fontRenderer = mc().textRenderer;
         final int scaledWidth = GuiUtils.getScaledWindowWidth();
@@ -556,8 +555,7 @@ public class RenderUtils
     /**
      * Assumes a BufferBuilder in GL_QUADS mode has been initialized
      */
-    public static void drawBoxAllSidesBatchedQuads(double minX, double minY, double minZ, double maxX, double maxY, double maxZ,
-            Color4f color, BufferBuilder buffer)
+    public static void drawBoxAllSidesBatchedQuads(double minX, double minY, double minZ, double maxX, double maxY, double maxZ, Color4f color, BufferBuilder buffer)
     {
         drawBoxHorizontalSidesBatchedQuads(minX, minY, minZ, maxX, maxY, maxZ, color, buffer);
         drawBoxTopBatchedQuads(minX, minZ, maxX, maxY, maxZ, color, buffer);
@@ -607,8 +605,7 @@ public class RenderUtils
     /**
      * Assumes a BufferBuilder in GL_QUADS mode has been initialized
      */
-    public static void drawBoxHorizontalSidesBatchedQuads(double minX, double minY, double minZ, double maxX, double maxY, double maxZ,
-            Color4f color, BufferBuilder buffer)
+    public static void drawBoxHorizontalSidesBatchedQuads(double minX, double minY, double minZ, double maxX, double maxY, double maxZ, Color4f color, BufferBuilder buffer)
     {
         // West side
         buffer.vertex(minX, minY, minZ).color(color.r, color.g, color.b, color.a).next();
@@ -662,8 +659,7 @@ public class RenderUtils
     /**
      * Assumes a BufferBuilder in GL_LINES mode has been initialized
      */
-    public static void drawBoxAllEdgesBatchedLines(double minX, double minY, double minZ, double maxX, double maxY, double maxZ,
-            Color4f color, BufferBuilder buffer)
+    public static void drawBoxAllEdgesBatchedLines(double minX, double minY, double minZ, double maxX, double maxY, double maxZ, Color4f color, BufferBuilder buffer)
     {
         // West side
         buffer.vertex(minX, minY, minZ).color(color.r, color.g, color.b, color.a).next();
@@ -738,8 +734,7 @@ public class RenderUtils
         }
     }
 
-    public static void drawTextPlate(List<String> text, double x, double y, double z, float yaw, float pitch,
-                                     float scale, int textColor, int bgColor, boolean disableDepth)
+    public static void drawTextPlate(List<String> text, double x, double y, double z, float yaw, float pitch, float scale, int textColor, int bgColor, boolean disableDepth)
     {
         Vec3d cameraPos = mc().gameRenderer.getCamera().getPos();
         double cx = cameraPos.x;
@@ -836,8 +831,7 @@ public class RenderUtils
         globalStack.pop();
     }
 
-    public static void renderBlockTargetingOverlay(Entity entity, BlockPos pos, Direction side, Vec3d hitVec,
-            Color4f color, MatrixStack matrixStack, MinecraftClient mc)
+    public static void renderBlockTargetingOverlay(Entity entity, BlockPos pos, Direction side, Vec3d hitVec, Color4f color, MatrixStack matrixStack, MinecraftClient mc)
     {
         Direction playerFacing = entity.getHorizontalFacing();
         HitPart part = PositionUtils.getHitPart(side, playerFacing, pos, hitVec);
@@ -944,8 +938,7 @@ public class RenderUtils
         RenderSystem.applyModelViewMatrix();
     }
 
-    public static void renderBlockTargetingOverlaySimple(Entity entity, BlockPos pos, Direction side,
-            Color4f color, MatrixStack matrixStack, MinecraftClient mc)
+    public static void renderBlockTargetingOverlaySimple(Entity entity, BlockPos pos, Direction side, Color4f color, MatrixStack matrixStack, MinecraftClient mc)
     {
         Direction playerFacing = entity.getHorizontalFacing();
         Vec3d cameraPos = mc.gameRenderer.getCamera().getPos();
@@ -997,8 +990,7 @@ public class RenderUtils
         RenderSystem.applyModelViewMatrix();
     }
 
-    private static void blockTargetingOverlayTranslations(double x, double y, double z,
-            Direction side, Direction playerFacing, MatrixStack matrixStack)
+    private static void blockTargetingOverlayTranslations(double x, double y, double z, Direction side, Direction playerFacing, MatrixStack matrixStack)
     {
         matrixStack.translate(x, y, z);
 

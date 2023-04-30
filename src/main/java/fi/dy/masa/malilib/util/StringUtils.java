@@ -10,16 +10,16 @@ import javax.annotation.Nullable;
 import net.minecraft.text.ClickEvent;
 import net.minecraft.text.Text;
 import fi.dy.masa.malilib.MaLiLibConfigs;
+import org.portinglab.fabricloader.loader.api.FabricLoader;
+import org.portinglab.fabricloader.loader.api.ModContainer;
 
 public class StringUtils
 {
     public static String getModVersionString(String modId)
     {
-        for (org.portinglab.fabricloader.loader.api.ModContainer container : org.portinglab.fabricloader.loader.api.FabricLoader.getInstance().getAllMods())
-        {
-            if (container.getMetadata().getId().equals(modId))
-            {
-                return container.getMetadata().getVersion();
+        for(ModContainer container: FabricLoader.getInstance().getAllMods()){
+            if(container.getMetadata().getId().equals(modId)){
+                return container.getMetadata().getId();
             }
         }
 

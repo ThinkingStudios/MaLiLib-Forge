@@ -12,6 +12,7 @@ import fi.dy.masa.malilib.event.RenderEventHandler;
 @Mixin(ForgeGui.class)
 public abstract class MixinInGameHud
 {
+
     @Inject(method = "render", at = @At("RETURN"))
     private void onGameOverlayPost(MatrixStack matrixStack, float partialTicks, CallbackInfo ci)
     {

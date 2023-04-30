@@ -27,7 +27,6 @@ public class GuiConfirmAction extends GuiDialogBase implements ICompletionListen
         this.title = StringUtils.translate(titleKey);
         this.listener = listener;
         this.useTitleHierarchy = false;
-        this.setZOffset(1);
 
         StringUtils.splitTextToLines(this.messageLines, StringUtils.translate(messageKey, args), width - 30);
 
@@ -46,8 +45,6 @@ public class GuiConfirmAction extends GuiDialogBase implements ICompletionListen
         x += buttonWidth + 10;
 
         this.createButton(x, y, buttonWidth, ButtonType.CANCEL);
-
-        this.mc.keyboard.setRepeatEvents(true);
     }
 
     public void setTextColor(int textColor)
@@ -93,7 +90,7 @@ public class GuiConfirmAction extends GuiDialogBase implements ICompletionListen
         }
 
         matrixStack.push();
-        matrixStack.translate(0, 0, this.getZOffset());
+        matrixStack.translate(0, 0, 1.f);
 
         RenderUtils.drawOutlinedBox(this.dialogLeft, this.dialogTop, this.dialogWidth, this.dialogHeight, 0xF0000000, COLOR_HORIZONTAL_BAR);
 

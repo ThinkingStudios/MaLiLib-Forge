@@ -10,7 +10,7 @@ import fi.dy.masa.malilib.event.InitializationHandler;
 public class MaLiLib {
     public static final Logger logger = LogManager.getLogger(MaLiLibReference.MOD_ID);
 
-    public MaLiLib() {
+    public MaLiLib(){
         InitializationHandler.getInstance().registerInitializationHandler(new MaLiLibInitHandler());
 
         ForgePlatformCompat.getInstance().getMod(MaLiLibReference.MOD_ID).registerModConfigScreen((screen) -> {

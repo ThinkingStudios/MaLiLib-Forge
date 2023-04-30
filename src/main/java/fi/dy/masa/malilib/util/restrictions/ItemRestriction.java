@@ -2,9 +2,11 @@ package fi.dy.masa.malilib.util.restrictions;
 
 import java.util.List;
 import java.util.Set;
+
 import net.minecraft.item.Item;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.util.Identifier;
+
 import fi.dy.masa.malilib.MaLiLib;
 import fi.dy.masa.malilib.util.StringUtils;
 
@@ -21,9 +23,7 @@ public class ItemRestriction extends UsageRestriction<Item>
             {
                 rl = new Identifier(name);
             }
-            catch (Exception e)
-            {
-            }
+            catch (Exception ignore) {}
 
             Item item = rl != null ? Registry.ITEM.get(rl) : null;
 
