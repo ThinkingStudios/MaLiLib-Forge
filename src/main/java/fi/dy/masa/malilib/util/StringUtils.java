@@ -20,7 +20,7 @@ public class StringUtils
         {
             if (container.getMetadata().getId().equals(modId))
             {
-                return container.getMetadata().getVersion();
+                return container.getMetadata().getVersion().toString();
             }
         }
 
