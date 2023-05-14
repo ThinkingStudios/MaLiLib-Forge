@@ -30,9 +30,3 @@ versionRange = "[1.16,)"
 ordering = "NONE"
 side = "BOTH"
 
-[[dependencies.malilib]]
-modId = "forgedfabricloader"
-mandatory = true
-versionRange = "[0.1.4,)"
-ordering = "NONE"
-side = "BOTH"
