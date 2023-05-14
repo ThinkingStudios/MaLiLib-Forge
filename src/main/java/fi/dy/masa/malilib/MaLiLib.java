@@ -6,15 +6,15 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import fi.dy.masa.malilib.compat.forge.ForgePlatformCompat;
 import fi.dy.masa.malilib.event.InitializationHandler;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @Mod(MaLiLibReference.MOD_ID)
 public class MaLiLib {
-    public static final Logger logger = LogManager.getLogger(MaLiLibReference.MOD_ID);
+    public static final Logger logger = LoggerFactory.getLogger(MaLiLibReference.MOD_ID);
 
     public MaLiLib() {
         IEventBus MOD_BUS = FMLJavaModLoadingContext.get().getModEventBus();
