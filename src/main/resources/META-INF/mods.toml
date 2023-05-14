@@ -5,7 +5,7 @@ license = "LGPLv3"
 [[mods]]
 modId = "malilib"
 version = "${version}"
-displayName = "MaLiLib-Forge"
+displayName = "MaFgLib"
 displayURL="https://github.com/ThinkingStudios/MaLiLib-Forge" #optional
 logoFile="icon.png" #optional
 credits="masa" #optional
