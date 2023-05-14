@@ -18,15 +18,13 @@ loom {
 }
 
 repositories {
-    maven { url 'https://jitpack.io' }
+
 }
 
 dependencies {
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
     mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
     forge "net.minecraftforge:forge:${project.forge_version}"
-
-    modImplementation "com.github.PortingLab:ForgedFabricLoaderAPI:v0.1.4-1.17_1.19"
 
     implementation "com.google.code.findbugs:jsr305:3.0.2"
 }

@@ -8,16 +8,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.annotation.Nullable;
 import fi.dy.masa.malilib.MaLiLibConfigs;
+import net.minecraftforge.fml.loading.FMLLoader;
+import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
 
-public class StringUtils
-{
-    public static String getModVersionString(String modId)
-    {
-        for (org.portinglab.fabricloader.loader.api.ModContainer container : org.portinglab.fabricloader.loader.api.FabricLoader.getInstance().getAllMods())
-        {
-            if (container.getMetadata().getId().equals(modId))
-            {
-                return container.getMetadata().getVersion();
+public class StringUtils {
+    public static String getModVersionString(String modId) {
+        for (ModInfo modInfo : FMLLoader.getLoadingModList().getMods()) {
+            if (modInfo.getModId().equals(modId)) {
+                return modInfo.getVersion().getQualifier();
             }
         }
 
