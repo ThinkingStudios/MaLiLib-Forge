@@ -11,16 +11,14 @@ import javax.annotation.Nullable;
 import net.minecraft.text.ClickEvent;
 import net.minecraft.text.Text;
 import fi.dy.masa.malilib.MaLiLibConfigs;
+import net.minecraftforge.fml.loading.FMLLoader;
+import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
 
-public class StringUtils
-{
-    public static String getModVersionString(String modId)
-    {
-        for (org.portinglab.fabricloader.loader.api.ModContainer container : org.portinglab.fabricloader.loader.api.FabricLoader.getInstance().getAllMods())
-        {
-            if (container.getMetadata().getId().equals(modId))
-            {
-                return container.getMetadata().getVersion().toString();
+public class StringUtils {
+    public static String getModVersionString(String modId) {
+        for (ModInfo modInfo : FMLLoader.getLoadingModList().getMods()) {
+            if (modInfo.getModId().equals(modId)) {
+                return modInfo.getVersion().getQualifier();
             }
         }
 
@@ -34,13 +32,11 @@ public class StringUtils
      * @param defaultColor
      * @return
      */
-    public static int getColor(String colorStr, int defaultColor)
-    {
+    public static int getColor(String colorStr, int defaultColor) {
         Pattern pattern = Pattern.compile("(?:0x|#)([a-fA-F0-9]{1,8})");
         Matcher matcher = pattern.matcher(colorStr);
 
-        if (matcher.matches())
-        {
+        if (matcher.matches()) {
             try { return (int) Long.parseLong(matcher.group(1), 16); }
             catch (NumberFormatException e) { return defaultColor; }
         }
