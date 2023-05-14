@@ -11,10 +11,8 @@ import fi.dy.masa.malilib.event.RenderEventHandler;
 
 @Mixin(ForgeIngameGui.class)
 public abstract class MixinInGameHud {
-
     @Inject(method = "render", at = @At("RETURN"))
-    private void onGameOverlayPost(MatrixStack matrixStack, float partialTicks, CallbackInfo ci)
-    {
+    private void onGameOverlayPost(MatrixStack matrixStack, float partialTicks, CallbackInfo ci) {
         ((RenderEventHandler) RenderEventHandler.getInstance()).onRenderGameOverlayPost(matrixStack, MinecraftClient.getInstance(), partialTicks);
     }
 }
