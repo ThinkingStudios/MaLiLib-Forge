@@ -29,7 +29,7 @@ public class RenderEventHandler implements IRenderDispatcher
     @Override
     public void registerGameOverlayRenderer(IRenderer renderer)
     {
-        if (this.overlayRenderers.contains(renderer) == false)
+        if (!this.overlayRenderers.contains(renderer))
         {
             this.overlayRenderers.add(renderer);
         }
@@ -38,7 +38,7 @@ public class RenderEventHandler implements IRenderDispatcher
     @Override
     public void registerTooltipLastRenderer(IRenderer renderer)
     {
-        if (this.tooltipLastRenderers.contains(renderer) == false)
+        if (!this.tooltipLastRenderers.contains(renderer))
         {
             this.tooltipLastRenderers.add(renderer);
         }
@@ -47,7 +47,7 @@ public class RenderEventHandler implements IRenderDispatcher
     @Override
     public void registerWorldLastRenderer(IRenderer renderer)
     {
-        if (this.worldLastRenderers.contains(renderer) == false)
+        if (!this.worldLastRenderers.contains(renderer))
         {
             this.worldLastRenderers.add(renderer);
         }
@@ -60,7 +60,7 @@ public class RenderEventHandler implements IRenderDispatcher
     {
         mc.getProfiler().push("malilib_rendergameoverlaypost");
 
-        if (this.overlayRenderers.isEmpty() == false)
+        if (!this.overlayRenderers.isEmpty())
         {
             for (IRenderer renderer : this.overlayRenderers)
             {
@@ -82,7 +82,7 @@ public class RenderEventHandler implements IRenderDispatcher
      */
     public void onRenderTooltipLast(MatrixStack matrixStack, ItemStack stack, int x, int y)
     {
-        if (this.tooltipLastRenderers.isEmpty() == false)
+        if (!this.tooltipLastRenderers.isEmpty())
         {
             for (IRenderer renderer : this.tooltipLastRenderers)
             {
@@ -96,7 +96,7 @@ public class RenderEventHandler implements IRenderDispatcher
      */
     public void onRenderWorldLast(MatrixStack matrixStack, Matrix4f projMatrix, MinecraftClient mc)
     {
-        if (this.worldLastRenderers.isEmpty() == false)
+        if (!this.worldLastRenderers.isEmpty())
         {
             mc.getProfiler().swap("malilib_renderworldlast");
 
