@@ -10,6 +10,7 @@ MaLiLib unofficial forge port.
 
 MaFgLib (or MaLiLib-Forge) is a library mod used by Masa's mods Forge port. It contains some common code previously
 duplicated in most of the mods, such as multi-key capable keybinds, configuration GUIs and **config screen register** etc.
+For compiled builds (= downloads), see [Releases](https://github.com/ThinkingStudios/MaLiLib-Forge/releases) or [Modrinth](https://modrinth.com/mod/mafglib)
 
 ## Development
 
