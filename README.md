@@ -6,8 +6,6 @@
 
 MaLiLib unofficial forge port.
 
-**Require [ForgedFabricLoaderAPI](https://github.com/PortingLab/ForgedFabricLoaderAPI). **
-
 </div></center>
 
 MaFgLib (or MaLiLib-Forge) is a library mod used by Masa's mods Forge port. It contains some common code previously
