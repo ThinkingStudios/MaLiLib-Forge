@@ -17,12 +17,6 @@ public class MaLiLib {
     public static final Logger logger = LoggerFactory.getLogger(MaLiLibReference.MOD_ID);
 
     public MaLiLib() {
-        IEventBus MOD_BUS = FMLJavaModLoadingContext.get().getModEventBus();
-        MOD_BUS.addListener(this::onInitialize);
-        MinecraftForge.EVENT_BUS.register(this);
-    }
-
-    public void onInitialize(FMLCommonSetupEvent event) {
         InitializationHandler.getInstance().registerInitializationHandler(new MaLiLibInitHandler());
 
         ForgePlatformCompat.getInstance().getMod(MaLiLibReference.MOD_ID).registerModConfigScreen((screen) -> {
