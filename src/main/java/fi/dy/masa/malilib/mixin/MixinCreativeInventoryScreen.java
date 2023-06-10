@@ -9,10 +9,10 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 import fi.dy.masa.malilib.event.RenderEventHandler;
 
-@Mixin(CreativeInventoryScreen.class)
+@Mixin(value = CreativeInventoryScreen.class, priority = 10)
 public abstract class MixinCreativeInventoryScreen {
     @Inject(method = "renderTooltip", at = @At(value = "INVOKE", shift = At.Shift.AFTER, //remap = false,
-            target = "Lnet/minecraft/client/gui/screen/ingame/CreativeInventoryScreen;renderTooltip(Lnet/minecraft/client/util/math/MatrixStack;Ljava/util/List;Ljava/util/Optional;IILnet/minecraft/item/ItemStack;)V"))
+            target = "Lnet/minecraft/client/gui/screen/ingame/CreativeInventoryScreen;renderTooltip(Lnet/minecraft/client/util/math/MatrixStack;Ljava/util/List;Ljava/util/Optional;IILnet/minecraft/client/font/TextRenderer;Lnet/minecraft/item/ItemStack;)V"))
     private void onRenderTooltip(MatrixStack matrixStack, ItemStack stack, int x, int y, CallbackInfo ci) {
         ((RenderEventHandler) RenderEventHandler.getInstance()).onRenderTooltipLast(matrixStack, stack, x, y);
     }
