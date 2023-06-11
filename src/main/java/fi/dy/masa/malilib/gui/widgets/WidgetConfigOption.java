@@ -2,19 +2,10 @@ package fi.dy.masa.malilib.gui.widgets;
 
 import javax.annotation.Nullable;
 import com.google.common.collect.ImmutableList;
+import fi.dy.masa.malilib.config.*;
+import fi.dy.masa.malilib.gui.button.*;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.math.MatrixStack;
-import fi.dy.masa.malilib.config.ConfigType;
-import fi.dy.masa.malilib.config.IConfigBase;
-import fi.dy.masa.malilib.config.IConfigBoolean;
-import fi.dy.masa.malilib.config.IConfigDouble;
-import fi.dy.masa.malilib.config.IConfigInteger;
-import fi.dy.masa.malilib.config.IConfigOptionList;
-import fi.dy.masa.malilib.config.IConfigResettable;
-import fi.dy.masa.malilib.config.IConfigSlider;
-import fi.dy.masa.malilib.config.IConfigStringList;
-import fi.dy.masa.malilib.config.IConfigValue;
-import fi.dy.masa.malilib.config.IStringRepresentable;
 import fi.dy.masa.malilib.config.gui.ConfigOptionChangeListenerButton;
 import fi.dy.masa.malilib.config.gui.ConfigOptionChangeListenerKeybind;
 import fi.dy.masa.malilib.config.gui.ConfigOptionChangeListenerTextField;
@@ -29,13 +20,6 @@ import fi.dy.masa.malilib.gui.GuiBase;
 import fi.dy.masa.malilib.gui.GuiConfigsBase.ConfigOptionWrapper;
 import fi.dy.masa.malilib.gui.GuiTextFieldGeneric;
 import fi.dy.masa.malilib.gui.MaLiLibIcons;
-import fi.dy.masa.malilib.gui.button.ButtonBase;
-import fi.dy.masa.malilib.gui.button.ButtonGeneric;
-import fi.dy.masa.malilib.gui.button.ConfigButtonBoolean;
-import fi.dy.masa.malilib.gui.button.ConfigButtonKeybind;
-import fi.dy.masa.malilib.gui.button.ConfigButtonOptionList;
-import fi.dy.masa.malilib.gui.button.ConfigButtonStringList;
-import fi.dy.masa.malilib.gui.button.IButtonActionListener;
 import fi.dy.masa.malilib.gui.interfaces.IConfigInfoProvider;
 import fi.dy.masa.malilib.gui.interfaces.IGuiIcon;
 import fi.dy.masa.malilib.gui.interfaces.IKeybindConfigGui;
@@ -163,6 +147,11 @@ public class WidgetConfigOption extends WidgetConfigOptionBase<ConfigOptionWrapp
             ConfigButtonStringList optionButton = new ConfigButtonStringList(x, y, configWidth, configHeight, (IConfigStringList) config, this.host, this.host.getDialogHandler());
             this.addConfigButtonEntry(x + configWidth + 2, y, (IConfigResettable) config, optionButton);
         }
+        else if (type == ConfigType.COLOR_LIST)
+        {
+            ConfigButtonColorList optionButton = new ConfigButtonColorList(x, y, configWidth, configHeight, (IConfigColorList) config, this.host, this.host.getDialogHandler());
+            this.addConfigButtonEntry(x + configWidth + 2, y, (IConfigResettable) config, optionButton);
+        }
         else if (type == ConfigType.HOTKEY)
         {
             this.addHotkeyConfigElements(x, y, configWidth, config.getName(), (IHotkey) config);
@@ -217,33 +206,33 @@ public class WidgetConfigOption extends WidgetConfigOptionBase<ConfigOptionWrapp
             {
                 IKeybind keybind = booleanHotkey.getKeybind();
                 return this.initialBoolean != booleanHotkey.getBooleanValue() ||
-                       this.initialStringValue.equals(keybind.getStringValue()) == false ||
-                       this.initialKeybindSettings.equals(keybind.getSettings()) == false;
+                        !this.initialStringValue.equals(keybind.getStringValue()) ||
+                        !this.initialKeybindSettings.equals(keybind.getSettings());
             }
             else if (config instanceof ConfigBooleanHotkeyed booleanHotkey)
             {
                 IKeybind keybind = booleanHotkey.getKeybind();
                 return this.initialBoolean != booleanHotkey.getBooleanValue() ||
-                       this.initialStringValue.equals(keybind.getStringValue()) == false ||
-                       this.initialKeybindSettings.equals(keybind.getSettings()) == false;
+                        !this.initialStringValue.equals(keybind.getStringValue()) ||
+                        !this.initialKeybindSettings.equals(keybind.getSettings());
             }
             else if (config instanceof IStringRepresentable)
             {
                 if (this.textField != null)
                 {
-                    modified |= this.initialStringValue.equals(this.textField.getTextField().getText()) == false;
+                    modified |= !this.initialStringValue.equals(this.textField.getTextField().getText());
                 }
 
-                if (this.initialKeybindSettings != null && this.initialKeybindSettings.equals(((IHotkey) config).getKeybind().getSettings()) == false)
+                if (this.initialKeybindSettings != null && !this.initialKeybindSettings.equals(((IHotkey) config).getKeybind().getSettings()))
                 {
                     modified = true;
                 }
 
-                return modified || this.initialStringValue.equals(((IStringRepresentable) config).getStringValue()) == false;
+                return modified || !this.initialStringValue.equals(((IStringRepresentable) config).getStringValue());
             }
             else if (this.initialStringList != null && config instanceof IConfigStringList)
             {
-                return this.initialStringList.equals(((IConfigStringList) config).getStrings()) == false;
+                return !this.initialStringList.equals(((IConfigStringList) config).getStrings());
             }
         }
 
