@@ -20,11 +20,10 @@ public class MaLiLib {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
         modEventBus.addListener(this::onInitializeClient);
-
-        MinecraftForge.EVENT_BUS.register(this);
     }
 
     public void onInitializeClient(FMLClientSetupEvent event) {
+        ForgePlatformCompat.getInstance().modClientSide();
         InitializationHandler.getInstance().registerInitializationHandler(new MaLiLibInitHandler());
         ForgePlatformCompat.getInstance().getMod(MaLiLibReference.MOD_ID).registerModConfigScreen((screen) -> {
             MaLiLibConfigGui gui = new MaLiLibConfigGui();
