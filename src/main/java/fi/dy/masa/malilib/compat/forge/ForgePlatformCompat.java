@@ -21,7 +21,7 @@ public class ForgePlatformCompat {
         return mods.computeIfAbsent(id, ModConfigScreenRegisterImpl::new);
     }
 
-    public void modClientSide() {
+    public void getModClientExtensionPoint() {
         ModLoadingContext.get().registerExtensionPoint(IExtensionPoint.DisplayTest.class, () -> new IExtensionPoint.DisplayTest(() -> NetworkConstants.IGNORESERVERONLY, (a, b) -> true));
     }
 }
