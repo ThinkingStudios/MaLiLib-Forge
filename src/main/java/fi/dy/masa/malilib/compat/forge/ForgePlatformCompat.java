@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ForgePlatformCompat {
-    private static ThreadLocal<ForgePlatformCompat> forgePlatform = ThreadLocal.withInitial(ForgePlatformCompat::new);
+    private static final ThreadLocal<ForgePlatformCompat> forgePlatform = ThreadLocal.withInitial(ForgePlatformCompat::new);
     private static final Map<String, ModConfigScreenRegister> mods = new ConcurrentHashMap<>();
 
     public static ForgePlatformCompat getInstance() {
@@ -21,7 +21,7 @@ public class ForgePlatformCompat {
         return mods.computeIfAbsent(id, ModConfigScreenRegisterImpl::new);
     }
 
-    public void modClientSide() {
+    public void getModClientExtensionPoint() {
         ModLoadingContext.get().registerExtensionPoint(IExtensionPoint.DisplayTest.class, () -> new IExtensionPoint.DisplayTest(() -> NetworkConstants.IGNORESERVERONLY, (a, b) -> true));
     }
 }
