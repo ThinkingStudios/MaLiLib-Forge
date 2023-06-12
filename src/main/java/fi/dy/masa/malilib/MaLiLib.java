@@ -2,6 +2,8 @@ package fi.dy.masa.malilib;
 
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.IExtensionPoint;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -9,6 +11,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import fi.dy.masa.malilib.compat.forge.ForgePlatformCompat;
 import fi.dy.masa.malilib.event.InitializationHandler;
 
+import net.minecraftforge.network.NetworkConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,11 +23,10 @@ public class MaLiLib {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
         modEventBus.addListener(this::onInitializeClient);
-
-        MinecraftForge.EVENT_BUS.register(this);
     }
 
     public void onInitializeClient(FMLClientSetupEvent event) {
+        ForgePlatformCompat.getInstance().modClientSide();
         InitializationHandler.getInstance().registerInitializationHandler(new MaLiLibInitHandler());
         ForgePlatformCompat.getInstance().getMod(MaLiLibReference.MOD_ID).registerModConfigScreen((screen) -> {
             MaLiLibConfigGui gui = new MaLiLibConfigGui();
