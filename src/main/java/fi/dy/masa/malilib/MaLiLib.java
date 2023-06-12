@@ -4,7 +4,6 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 import fi.dy.masa.malilib.compat.forge.ForgePlatformCompat;
@@ -20,17 +19,13 @@ public class MaLiLib {
     public MaLiLib() {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
-        modEventBus.addListener(this::onInitialize);
         modEventBus.addListener(this::onInitializeClient);
 
         MinecraftForge.EVENT_BUS.register(this);
     }
 
-    public void onInitialize(FMLCommonSetupEvent event) {
-        InitializationHandler.getInstance().registerInitializationHandler(new MaLiLibInitHandler());
-    }
-
     public void onInitializeClient(FMLClientSetupEvent event) {
+        InitializationHandler.getInstance().registerInitializationHandler(new MaLiLibInitHandler());
         ForgePlatformCompat.getInstance().getMod(MaLiLibReference.MOD_ID).registerModConfigScreen((screen) -> {
             MaLiLibConfigGui gui = new MaLiLibConfigGui();
             gui.setParent(screen);
