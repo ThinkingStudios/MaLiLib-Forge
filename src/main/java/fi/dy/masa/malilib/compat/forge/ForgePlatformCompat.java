@@ -22,7 +22,7 @@ public class ForgePlatformCompat {
         return mods.computeIfAbsent(id, ModConfigScreenRegisterImpl::new);
     }
 
-    public void modClientSide() {
+    public void getModClientExtensionPoint() {
         ModLoadingContext.get().registerExtensionPoint(ExtensionPoint.DISPLAYTEST, () -> Pair.of(() -> FMLNetworkConstants.IGNORESERVERONLY, (a, b) -> true));
     }
 }

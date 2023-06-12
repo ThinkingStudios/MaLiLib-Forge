@@ -23,7 +23,7 @@ public class MaLiLib {
     }
 
     public void onInitializeClient(FMLClientSetupEvent event) {
-        ForgePlatformCompat.getInstance().modClientSide();
+        ForgePlatformCompat.getInstance().getModClientExtensionPoint();
         InitializationHandler.getInstance().registerInitializationHandler(new MaLiLibInitHandler());
         ForgePlatformCompat.getInstance().getMod(MaLiLibReference.MOD_ID).registerModConfigScreen((screen) -> {
             MaLiLibConfigGui gui = new MaLiLibConfigGui();
