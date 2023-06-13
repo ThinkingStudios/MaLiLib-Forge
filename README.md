@@ -18,15 +18,15 @@ This mod uses jitpack maven, and will use modrinth maven in the future after mod
 
 ```gradle
 repositories {
-    maven { url 'https://jitpack.io' }
+    maven { url 'https://api.modrinth.com/maven' }
 }
 
 dependencies {
-    modImplementation "com.github.ThinkingStudios:MaLiLib-Forge:${mafglib_version}"
+    modImplementation "maven.modrinth:mafglib:${mafglib_version}"
 }
 ```
 
-> Note: "${mafglib_version}" can be found in Releases
+> Note: "${mafglib_version}" can be found in [Modrinth](https://modrinth.com/mod/mafglib)
 
 ## Compiling
 - Clone the repository
