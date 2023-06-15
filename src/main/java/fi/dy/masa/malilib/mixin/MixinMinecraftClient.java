@@ -23,6 +23,7 @@ public abstract class MixinMinecraftClient
 
     private ClientWorld worldBefore;
 
+    /*
     @Inject(method = "<init>(Lnet/minecraft/client/RunArgs;)V", at = @At("RETURN"))
     private void onInitComplete(RunArgs args, CallbackInfo ci)
     {
@@ -36,6 +37,7 @@ public abstract class MixinMinecraftClient
         KeybindMulti.reCheckPressedKeys();
         TickHandler.getInstance().onClientTick((MinecraftClient)(Object) this);
     }
+     */
 
     @Inject(method = "joinWorld(Lnet/minecraft/client/world/ClientWorld;)V", at = @At("HEAD"))
     private void onLoadWorldPre(@Nullable ClientWorld worldClientIn, CallbackInfo ci)
