@@ -3,6 +3,7 @@ package fi.dy.masa.malilib;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 import fi.dy.masa.malilib.compat.forge.ForgePlatformCompat;
@@ -19,6 +20,7 @@ public class MaLiLib {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
         modEventBus.addListener(this::onInitializeClient);
+        modEventBus.addListener(this::onInterModProcess);
     }
 
     public void onInitializeClient(FMLClientSetupEvent event) {
@@ -29,5 +31,9 @@ public class MaLiLib {
             gui.setParent(screen);
             return gui;
         });
+    }
+
+    public void onInterModProcess(InterModProcessEvent event) {
+        ((InitializationHandler) InitializationHandler.getInstance()).onGameInitDone();
     }
 }
