@@ -23,14 +23,12 @@ public abstract class MixinMinecraftClient
 
     private ClientWorld worldBefore;
 
-    /*
     @Inject(method = "<init>(Lnet/minecraft/client/RunArgs;)V", at = @At("RETURN"))
     private void onInitComplete(RunArgs args, CallbackInfo ci)
     {
         // Register all mod handlers
         ((InitializationHandler) InitializationHandler.getInstance()).onGameInitDone();
     }
-     */
 
     @Inject(method = "tick()V", at = @At("RETURN"))
     private void onPostKeyboardInput(CallbackInfo ci)
