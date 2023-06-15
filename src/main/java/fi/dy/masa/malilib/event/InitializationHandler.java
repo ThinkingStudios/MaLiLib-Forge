@@ -20,7 +20,7 @@ public class InitializationHandler implements IInitializationDispatcher
     @Override
     public void registerInitializationHandler(IInitializationHandler handler)
     {
-        if (this.handlers.contains(handler) == false)
+        if (!this.handlers.contains(handler))
         {
             this.handlers.add(handler);
         }
@@ -31,7 +31,7 @@ public class InitializationHandler implements IInitializationDispatcher
      */
     public void onGameInitDone()
     {
-        if (this.handlers.isEmpty() == false)
+        if (!this.handlers.isEmpty())
         {
             for (IInitializationHandler handler : this.handlers)
             {
