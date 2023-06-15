@@ -5,6 +5,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 import javax.annotation.Nullable;
+
+import net.minecraft.util.math.Vec3f;
 import org.lwjgl.opengl.GL11;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -22,7 +24,6 @@ import net.minecraft.client.render.model.BakedModel;
 import net.minecraft.client.render.model.BakedQuad;
 import net.minecraft.client.texture.Sprite;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.client.util.math.Vector3f;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
@@ -719,7 +720,6 @@ public class RenderUtils
      * @param y
      * @param z
      * @param scale
-     * @param mc
      */
     public static void drawTextPlate(List<String> text, double x, double y, double z, float scale, MatrixStack matrixStack)
     {
@@ -981,23 +981,23 @@ public class RenderUtils
         switch (side)
         {
             case DOWN:
-                matrixStack.multiply(Vector3f.POSITIVE_Y.getDegreesQuaternion(180f - playerFacing.asRotation()));
-                matrixStack.multiply(Vector3f.POSITIVE_X.getDegreesQuaternion(90f));
+                matrixStack.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(180f - playerFacing.asRotation()));
+                matrixStack.multiply(Vec3f.POSITIVE_X.getDegreesQuaternion(90f));
                 break;
             case UP:
-                matrixStack.multiply(Vector3f.POSITIVE_Y.getDegreesQuaternion(180f - playerFacing.asRotation()));
-                matrixStack.multiply(Vector3f.POSITIVE_X.getDegreesQuaternion(-90f));
+                matrixStack.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(180f - playerFacing.asRotation()));
+                matrixStack.multiply(Vec3f.POSITIVE_X.getDegreesQuaternion(-90f));
                 break;
             case NORTH:
-                matrixStack.multiply(Vector3f.POSITIVE_Y.getDegreesQuaternion(180f));
+                matrixStack.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(180f));
                 break;
             case SOUTH:
                 break;
             case WEST:
-                matrixStack.multiply(Vector3f.POSITIVE_Y.getDegreesQuaternion(-90f));
+                matrixStack.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(-90f));
                 break;
             case EAST:
-                matrixStack.multiply(Vector3f.POSITIVE_Y.getDegreesQuaternion(90f));
+                matrixStack.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(90f));
                 break;
         }
 
