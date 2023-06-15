@@ -27,14 +27,19 @@ public class MaLiLib {
     }
 
     public void onInitializeClient(FMLClientSetupEvent event) {
+        // Make sure the mod being absent on the other network side does not cause
+        // the client to display the server as incompatible
         ForgePlatformCompat.getInstance().getModClientExtensionPoint();
         InitializationHandler.getInstance().registerInitializationHandler(new MaLiLibInitHandler());
+
+        // Config Screen
         ForgePlatformCompat.getInstance().getMod(MaLiLibReference.MOD_ID).registerModConfigScreen((screen) -> {
             MaLiLibConfigGui gui = new MaLiLibConfigGui();
             gui.setParent(screen);
             return gui;
         });
 
+        // Mixin doesn't work, maybe?
         MinecraftForge.EVENT_BUS.register(new ForgeInputEventHandler());
         MinecraftForge.EVENT_BUS.register(new ForgeTickEventHandler());
     }
