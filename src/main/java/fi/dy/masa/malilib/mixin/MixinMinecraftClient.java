@@ -30,7 +30,6 @@ public abstract class MixinMinecraftClient
         // Register all mod handlers
         ((InitializationHandler) InitializationHandler.getInstance()).onGameInitDone();
     }
-     */
 
     @Inject(method = "tick()V", at = @At("RETURN"))
     private void onPostKeyboardInput(CallbackInfo ci)
@@ -38,6 +37,7 @@ public abstract class MixinMinecraftClient
         KeybindMulti.reCheckPressedKeys();
         TickHandler.getInstance().onClientTick((MinecraftClient)(Object) this);
     }
+     */
 
     @Inject(method = "joinWorld(Lnet/minecraft/client/world/ClientWorld;)V", at = @At("HEAD"))
     private void onLoadWorldPre(@Nullable ClientWorld worldClientIn, CallbackInfo ci)
