@@ -7,14 +7,14 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.annotation.Nullable;
-
 import net.minecraft.text.ClickEvent;
 import net.minecraft.text.Text;
 import fi.dy.masa.malilib.MaLiLibConfigs;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
 
-public class StringUtils {
+public class StringUtils
+{
     public static String getModVersionString(String modId) {
         for (ModInfo modInfo : FMLLoader.getLoadingModList().getMods()) {
             if (modInfo.getModId().equals(modId)) {
@@ -32,11 +32,13 @@ public class StringUtils {
      * @param defaultColor
      * @return
      */
-    public static int getColor(String colorStr, int defaultColor) {
+    public static int getColor(String colorStr, int defaultColor)
+    {
         Pattern pattern = Pattern.compile("(?:0x|#)([a-fA-F0-9]{1,8})");
         Matcher matcher = pattern.matcher(colorStr);
 
-        if (matcher.matches()) {
+        if (matcher.matches())
+        {
             try { return (int) Long.parseLong(matcher.group(1), 16); }
             catch (NumberFormatException e) { return defaultColor; }
         }
@@ -398,8 +400,8 @@ public class StringUtils {
         return net.minecraft.client.MinecraftClient.getInstance().textRenderer.getWidth(text);
     }
 
-    public static void drawString(int x, int y, int color, String text, net.minecraft.client.util.math.MatrixStack matrixStack)
+    public static void drawString(int x, int y, int color, String text, net.minecraft.client.gui.DrawContext drawContext)
     {
-        net.minecraft.client.MinecraftClient.getInstance().textRenderer.draw(matrixStack, text, x, y, color);
+        drawContext.drawText(net.minecraft.client.MinecraftClient.getInstance().textRenderer, text, x, y, color, false);
     }
 }
