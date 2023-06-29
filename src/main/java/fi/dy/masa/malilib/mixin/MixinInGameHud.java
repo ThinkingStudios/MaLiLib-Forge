@@ -1,6 +1,5 @@
 package fi.dy.masa.malilib.mixin;
 
-import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraftforge.client.gui.overlay.ForgeGui;
 
 import org.spongepowered.asm.mixin.Mixin;
