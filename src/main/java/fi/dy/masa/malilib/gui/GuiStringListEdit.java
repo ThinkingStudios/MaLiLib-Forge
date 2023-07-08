@@ -123,14 +123,18 @@ public class GuiStringListEdit extends GuiListBase<String, WidgetStringListEditE
         {
             this.getParent().render(drawContext, mouseX, mouseY, partialTicks);
         }
+        drawContext.getMatrices().push();
+        drawContext.getMatrices().translate(0,0,1.5f);
 
         super.render(drawContext, mouseX, mouseY, partialTicks);
+
+        drawContext.getMatrices().pop();
     }
 
     @Override
     protected void drawScreenBackground(int mouseX, int mouseY)
     {
-        RenderUtils.drawOutlinedBox(this.dialogLeft, this.dialogTop, this.dialogWidth, this.dialogHeight, 0xFF000000, COLOR_HORIZONTAL_BAR);
+        RenderUtils.drawOutlinedBox(this.dialogLeft, this.dialogTop, this.dialogWidth, this.dialogHeight, 0xFF000000, COLOR_HORIZONTAL_BAR, 1.f);
     }
 
     @Override

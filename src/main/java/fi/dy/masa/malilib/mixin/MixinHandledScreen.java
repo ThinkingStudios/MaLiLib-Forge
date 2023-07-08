@@ -14,8 +14,7 @@ import net.minecraft.screen.slot.Slot;
 import fi.dy.masa.malilib.event.RenderEventHandler;
 
 @Mixin(HandledScreen.class)
-public abstract class MixinHandledScreen
-{
+public abstract class MixinHandledScreen {
     @Shadow @Nullable protected Slot focusedSlot;
 
     @Inject(method = "drawMouseoverTooltip", at = @At(value = "INVOKE", shift = At.Shift.AFTER,
