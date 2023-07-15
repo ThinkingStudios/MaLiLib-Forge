@@ -20,7 +20,7 @@ public class ForgeInputEventHandler {
     }
 
     @SubscribeEvent
-    public void onMouseInputEvent(InputEvent.MouseButton event) {
+    public void onMouseInputEvent(InputEvent.MouseButton.Pre event) {
         int mouseX = 0;
         int mouseY = 0;
 
