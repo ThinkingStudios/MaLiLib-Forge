@@ -1,7 +1,6 @@
 package fi.dy.masa.malilib;
 
 import fi.dy.masa.malilib.compat.forge.ForgePlatformCompat;
-import fi.dy.masa.malilib.compat.forge.event.ForgeInputEventHandler;
 import fi.dy.masa.malilib.compat.forge.event.ForgeTickEventHandler;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -38,7 +37,6 @@ public class MaLiLib {
         });
 
         // Mixin doesn't work, maybe?
-        MinecraftForge.EVENT_BUS.register(new ForgeInputEventHandler());
         MinecraftForge.EVENT_BUS.register(new ForgeTickEventHandler());
     }
 

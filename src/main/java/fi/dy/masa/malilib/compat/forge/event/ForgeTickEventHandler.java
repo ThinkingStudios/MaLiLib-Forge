@@ -13,7 +13,7 @@ public class ForgeTickEventHandler {
     public void onClientTickEnd(TickEvent.ClientTickEvent event) {
         if (event.phase == TickEvent.Phase.END) {
             KeybindMulti.reCheckPressedKeys();
-            TickHandler.getInstance().onClientTick(client);
+            TickHandler.getInstance().onClientTick(this.client);
         }
     }
 }
