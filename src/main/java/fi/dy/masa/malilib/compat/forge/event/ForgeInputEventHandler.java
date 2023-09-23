@@ -9,7 +9,6 @@ import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 public class ForgeInputEventHandler {
-    /*
     private final MinecraftClient client = MinecraftClient.getInstance();
     @SubscribeEvent
     public void onKeyboardInput(InputEvent.Key event) {
@@ -39,28 +38,28 @@ public class ForgeInputEventHandler {
 
     @SubscribeEvent
     public void onGuiKeyboardKeyPressPre(ScreenEvent.KeyPressed.Pre event) {
-        if (((InputEventHandler) InputEventHandler.getInputManager()).onKeyInput(event.getKeyCode(), event.getScanCode(), event.getModifiers(), true)) {
+        if (((InputEventHandler) InputEventHandler.getInputManager()).onKeyInput(event.getKeyCode(), event.getScanCode(), event.getModifiers(), event.getResult().ordinal())) {
             event.setCanceled(true);
         }
     }
 
     @SubscribeEvent
     public void onGuiKeyboardKeyReleasePre(ScreenEvent.KeyReleased.Pre event) {
-        if (((InputEventHandler) InputEventHandler.getInputManager()).onKeyInput(event.getKeyCode(), event.getScanCode(), event.getModifiers(), false)) {
+        if (((InputEventHandler) InputEventHandler.getInputManager()).onKeyInput(event.getKeyCode(), event.getScanCode(), event.getModifiers(), event.getResult().ordinal())) {
             event.setCanceled(true);
         }
     }
 
     @SubscribeEvent
     public void onGuiMouseClickPre(ScreenEvent.MouseButtonPressed.Pre event) {
-        if (((InputEventHandler) InputEventHandler.getInputManager()).onMouseClick((int) event.getMouseX(), (int) event.getMouseY(), event.getButton(), true)) {
+        if (((InputEventHandler) InputEventHandler.getInputManager()).onMouseClick((int) event.getMouseX(), (int) event.getMouseY(), event.getButton(), event.getResult().ordinal())) {
             event.setCanceled(true);
         }
     }
 
     @SubscribeEvent
     public void onGuiMouseReleasePre(ScreenEvent.MouseButtonReleased.Pre event) {
-        if (((InputEventHandler) InputEventHandler.getInputManager()).onMouseClick((int) event.getMouseX(), (int) event.getMouseY(), event.getButton(), false)) {
+        if (((InputEventHandler) InputEventHandler.getInputManager()).onMouseClick((int) event.getMouseX(), (int) event.getMouseY(), event.getButton(), event.getResult().ordinal())) {
             event.setCanceled(true);
         }
     }
@@ -76,5 +75,4 @@ public class ForgeInputEventHandler {
     public void onGuiMouseMovedPre(ScreenEvent.MouseDragged.Pre event) {
         ((InputEventHandler) InputEventHandler.getInputManager()).onMouseMove((int) event.getMouseX(), (int) event.getMouseY());
     }
-     */
 }
