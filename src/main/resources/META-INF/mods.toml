@@ -3,7 +3,7 @@ loaderVersion = "[38,)"
 license = "LGPLv3"
 
 [[mods]]
-modId = "malilib"
+modId = "mafglib"
 version = "${version}"
 displayName = "MaFgLib"
 displayURL="https://github.com/ThinkingStudios/MaLiLib-Forge" #optional
@@ -16,16 +16,16 @@ MaLiLib unofficial Forge port.
 A library mod required by masa's client-side mods.
 '''
 
-[[dependencies.malilib]]
+[[dependencies.mafglib]]
 modId = "forge"
 mandatory = true
 versionRange = "[38,)"
 ordering = "NONE"
 side = "BOTH"
 
-[[dependencies.malilib]]
+[[dependencies.mafglib]]
 modId = "minecraft"
 mandatory = true
-versionRange = "[1.18,)"
+versionRange = "[1.18,1.18.2]"
 ordering = "NONE"
 side = "BOTH"
