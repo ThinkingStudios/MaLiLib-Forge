@@ -19,7 +19,7 @@ import fi.dy.masa.malilib.util.StringUtils;
 
 public class WidgetKeybindSettings extends WidgetBase
 {
-    public static final Identifier TEXTURE = new Identifier(MaLiLibReference.MOD_ID, "textures/gui/gui_widgets.png");
+    public static final Identifier TEXTURE = new Identifier(MaLiLibReference.NAMESPACE, "textures/gui/gui_widgets.png");
 
     protected final String keybindName;
     protected final IKeybind keybind;

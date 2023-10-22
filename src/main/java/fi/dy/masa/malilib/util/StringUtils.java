@@ -18,7 +18,7 @@ public class StringUtils
     public static String getModVersionString(String modId) {
         for (ModInfo modInfo : FMLLoader.getLoadingModList().getMods()) {
             if (modInfo.getModId().equals(modId)) {
-                return modInfo.getVersion().getQualifier();
+                return modInfo.getVersion().toString();
             }
         }
 
