@@ -1,3 +1,2 @@
 ## Changelog
-- change modid to `mafglib`
-- auto upload
+- fix icon missing issue
