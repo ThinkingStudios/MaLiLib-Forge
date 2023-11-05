@@ -1,8 +1,6 @@
 package fi.dy.masa.malilib.mixin;
 
-import net.minecraft.screen.ScreenHandler;
 import org.jetbrains.annotations.Nullable;
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -16,14 +14,15 @@ import net.minecraft.screen.slot.Slot;
 import fi.dy.masa.malilib.event.RenderEventHandler;
 
 @Mixin(HandledScreen.class)
-public abstract class MixinHandledScreen<T extends ScreenHandler> {
+public abstract class MixinHandledScreen
+{
     @Shadow @Nullable protected Slot focusedSlot;
 
-    @Shadow @Final protected T handler;
-
-    @Inject(method = "drawMouseoverTooltip", at = @At("TAIL"))
-    private void onRenderTooltip(DrawContext drawContext, int x, int y, CallbackInfo ci) {
-        if (this.handler.getCursorStack().isEmpty() && this.focusedSlot != null && this.focusedSlot.hasStack()) {
+    @Inject(method = "drawMouseoverTooltip", at = @At(value = "INVOKE", shift = At.Shift.AFTER,
+            target = "Lnet/minecraft/client/gui/DrawContext;renderTooltip(Lnet/minecraft/client/font/TextRenderer;Ljava/util/List;Ljava/util/Optional;Lnet/minecraft/item/ItemStack;II)V"))
+    private void onRenderTooltip(DrawContext drawContext, int x, int y, CallbackInfo ci)
+    {
+        if (this.focusedSlot != null && this.focusedSlot.hasStack()) {
             ((RenderEventHandler) RenderEventHandler.getInstance()).onRenderTooltipLast(drawContext, this.focusedSlot.getStack(), x, y);
         }
     }

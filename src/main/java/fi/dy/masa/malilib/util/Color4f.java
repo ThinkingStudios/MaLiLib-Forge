@@ -68,7 +68,7 @@ public class Color4f
     }
 
     @Override
-    public boolean equals(Object obj)
+    public boolean equals(Object obj) 
     {
         if (this == obj)
             return true;
@@ -83,7 +83,7 @@ public class Color4f
     }
 
     @Override
-    public int hashCode()
+    public int hashCode() 
     {
         return Objects.hash(this.intValue);
     }

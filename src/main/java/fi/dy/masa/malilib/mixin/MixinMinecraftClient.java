@@ -7,9 +7,13 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import net.minecraft.client.MinecraftClient;
+//import net.minecraft.client.RunArgs;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.world.ClientWorld;
+//import fi.dy.masa.malilib.event.InitializationHandler;
+//import fi.dy.masa.malilib.event.TickHandler;
 import fi.dy.masa.malilib.event.WorldLoadHandler;
+//import fi.dy.masa.malilib.hotkeys.KeybindMulti;
 
 @Mixin(MinecraftClient.class)
 public abstract class MixinMinecraftClient
@@ -18,6 +22,22 @@ public abstract class MixinMinecraftClient
     public ClientWorld world;
 
     private ClientWorld worldBefore;
+
+    /*
+    @Inject(method = "<init>(Lnet/minecraft/client/RunArgs;)V", at = @At("RETURN"))
+    private void onInitComplete(RunArgs args, CallbackInfo ci)
+    {
+        // Register all mod handlers
+        ((InitializationHandler) InitializationHandler.getInstance()).onGameInitDone();
+    }
+
+    @Inject(method = "tick()V", at = @At("RETURN"))
+    private void onPostKeyboardInput(CallbackInfo ci)
+    {
+        KeybindMulti.reCheckPressedKeys();
+        TickHandler.getInstance().onClientTick((MinecraftClient)(Object) this);
+    }
+     */
 
     @Inject(method = "joinWorld(Lnet/minecraft/client/world/ClientWorld;)V", at = @At("HEAD"))
     private void onLoadWorldPre(@Nullable ClientWorld worldClientIn, CallbackInfo ci)

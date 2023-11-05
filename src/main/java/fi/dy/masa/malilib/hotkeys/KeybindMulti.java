@@ -463,7 +463,8 @@ public class KeybindMulti implements IKeybind
             }
         }
 
-        if (MaLiLibConfigs.Debug.KEYBIND_DEBUG.getBooleanValue()) {
+        if (MaLiLibConfigs.Debug.KEYBIND_DEBUG.getBooleanValue())
+        {
             printKeybindDebugMessage(keyCode, scanCode, modifiers, action);
         }
     }
@@ -499,7 +500,7 @@ public class KeybindMulti implements IKeybind
         String held = getActiveKeysString();
         String msg = String.format("%s %s (%d, m: %d), held: %s", type, keyName, keyCode, modifiers, held);
         String msgConsole = String.format("%s %s (keyCode: %d, scanCode: %d, modifiers: %d), held keys: %s",
-                type, keyName, keyCode, scanCode, modifiers, held);
+                                          type, keyName, keyCode, scanCode, modifiers, held);
 
         if (action != GLFW.GLFW_REPEAT)
         {

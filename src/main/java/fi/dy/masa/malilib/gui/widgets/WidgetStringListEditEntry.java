@@ -199,16 +199,14 @@ public class WidgetStringListEditEntry extends WidgetConfigOptionBase<String>
     {
         RenderUtils.color(1f, 1f, 1f, 1f);
 
-        setZLevel(1);
-
         if (this.isOdd)
         {
-            RenderUtils.drawRect(this.x, this.y, this.width, this.height, 0x20FFFFFF, zLevel);
+            RenderUtils.drawRect(this.x, this.y, this.width, this.height, 0x20FFFFFF);
         }
         // Draw a slightly lighter background for even entries
         else
         {
-            RenderUtils.drawRect(this.x, this.y, this.width, this.height, 0x30FFFFFF, zLevel);
+            RenderUtils.drawRect(this.x, this.y, this.width, this.height, 0x30FFFFFF);
         }
 
         this.drawSubWidgets(mouseX, mouseY, drawContext);

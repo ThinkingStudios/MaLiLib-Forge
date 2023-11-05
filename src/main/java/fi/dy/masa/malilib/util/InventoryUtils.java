@@ -1,7 +1,8 @@
 package fi.dy.masa.malilib.util;
 
+import java.util.Objects;
+import java.util.Set;
 import javax.annotation.Nullable;
-
 import com.google.common.collect.ImmutableSet;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 
@@ -27,9 +28,6 @@ import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-
-import java.util.Objects;
-import java.util.Set;
 
 public class InventoryUtils
 {
