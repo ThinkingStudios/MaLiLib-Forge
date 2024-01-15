@@ -14,7 +14,7 @@ import fi.dy.masa.malilib.util.JsonUtils;
 
 public class MaLiLibConfigs implements IConfigHandler
 {
-    private static final String CONFIG_FILE_NAME = MaLiLibReference.NAMESPACE + ".json";
+    private static final String CONFIG_FILE_NAME = MaLiLibReference.MOD_ID + ".json";
 
     public static class Generic
     {
