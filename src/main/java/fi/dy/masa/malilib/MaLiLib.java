@@ -1,5 +1,6 @@
 package fi.dy.masa.malilib;
 
+import fi.dy.masa.malilib.compat.forge.ForgePlatformUtils;
 import fi.dy.masa.malilib.compat.forge.event.ForgeInputEventHandler;
 import fi.dy.masa.malilib.compat.forge.event.ForgeTickEventHandler;
 import net.minecraftforge.common.MinecraftForge;
@@ -12,7 +13,6 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import fi.dy.masa.malilib.compat.forge.ForgePlatformCompat;
 import fi.dy.masa.malilib.event.InitializationHandler;
 
 @Mod(MaLiLibReference.MOD_ID)
@@ -29,11 +29,11 @@ public class MaLiLib {
     public void onInitializeClient(FMLClientSetupEvent event) {
         // Make sure the mod being absent on the other network side does not cause
         // the client to display the server as incompatible
-        ForgePlatformCompat.getInstance().getModClientExtensionPoint();
+        ForgePlatformUtils.getInstance().getClientModIgnoredServerOnly();
         InitializationHandler.getInstance().registerInitializationHandler(new MaLiLibInitHandler());
 
         // Config Screen
-        ForgePlatformCompat.getInstance().getMod(MaLiLibReference.MOD_ID).registerModConfigScreen((screen) -> {
+        ForgePlatformUtils.getInstance().getMod(MaLiLibReference.MOD_ID).registerModConfigScreen((screen) -> {
             MaLiLibConfigGui gui = new MaLiLibConfigGui();
             gui.setParent(screen);
             return gui;
