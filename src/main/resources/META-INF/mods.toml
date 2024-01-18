@@ -18,11 +18,8 @@ A library mod required by masa's client-side mods.
 
 [[mods]]
 modId = "malilib"
-version = "${version}"
+version = "0.1.5"
 displayName = "MaFgLib (old modid compat)"
-logoFile="icon.png" #optional
-credits="masa" #optional
-authors="TexTrue, ThinkingStudio" #optional
 description = '''
 MaFgLib old modid compat
 '''
