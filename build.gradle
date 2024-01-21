@@ -75,13 +75,6 @@ unifiedPublishing {
         mainPublication remapJar
         secondaryPublications.builtBy(sourcesJar)
 
-        relations {
-            depends {
-                curseforge = "mafglib"
-                modrinth = "mafglib"
-            }
-        }
-
         var CURSEFORGE_TOKEN = project.findProperty("CURSEFORGE_TOKEN") ?: System.getenv("CURSEFORGE_TOKEN")
         if (CURSEFORGE_TOKEN != null) {
             curseforge {
