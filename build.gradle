@@ -84,7 +84,7 @@ unifiedPublishing {
         displayName = "$project.version"
         releaseType = "beta"
         changelog = file("CHANGELOG.md").getText('UTF-8')
-        gameVersions = ["1.20", "1.20.1"]
+        gameVersions = ["1.19", "1.19.1", "1.19.2"]
         gameLoaders = ["forge", "neoforge"]
 
         mainPublication remapJar
