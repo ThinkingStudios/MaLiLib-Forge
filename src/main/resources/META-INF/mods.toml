@@ -16,14 +16,6 @@ MaLiLib unofficial Forge port.
 A library mod required by masa's client-side mods.
 '''
 
-[[mods]]
-modId = "malilib"
-version = "0.1.5"
-displayName = "MaFgLib (old modid compat)"
-description = '''
-MaFgLib old modid compat
-'''
-
 [[dependencies.mafglib]]
 modId = "forge"
 mandatory = true

@@ -1,2 +1,2 @@
 ## Changelog
-- delete old MaFgLib modid compat (fix #31)
+- delete old MaFgLib modid compat again (fix #38)
