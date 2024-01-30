@@ -3,12 +3,13 @@ package fi.dy.masa.malilib;
 import fi.dy.masa.malilib.compat.forge.ForgePlatformUtils;
 import fi.dy.masa.malilib.compat.forge.event.ForgeInputEventHandler;
 import fi.dy.masa.malilib.compat.forge.event.ForgeTickEventHandler;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.loading.FMLLoader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import fi.dy.masa.malilib.event.InitializationHandler;
@@ -20,11 +21,13 @@ public class MaLiLib {
     public MaLiLib() {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
-        modEventBus.addListener(this::onInitializeClient);
-        modEventBus.addListener(this::onInterModProcess);
+        if (FMLLoader.getDist() == Dist.CLIENT) {
+            this.onInitializeClient();
+            modEventBus.addListener(this::onInterModProcess);
+        }
     }
 
-    public void onInitializeClient(FMLClientSetupEvent event) {
+    public void onInitializeClient() {
         // Make sure the mod being absent on the other network side does not cause
         // the client to display the server as incompatible
         ForgePlatformUtils.getInstance().getClientModIgnoredServerOnly();

@@ -10,11 +10,10 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ForgePlatformUtils {
-    private static final ThreadLocal<ForgePlatformUtils> forgePlatform = ThreadLocal.withInitial(ForgePlatformUtils::new);
     private static final Map<String, ModConfigScreenRegister> mods = new ConcurrentHashMap<>();
 
     public static ForgePlatformUtils getInstance() {
-        return forgePlatform.get();
+        return new ForgePlatformUtils();
     }
 
     public ModConfigScreenRegister getMod(String id) {

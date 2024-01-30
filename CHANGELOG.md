@@ -1,2 +1,2 @@
 ## Changelog
-- delete old MaFgLib modid compat again (fix #38)
+- fix ingamehud, NOT use `ThreadLocal`
