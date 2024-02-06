@@ -20,7 +20,7 @@ dependencies {
     mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
     neoForge "net.neoforged:neoforge:${project.neoforge_version}"
 
-    modImplementation "mysticdrew:common-networking-neoforge:1.0.6-1.20.4"
+    modApi "dev.architectury:architectury-neoforge:11.0.11"
 
     implementation "com.google.code.findbugs:jsr305:3.0.2"
 }

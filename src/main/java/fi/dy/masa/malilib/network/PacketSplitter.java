@@ -5,8 +5,9 @@ import java.util.Map;
 import javax.annotation.Nullable;
 
 import io.netty.buffer.Unpooled;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
+import dev.architectury.networking.NetworkManager;
+//import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+//import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import org.apache.commons.lang3.tuple.Pair;
 
 import net.minecraft.client.network.ClientPlayNetworkHandler;
@@ -64,7 +65,8 @@ public class PacketSplitter
 
             buf.writeBytes(packet, thisLen);
 
-            ClientPlayNetworking.send(channel, buf);
+            NetworkManager.sendToServer(channel, buf);
+            //ClientPlayNetworking.send(channel, buf);
         }
 
         packet.release();
@@ -91,7 +93,7 @@ public class PacketSplitter
 
     public static PacketByteBuf readPayload(PacketByteBuf byteBuf)
     {
-        PacketByteBuf newBuf = PacketByteBufs.create();
+        PacketByteBuf newBuf = new PacketByteBuf(Unpooled.buffer());
         newBuf.writeBytes(byteBuf.copy());
         byteBuf.skipBytes(byteBuf.readableBytes());
         return newBuf;

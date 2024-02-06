@@ -1,6 +1,7 @@
 package fi.dy.masa.malilib.network;
 
 import com.google.common.collect.ArrayListMultimap;
+import dev.architectury.networking.NetworkManager;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 
 import net.minecraft.util.Identifier;

@@ -19,7 +19,6 @@ public class MaLiLib {
     public MaLiLib() {
         if (FMLLoader.getDist() == Dist.CLIENT) {
             this.onInitializeClient();
-
         }
     }
 

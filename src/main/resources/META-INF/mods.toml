@@ -1,5 +1,5 @@
 modLoader = "javafml"
-loaderVersion = "[46,)"
+loaderVersion = "[1,)"
 license = "LGPLv3"
 
 [[mods]]
@@ -20,9 +20,9 @@ A library mod required by masa's client-side mods.
 config = "mafglib.mixins.json"
 
 [[dependencies.mafglib]]
-modId = "forge"
+modId = "neoforge"
 mandatory = true
-versionRange = "[46,)"
+versionRange = "[20,)"
 ordering = "NONE"
 side = "BOTH"
 
