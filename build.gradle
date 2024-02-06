@@ -10,22 +10,17 @@ archivesBaseName = project.archives_base_name
 version = "${project.mod_version}-mc${project.minecraft_version}"
 group = project.maven_group
 
-loom {
-    forge {
-        mixinConfigs = [
-                "mafglib.mixins.json"
-        ]
-    }
-}
-
 repositories {
-
+    maven { url "https://maven.neoforged.net/releases/" }
+    maven { url "https://jm.gserv.me/repository/maven-public/" }
 }
 
 dependencies {
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
     mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
-    forge "net.minecraftforge:forge:${project.forge_version}"
+    neoForge "net.neoforged:neoforge:${project.neoforge_version}"
+
+    modImplementation "mysticdrew:common-networking-neoforge:1.0.6-1.20.4"
 
     implementation "com.google.code.findbugs:jsr305:3.0.2"
 }
@@ -69,8 +64,8 @@ unifiedPublishing {
         displayName = "$project.version"
         releaseType = "beta"
         changelog = file("CHANGELOG.md").getText('UTF-8')
-        gameVersions = ["1.20", "1.20.1"]
-        gameLoaders = ["forge", "neoforge"]
+        gameVersions = ["1.20.3", "1.20.4"]
+        gameLoaders = ["neoforge"]
 
         mainPublication remapJar
         secondaryPublications.builtBy(sourcesJar)

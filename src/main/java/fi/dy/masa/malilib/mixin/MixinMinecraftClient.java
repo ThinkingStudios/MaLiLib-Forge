@@ -7,13 +7,13 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import net.minecraft.client.MinecraftClient;
-//import net.minecraft.client.RunArgs;
+import net.minecraft.client.RunArgs;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.world.ClientWorld;
-//import fi.dy.masa.malilib.event.InitializationHandler;
-//import fi.dy.masa.malilib.event.TickHandler;
+import fi.dy.masa.malilib.event.InitializationHandler;
+import fi.dy.masa.malilib.event.TickHandler;
 import fi.dy.masa.malilib.event.WorldLoadHandler;
-//import fi.dy.masa.malilib.hotkeys.KeybindMulti;
+import fi.dy.masa.malilib.hotkeys.KeybindMulti;
 
 @Mixin(MinecraftClient.class)
 public abstract class MixinMinecraftClient

@@ -1,8 +1,8 @@
-package fi.dy.masa.malilib.compat.forge.register;
+package fi.dy.masa.malilib.compat.neoforge.register;
 
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 public interface ModConfigScreenRegister {
     @OnlyIn(Dist.CLIENT)

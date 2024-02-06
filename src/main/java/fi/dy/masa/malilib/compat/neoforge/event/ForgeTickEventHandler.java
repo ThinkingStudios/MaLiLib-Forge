@@ -1,11 +1,11 @@
-package fi.dy.masa.malilib.compat.forge.event;
+package fi.dy.masa.malilib.compat.neoforge.event;
 
 import fi.dy.masa.malilib.event.TickHandler;
 import fi.dy.masa.malilib.hotkeys.KeybindMulti;
 
 import net.minecraft.client.MinecraftClient;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.neoforge.event.TickEvent;
 
 public class ForgeTickEventHandler {
     private final MinecraftClient client = MinecraftClient.getInstance();

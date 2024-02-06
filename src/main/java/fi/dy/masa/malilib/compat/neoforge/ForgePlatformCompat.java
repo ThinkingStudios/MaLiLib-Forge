@@ -1,6 +1,6 @@
-package fi.dy.masa.malilib.compat.forge;
+package fi.dy.masa.malilib.compat.neoforge;
 
-import fi.dy.masa.malilib.compat.forge.register.ModConfigScreenRegister;
+import fi.dy.masa.malilib.compat.neoforge.register.ModConfigScreenRegister;
 
 @Deprecated
 public class ForgePlatformCompat {

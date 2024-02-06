@@ -16,6 +16,9 @@ MaLiLib unofficial Forge port.
 A library mod required by masa's client-side mods.
 '''
 
+[[mixins]]
+config = "mafglib.mixins.json"
+
 [[dependencies.mafglib]]
 modId = "forge"
 mandatory = true

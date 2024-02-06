@@ -1,33 +1,30 @@
 package fi.dy.masa.malilib;
 
-import fi.dy.masa.malilib.compat.forge.ForgePlatformUtils;
-import fi.dy.masa.malilib.compat.forge.event.ForgeInputEventHandler;
-import fi.dy.masa.malilib.compat.forge.event.ForgeTickEventHandler;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fml.loading.FMLLoader;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.event.lifecycle.InterModProcessEvent;
+import net.neoforged.fml.loading.FMLLoader;
+import net.neoforged.neoforge.common.NeoForge;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import fi.dy.masa.malilib.event.InitializationHandler;
+import fi.dy.masa.malilib.compat.neoforge.ForgePlatformUtils;
+import fi.dy.masa.malilib.compat.neoforge.event.ForgeInputEventHandler;
+import fi.dy.masa.malilib.compat.neoforge.event.ForgeTickEventHandler;
 
 @Mod(MaLiLibReference.MOD_ID)
 public class MaLiLib {
     public static final Logger logger = LogManager.getLogger(MaLiLibReference.MOD_ID);
 
     public MaLiLib() {
-        IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
-
         if (FMLLoader.getDist() == Dist.CLIENT) {
             this.onInitializeClient();
-            modEventBus.addListener(this::onInterModProcess);
+
         }
     }
 
     public void onInitializeClient() {
+        NeoForge.EVENT_BUS.addListener(this::onInterModProcess);
         // Make sure the mod being absent on the other network side does not cause
         // the client to display the server as incompatible
         ForgePlatformUtils.getInstance().getClientModIgnoredServerOnly();
@@ -41,8 +38,8 @@ public class MaLiLib {
         });
 
         // Mixin doesn't work, maybe?
-        MinecraftForge.EVENT_BUS.register(new ForgeTickEventHandler());
-        MinecraftForge.EVENT_BUS.register(new ForgeInputEventHandler());
+        NeoForge.EVENT_BUS.register(new ForgeTickEventHandler());
+        NeoForge.EVENT_BUS.register(new ForgeInputEventHandler());
     }
 
     public void onInterModProcess(InterModProcessEvent event) {

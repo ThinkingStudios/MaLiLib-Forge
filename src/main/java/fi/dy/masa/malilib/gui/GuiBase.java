@@ -73,7 +73,8 @@ public abstract class GuiBase extends Screen implements IMessageConsumer, IStrin
     protected String title = "";
     protected boolean useTitleHierarchy = true;
     private int keyInputCount;
-    private double mouseWheelDeltaSum;
+    private double mouseWheelHorizontalDeltaSum;
+    private double mouseWheelVerticalDeltaSum;
     @Nullable
     private Screen parent;
 
@@ -180,27 +181,38 @@ public abstract class GuiBase extends Screen implements IMessageConsumer, IStrin
     }
 
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double amount)
+    public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount)
     {
-        if (this.mouseWheelDeltaSum != 0.0 && Math.signum(amount) != Math.signum(this.mouseWheelDeltaSum))
+        if (this.mouseWheelHorizontalDeltaSum != 0.0 &&
+            Math.signum(horizontalAmount) != Math.signum(this.mouseWheelHorizontalDeltaSum))
         {
-            this.mouseWheelDeltaSum = 0.0;
+            this.mouseWheelHorizontalDeltaSum = 0.0;
         }
 
-        this.mouseWheelDeltaSum += amount;
-        amount = (int) this.mouseWheelDeltaSum;
-
-        if (amount != 0.0)
+        if (this.mouseWheelVerticalDeltaSum != 0.0 &&
+            Math.signum(verticalAmount) != Math.signum(this.mouseWheelVerticalDeltaSum))
         {
-            this.mouseWheelDeltaSum -= amount;
+            this.mouseWheelVerticalDeltaSum = 0.0;
+        }
 
-            if (this.onMouseScrolled((int) mouseX, (int) mouseY, amount))
+        this.mouseWheelHorizontalDeltaSum += horizontalAmount;
+        this.mouseWheelVerticalDeltaSum += verticalAmount;
+
+        horizontalAmount = (int) this.mouseWheelHorizontalDeltaSum;
+        verticalAmount = (int) this.mouseWheelVerticalDeltaSum;
+
+        if (horizontalAmount != 0.0 || verticalAmount != 0.0)
+        {
+            this.mouseWheelHorizontalDeltaSum -= horizontalAmount;
+            this.mouseWheelVerticalDeltaSum -= verticalAmount;
+
+            if (this.onMouseScrolled((int) mouseX, (int) mouseY, horizontalAmount, verticalAmount))
             {
                 return true;
             }
         }
 
-        return super.mouseScrolled(mouseX, mouseY, amount);
+        return super.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount);
     }
 
     @Override
@@ -308,11 +320,11 @@ public abstract class GuiBase extends Screen implements IMessageConsumer, IStrin
         return false;
     }
 
-    public boolean onMouseScrolled(int mouseX, int mouseY, double mouseWheelDelta)
+    public boolean onMouseScrolled(int mouseX, int mouseY, double horizontalAmount, double verticalAmount)
     {
         for (ButtonBase button : this.buttons)
         {
-            if (button.onMouseScrolled(mouseX, mouseY, mouseWheelDelta))
+            if (button.onMouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount))
             {
                 // Don't call super if the button press got handled
                 return true;
@@ -321,7 +333,7 @@ public abstract class GuiBase extends Screen implements IMessageConsumer, IStrin
 
         for (WidgetBase widget : this.widgets)
         {
-            if (widget.onMouseScrolled(mouseX, mouseY, mouseWheelDelta))
+            if (widget.onMouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount))
             {
                 // Don't call super if the action got handled
                 return true;

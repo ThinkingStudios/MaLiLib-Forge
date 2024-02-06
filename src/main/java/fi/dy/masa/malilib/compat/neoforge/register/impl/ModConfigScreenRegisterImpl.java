@@ -1,9 +1,9 @@
-package fi.dy.masa.malilib.compat.forge.register.impl;
+package fi.dy.masa.malilib.compat.neoforge.register.impl;
 
-import fi.dy.masa.malilib.compat.forge.register.ModConfigScreenRegister;
-import net.minecraftforge.client.ConfigScreenHandler;
-import net.minecraftforge.fml.ModContainer;
-import net.minecraftforge.fml.ModList;
+import fi.dy.masa.malilib.compat.neoforge.register.ModConfigScreenRegister;
+import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.ModList;
+import net.neoforged.neoforge.client.ConfigScreenHandler;
 
 public class ModConfigScreenRegisterImpl implements ModConfigScreenRegister {
     private final ModContainer container;

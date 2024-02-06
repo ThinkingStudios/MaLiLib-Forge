@@ -1,12 +1,11 @@
-package fi.dy.masa.malilib.compat.forge.event;
+package fi.dy.masa.malilib.compat.neoforge.event;
 
 import fi.dy.masa.malilib.event.InputEventHandler;
 
 import net.minecraft.client.MinecraftClient;
-
-import net.minecraftforge.client.event.InputEvent;
-import net.minecraftforge.client.event.ScreenEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.neoforge.client.event.InputEvent;
+import net.neoforged.neoforge.client.event.ScreenEvent;
 
 public class ForgeInputEventHandler {
     private final MinecraftClient client = MinecraftClient.getInstance();
@@ -31,7 +30,7 @@ public class ForgeInputEventHandler {
 
     @SubscribeEvent
     public void onMouseScrollEvent(InputEvent.MouseScrollingEvent event) {
-        if (((InputEventHandler) InputEventHandler.getInputManager()).onMouseScroll((int) event.getMouseX(), (int) event.getMouseY(), 0, event.getScrollDelta())) {
+        if (((InputEventHandler) InputEventHandler.getInputManager()).onMouseScroll((int) event.getMouseX(), (int) event.getMouseY(), 0, event.getScrollDeltaY())) {
             event.setCanceled(true);
         }
     }
@@ -66,7 +65,7 @@ public class ForgeInputEventHandler {
 
     @SubscribeEvent
     public void onGuiMouseScrolledPre(ScreenEvent.MouseScrolled.Pre event) {
-        if (((InputEventHandler) InputEventHandler.getInputManager()).onMouseScroll((int) event.getMouseX(), (int) event.getMouseY(), event.getScrollDelta(), 0)) {
+        if (((InputEventHandler) InputEventHandler.getInputManager()).onMouseScroll((int) event.getMouseX(), (int) event.getMouseY(), event.getScrollDeltaX(), 0)) {
             event.setCanceled(true);
         }
     }

@@ -7,7 +7,7 @@
     "MixinClientPlayNetworkHandler",
     "MixinDrawContext",
     "MixinHandledScreen",
-    "compat.MixinForgeGui",
+    "MixinExtendedGui",
     "MixinKeyboard",
     "MixinMinecraftClient",
     "MixinMouse",

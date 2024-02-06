@@ -10,8 +10,8 @@ import javax.annotation.Nullable;
 import net.minecraft.text.ClickEvent;
 import net.minecraft.text.Text;
 import fi.dy.masa.malilib.MaLiLibConfigs;
-import net.minecraftforge.fml.loading.FMLLoader;
-import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
+import net.neoforged.fml.loading.FMLLoader;
+import net.neoforged.fml.loading.moddiscovery.ModInfo;
 
 public class StringUtils
 {
@@ -286,7 +286,7 @@ public class StringUtils
         }
         else
         {
-            if (mc.isConnectedToRealms())
+            if (mc.getCurrentServerEntry() != null && mc.getCurrentServerEntry().isRealm())
             {
                 if (MaLiLibConfigs.Generic.REALMS_COMMON_CONFIG.getBooleanValue())
                 {
