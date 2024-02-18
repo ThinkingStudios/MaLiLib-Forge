@@ -3,6 +3,7 @@ package fi.dy.masa.malilib.compat.neoforge.event;
 import fi.dy.masa.malilib.event.InputEventHandler;
 
 import net.minecraft.client.MinecraftClient;
+
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.client.event.InputEvent;
 import net.neoforged.neoforge.client.event.ScreenEvent;

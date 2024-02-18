@@ -4,6 +4,7 @@ import fi.dy.masa.malilib.event.TickHandler;
 import fi.dy.masa.malilib.hotkeys.KeybindMulti;
 
 import net.minecraft.client.MinecraftClient;
+
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.event.TickEvent;
 

@@ -1,14 +1,11 @@
 package fi.dy.masa.malilib.network;
 
-import dev.architectury.networking.NetworkManager;
-//import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking.PlayChannelHandler;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking.PlayChannelHandler;
 
-import dev.architectury.networking.forge.BufCustomPacketPayload;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.util.Identifier;
-import net.neoforged.neoforge.network.handling.IPlayPayloadHandler;
 
 public interface IPluginChannelHandler
 {
