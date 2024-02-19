@@ -7,8 +7,6 @@ import net.neoforged.neoforge.common.NeoForge;
 
 import fi.dy.masa.malilib.event.InitializationHandler;
 import fi.dy.masa.malilib.compat.neoforge.ForgePlatformUtils;
-import fi.dy.masa.malilib.compat.neoforge.event.ForgeInputEventHandler;
-import fi.dy.masa.malilib.compat.neoforge.event.ForgeTickEventHandler;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,9 +33,5 @@ public class MaLiLib {
             gui.setParent(screen);
             return gui;
         });
-
-        // Mixin doesn't work, maybe?
-        NeoForge.EVENT_BUS.register(new ForgeTickEventHandler());
-        NeoForge.EVENT_BUS.register(new ForgeInputEventHandler());
     }
 }
