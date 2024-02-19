@@ -1,7 +1,10 @@
+import com.hypherionmc.modpublisher.properties.CurseEnvironment
+import com.hypherionmc.modpublisher.properties.ModLoader
+
 plugins {
     id "dev.architectury.loom" version "1.4-SNAPSHOT"
     id "maven-publish"
-    id "me.shedaniel.unified-publishing" version "0.1.+"
+    id "com.hypherionmc.modutils.modpublisher" version "2.0.+"
 }
 
 sourceCompatibility = targetCompatibility = JavaVersion.VERSION_17
@@ -59,32 +62,29 @@ publishing {
     }
 }
 
-unifiedPublishing {
-    project {
-        displayName = "$project.version"
-        releaseType = "beta"
-        changelog = file("CHANGELOG.md").getText('UTF-8')
-        gameVersions = ["1.20.3", "1.20.4"]
-        gameLoaders = ["neoforge"]
+publisher {
+    apiKeys {
+        modrinth System.getenv("MODRINTH_TOKEN")
+        curseforge System.getenv("CURSE_TOKEN")
+    }
 
-        mainPublication remapJar
-        secondaryPublications.builtBy(sourcesJar)
+    setCurseID("${project.curseforge_id}")
+    setModrinthID("${project.modrinth_id}")
+    setVersionType("alpha")
+    setChangelog("CHANGELOG.md")
+    setVersion("${project.version}")
+    setDisplayName("${project.version}")
+    setGameVersions("1.20.3", "1.20.4")
+    setLoaders(ModLoader.NEOFORGE)
+    setCurseEnvironment(CurseEnvironment.CLIENT)
+    setArtifact(remapJar)
+    addAdditionalFile(sourcesJar)
 
-        var CURSEFORGE_TOKEN = project.findProperty("CURSEFORGE_TOKEN") ?: System.getenv("CURSEFORGE_TOKEN")
-        if (CURSEFORGE_TOKEN != null) {
-            curseforge {
-                token = CURSEFORGE_TOKEN
-                id = project.curseforge_id
-            }
-        }
+    modrinthDepends {
+        required "mafglib"
+    }
 
-        var MODRINTH_TOKEN = project.findProperty("MODRINTH_TOKEN") ?: System.getenv("MODRINTH_TOKEN")
-        if (MODRINTH_TOKEN != null) {
-            modrinth {
-                token = MODRINTH_TOKEN
-                id = project.modrinth_id
-                version = "$project.version"
-            }
-        }
+    curseDepends {
+        required "mafglib"
     }
 }
