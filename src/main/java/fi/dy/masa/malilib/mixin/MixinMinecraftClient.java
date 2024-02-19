@@ -23,7 +23,6 @@ public abstract class MixinMinecraftClient
 
     private ClientWorld worldBefore;
 
-
     @Inject(method = "<init>(Lnet/minecraft/client/RunArgs;)V", at = @At("RETURN"))
     private void onInitComplete(RunArgs args, CallbackInfo ci)
     {

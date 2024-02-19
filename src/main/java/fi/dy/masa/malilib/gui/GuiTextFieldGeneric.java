@@ -83,12 +83,12 @@ public class GuiTextFieldGeneric extends TextFieldWidget
         super.setFocused(isFocusedIn);
     }
 
-    public int getCursorPosition()
+    public int getCursorPos()
     {
         return this.getCursor();
     }
 
-    public void setCursorPosition(int pos)
+    public void setCursorPos(int pos)
     {
         this.setCursor(pos, GuiBase.isShiftDown());
     }

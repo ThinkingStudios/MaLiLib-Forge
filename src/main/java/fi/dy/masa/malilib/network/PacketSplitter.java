@@ -3,7 +3,6 @@ package fi.dy.masa.malilib.network;
 import java.util.HashMap;
 import java.util.Map;
 import javax.annotation.Nullable;
-
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
