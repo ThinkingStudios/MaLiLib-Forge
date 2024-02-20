@@ -1,2 +1,2 @@
 ## Change
-- fix publish
+- clean

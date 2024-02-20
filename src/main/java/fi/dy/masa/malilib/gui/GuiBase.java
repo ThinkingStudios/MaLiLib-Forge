@@ -530,12 +530,12 @@ public abstract class GuiBase extends Screen implements IMessageConsumer, IStrin
 
     protected void clearElements()
     {
-        this.clearWidgets();
+        this.clearGuiWidgets();
         this.clearButtons();
         this.clearTextFields();
     }
 
-    protected void clearWidgets()
+    protected void clearGuiWidgets()
     {
         this.widgets.clear();
     }
