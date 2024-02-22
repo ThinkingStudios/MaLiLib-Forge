@@ -32,10 +32,3 @@ type = "required"
 versionRange = "[1.20.3,)"
 ordering = "NONE"
 side = "BOTH"
-
-[[dependencies.mafglib]]
-modId = "forged_networking"
-type = "required"
-versionRange = "[0.1,)"
-ordering = "NONE"
-side = "BOTH"
