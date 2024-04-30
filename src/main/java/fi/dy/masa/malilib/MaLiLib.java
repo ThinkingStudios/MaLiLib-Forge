@@ -1,17 +1,9 @@
 package fi.dy.masa.malilib;
 
 import fi.dy.masa.malilib.compat.forge.ForgePlatformUtils;
-import fi.dy.masa.malilib.compat.forge.event.ForgeInputEventHandler;
-import fi.dy.masa.malilib.compat.forge.event.ForgeTickEventHandler;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-
 import fi.dy.masa.malilib.event.InitializationHandler;
-
+import net.minecraftforge.fml.loading.FMLLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,31 +12,18 @@ public class MaLiLib {
     public static final Logger logger = LoggerFactory.getLogger(MaLiLibReference.MOD_ID);
 
     public MaLiLib() {
-        IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+        if (FMLLoader.getDist().isClient()) {
+            // Make sure the mod being absent on the other network side does not cause
+            // the client to display the server as incompatible
+            ForgePlatformUtils.getInstance().getClientModIgnoredServerOnly();
+            InitializationHandler.getInstance().registerInitializationHandler(new MaLiLibInitHandler());
 
-        modEventBus.addListener(this::onInitializeClient);
-        modEventBus.addListener(this::onInterModProcess);
-    }
-
-    public void onInitializeClient(FMLClientSetupEvent event) {
-        // Make sure the mod being absent on the other network side does not cause
-        // the client to display the server as incompatible
-        ForgePlatformUtils.getInstance().getClientModIgnoredServerOnly();
-        InitializationHandler.getInstance().registerInitializationHandler(new MaLiLibInitHandler());
-
-        // Config Screen
-        ForgePlatformUtils.getInstance().getMod(MaLiLibReference.MOD_ID).registerModConfigScreen((screen) -> {
-            MaLiLibConfigGui gui = new MaLiLibConfigGui();
-            gui.setParent(screen);
-            return gui;
-        });
-
-        // Mixin doesn't work, maybe?
-        MinecraftForge.EVENT_BUS.register(new ForgeInputEventHandler());
-        MinecraftForge.EVENT_BUS.register(new ForgeTickEventHandler());
-    }
-
-    public void onInterModProcess(InterModProcessEvent event) {
-        ((InitializationHandler) InitializationHandler.getInstance()).onGameInitDone();
+            // Config Screen
+            ForgePlatformUtils.getInstance().getMod(MaLiLibReference.MOD_ID).registerModConfigScreen((screen) -> {
+                MaLiLibConfigGui gui = new MaLiLibConfigGui();
+                gui.setParent(screen);
+                return gui;
+            });
+        }
     }
 }
