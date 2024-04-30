@@ -16,21 +16,17 @@ public class MaLiLib {
 
     public MaLiLib() {
         if (FMLLoader.getDist() == Dist.CLIENT) {
-            this.onInitializeClient();
+            // Make sure the mod being absent on the other network side does not cause
+            // the client to display the server as incompatible
+            ForgePlatformUtils.getInstance().getClientModIgnoredServerOnly();
+            InitializationHandler.getInstance().registerInitializationHandler(new MaLiLibInitHandler());
+
+            // Config Screen
+            ForgePlatformUtils.getInstance().getMod(MaLiLibReference.MOD_ID).registerModConfigScreen((screen) -> {
+                MaLiLibConfigGui gui = new MaLiLibConfigGui();
+                gui.setParent(screen);
+                return gui;
+            });
         }
-    }
-
-    public void onInitializeClient() {
-        // Make sure the mod being absent on the other network side does not cause
-        // the client to display the server as incompatible
-        ForgePlatformUtils.getInstance().getClientModIgnoredServerOnly();
-        InitializationHandler.getInstance().registerInitializationHandler(new MaLiLibInitHandler());
-
-        // Config Screen
-        ForgePlatformUtils.getInstance().getMod(MaLiLibReference.MOD_ID).registerModConfigScreen((screen) -> {
-            MaLiLibConfigGui gui = new MaLiLibConfigGui();
-            gui.setParent(screen);
-            return gui;
-        });
     }
 }
