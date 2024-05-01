@@ -4,9 +4,7 @@ plugins {
     id "com.hypherionmc.modutils.modpublisher" version "2.+"
 }
 
-sourceCompatibility = targetCompatibility = JavaVersion.VERSION_17
-
-archivesBaseName = project.archives_base_name
+base.archivesName = project.archives_base_name
 version = "${project.mod_version}-mc${project.minecraft_version}"
 group = project.maven_group
 
@@ -39,6 +37,9 @@ tasks.withType(JavaCompile) {
 }
 
 java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+
     withSourcesJar()
 }
 
@@ -67,7 +68,7 @@ publisher {
 
     setCurseID("${project.curseforge_id}")
     setModrinthID("${project.modrinth_id}")
-    setVersionType("alpha")
+    setVersionType("release")
     setChangelog(file("CHANGELOG.md").getText("UTF-8"))
     setVersion("${project.version}")
     setDisplayName("${project.version}")
@@ -76,12 +77,4 @@ publisher {
     setCurseEnvironment("client")
     setArtifact(remapJar)
     addAdditionalFile(sourcesJar)
-
-    modrinthDepends {
-        required "mafglib"
-    }
-
-    curseDepends {
-        required "mafglib"
-    }
 }
