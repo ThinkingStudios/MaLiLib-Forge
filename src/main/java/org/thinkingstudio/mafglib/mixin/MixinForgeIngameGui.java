@@ -1,4 +1,4 @@
-package fi.dy.masa.malilib.mixin;
+package org.thinkingstudio.mafglib.mixin;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraftforge.client.gui.ForgeIngameGui;
@@ -10,7 +10,7 @@ import net.minecraft.client.util.math.MatrixStack;
 import fi.dy.masa.malilib.event.RenderEventHandler;
 
 @Mixin(ForgeIngameGui.class)
-public abstract class MixinInGameHud {
+public abstract class MixinForgeIngameGui {
     @Inject(method = "render", at = @At("RETURN"))
     private void onGameOverlayPost(MatrixStack matrixStack, float partialTicks, CallbackInfo ci) {
         ((RenderEventHandler) RenderEventHandler.getInstance()).onRenderGameOverlayPost(matrixStack, MinecraftClient.getInstance(), partialTicks);
