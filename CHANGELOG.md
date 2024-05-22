@@ -1,2 +1,2 @@
 ## Change
-- update NeoForge version
+- try fix `registerConfigScreen`

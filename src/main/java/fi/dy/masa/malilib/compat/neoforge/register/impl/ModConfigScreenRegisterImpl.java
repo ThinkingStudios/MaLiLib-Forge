@@ -5,11 +5,12 @@ import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.ModList;
 import net.neoforged.neoforge.client.ConfigScreenHandler;
 
+@Deprecated
 public class ModConfigScreenRegisterImpl implements ModConfigScreenRegister {
     private final ModContainer container;
 
     public ModConfigScreenRegisterImpl(String id) {
-        this.container = ModList.get().getModContainerById(id).get();
+        this.container = ModList.get().getModContainerById(id).orElseThrow();
     }
 
     @Override

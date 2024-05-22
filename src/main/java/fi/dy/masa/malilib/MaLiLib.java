@@ -22,7 +22,7 @@ public class MaLiLib {
             InitializationHandler.getInstance().registerInitializationHandler(new MaLiLibInitHandler());
 
             // Config Screen
-            ForgePlatformUtils.getInstance().getMod(MaLiLibReference.MOD_ID).registerModConfigScreen((screen) -> {
+            ForgePlatformUtils.getInstance().registerModConfigScreen((screen) -> {
                 MaLiLibConfigGui gui = new MaLiLibConfigGui();
                 gui.setParent(screen);
                 return gui;
