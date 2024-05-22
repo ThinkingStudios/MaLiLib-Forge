@@ -1,16 +1,11 @@
-package fi.dy.masa.malilib.compat.forge.register;
+package org.thinkingstudio.mafglib.util.register;
 
-import net.minecraft.client.gui.screen.Screen;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.thinkingstudio.mafglib.util.ModConfigScreenProvider;
 
+@Deprecated
 public interface ModConfigScreenRegister {
     @OnlyIn(Dist.CLIENT)
     void registerModConfigScreen(ModConfigScreenProvider configScreenProvider);
-
-    @OnlyIn(Dist.CLIENT)
-    @FunctionalInterface
-    interface ModConfigScreenProvider {
-        Screen provide(Screen parent);
-    }
 }

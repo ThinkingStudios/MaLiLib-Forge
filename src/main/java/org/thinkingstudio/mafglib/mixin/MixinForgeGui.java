@@ -1,4 +1,4 @@
-package fi.dy.masa.malilib.mixin.compat;
+package org.thinkingstudio.mafglib.mixin;
 
 import net.minecraftforge.client.gui.overlay.ForgeGui;
 import org.spongepowered.asm.mixin.Mixin;
