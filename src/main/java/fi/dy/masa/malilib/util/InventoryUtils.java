@@ -1,10 +1,14 @@
 package fi.dy.masa.malilib.util;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.Iterator;
 import java.util.Objects;
 import java.util.Set;
-import javax.annotation.Nullable;
-import com.google.common.collect.ImmutableSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import org.apache.commons.lang3.math.Fraction;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ChestBlock;
@@ -13,69 +17,147 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.ChestBlockEntity;
 import net.minecraft.block.enums.ChestType;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.component.ComponentMap;
+import net.minecraft.component.DataComponentType;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.BundleContentsComponent;
+import net.minecraft.component.type.ContainerComponent;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.DoubleInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.SimpleInventory;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.ItemStack;
+import net.minecraft.item.*;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtList;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.screen.PlayerScreenHandler;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.screen.slot.SlotActionType;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 public class InventoryUtils
 {
-    public static final ImmutableSet<String> DAMAGE_KEY = ImmutableSet.of("Damage");
-    private static final DefaultedList<ItemStack> EMPTY_LIST = DefaultedList.of();
+    public static final Pattern PATTERN_ITEM_BASE = Pattern.compile("^(?<name>(?:[a-z0-9\\._-]+:)[a-z0-9\\._-]+)$");
 
     /**
-     * @return true if the stacks are identical otherwise, but ignoring the stack size
+     * @return true if the stacks are identical, including their Components
      */
     public static boolean areStacksEqual(ItemStack stack1, ItemStack stack2)
     {
-        return ItemStack.canCombine(stack1, stack2);
+        return areStacksAndNbtEqual(stack1, stack2);
     }
 
     /**
-     * @return true if the stacks are identical otherwise, but ignoring the stack size,
+     * @return true if the stacks are identical, including their Components
+     */
+    public static boolean areStacksAndNbtEqual(ItemStack stack1, ItemStack stack2)
+    {
+        return ItemStack.areItemsAndComponentsEqual(stack1, stack2);
+    }
+
+    /**
+     * @return true if the stacks are identical, but ignoring their Components
+     */
+    public static boolean areStacksEqualIgnoreNbt(ItemStack stack1, ItemStack stack2)
+    {
+        return ItemStack.areItemsEqual(stack1, stack2);
+    }
+
+    /**
+     * @return true if the stacks are identical, but ignoring the stack size,
      * and if the item is damageable, then ignoring the damage too.
      */
     public static boolean areStacksEqualIgnoreDurability(ItemStack stack1, ItemStack stack2)
     {
-        if (ItemStack.areItemsEqual(stack1, stack2) == false)
+        ItemStack ref = stack1.copy();
+        ItemStack check = stack2.copy();
+
+        // It's a little hacky, but it works.
+        ref.setCount(1);
+        check.setCount(1);
+
+        if (ref.isDamageable() && ref.isDamaged())
+        {
+            ref.setDamage(0);
+        }
+        if (check.isDamageable() && check.isDamaged())
+        {
+            check.setDamage(0);
+        }
+
+        return ItemStack.areItemsAndComponentsEqual(ref, check);
+    }
+
+    /**
+     * Uses new ComponentMap to compare values
+     * @param tag1 (ComponentMap 1)
+     * @param tag2 (ComponentMap 2)
+     * @param type (DataComponentType) [OPTIONAL]
+     * @param ignoredKeys (keys to ignore) [OPTIONAL]
+     * @return (return value)
+     * @param <T> DataComponentType extendable
+     */
+    public static <T> boolean areNbtEqualIgnoreKeys(@Nonnull ComponentMap tag1, @Nonnull ComponentMap tag2, @Nullable DataComponentType<T> type, @Nullable Set<DataComponentType<T>> ignoredKeys)
+    {
+        Set<DataComponentType<?>> keys1;
+        Set<DataComponentType<?>> keys2;
+
+        keys1 = tag1.getTypes();
+        keys2 = tag2.getTypes();
+
+        if (ignoredKeys != null)
+        {
+            keys1.removeAll(ignoredKeys);
+            keys2.removeAll(ignoredKeys);
+        }
+
+        if (Objects.equals(keys1, keys2) == false)
         {
             return false;
         }
 
-        NbtCompound tag1 = stack1.getNbt();
-        NbtCompound tag2 = stack2.getNbt();
-
-        if (tag1 == null || tag2 == null)
+        if (type == null)
         {
-            return tag1 == tag2;
-        }
+            for (DataComponentType<?> key : keys1)
+            {
+                if (Objects.equals(tag1.get(key), tag2.get(key)) == false)
+                {
+                    return false;
+                }
+            }
 
-        if (stack1.isDamageable() == false && stack2.isDamageable() == false)
+            return true;
+        }
+        else
         {
-            return Objects.equals(tag1, tag2);
+            return Objects.equals(tag1.get(type), tag2.get(type));
         }
-
-        return areNbtEqualIgnoreKeys(tag1, tag2, DAMAGE_KEY);
     }
 
-    public static boolean areNbtEqualIgnoreKeys(NbtCompound tag1, NbtCompound tag2, Set<String> ignoredKeys)
+    /**
+     * Same as above, but still intended to compare NbtCompounds
+     * @param tag1 (NbtCompound tag1)
+     * @param tag2 (NbtCompound tag2)
+     * @param ignoredKeys (Keys to ignore) [OPTIONAL]
+     * @return (result)
+     */
+    public static boolean areNbtEqualIgnoreKeys(@Nonnull NbtCompound tag1, @Nonnull NbtCompound tag2, @Nullable Set<String> ignoredKeys)
     {
-        Set<String> keys1 = tag1.getKeys();
-        Set<String> keys2 = tag2.getKeys();
+        Set<String> keys1;
+        Set<String> keys2;
 
-        keys1.removeAll(ignoredKeys);
-        keys2.removeAll(ignoredKeys);
+        keys1 = tag1.getKeys();
+        keys2 = tag2.getKeys();
+
+        if (ignoredKeys != null)
+        {
+            keys1.removeAll(ignoredKeys);
+            keys2.removeAll(ignoredKeys);
+        }
 
         if (Objects.equals(keys1, keys2) == false)
         {
@@ -190,7 +272,7 @@ public class InventoryUtils
         boolean isCreative = player.isCreative();
 
         // Already holding the requested item
-        if (areStacksEqual(stackReference, player.getMainHandStack()))
+        if (areStacksEqualIgnoreNbt(stackReference, player.getMainHandStack()))
         {
             return false;
         }
@@ -284,17 +366,11 @@ public class InventoryUtils
      */
     public static boolean shulkerBoxHasItems(ItemStack stackShulkerBox)
     {
-        NbtCompound nbt = stackShulkerBox.getNbt();
+        ContainerComponent countContainer = stackShulkerBox.getComponents().get(DataComponentTypes.CONTAINER);
 
-        if (nbt != null && nbt.contains("BlockEntityTag", Constants.NBT.TAG_COMPOUND))
+        if (countContainer != null)
         {
-            NbtCompound tag = nbt.getCompound("BlockEntityTag");
-
-            if (tag.contains("Items", Constants.NBT.TAG_LIST))
-            {
-                NbtList tagList = tag.getList("Items", Constants.NBT.TAG_COMPOUND);
-                return tagList.size() > 0;
-            }
+            return countContainer.iterateNonEmpty().iterator().hasNext();
         }
 
         return false;
@@ -309,30 +385,20 @@ public class InventoryUtils
      */
     public static DefaultedList<ItemStack> getStoredItems(ItemStack stackIn)
     {
-        NbtCompound nbt = stackIn.getNbt();
+        ContainerComponent container = stackIn.getComponents().get(DataComponentTypes.CONTAINER);
 
-        if (nbt != null && nbt.contains("BlockEntityTag", Constants.NBT.TAG_COMPOUND))
+        if (container != null)
         {
-            NbtCompound tagBlockEntity = nbt.getCompound("BlockEntityTag");
+            Iterator<ItemStack> iter = container.streamNonEmpty().iterator();
+            DefaultedList<ItemStack> items = DefaultedList.ofSize((int) container.streamNonEmpty().count());
 
-            if (tagBlockEntity.contains("Items", Constants.NBT.TAG_LIST))
+            // Using 'container.copyTo(items)' will break Litematica's Material List
+            while (iter.hasNext())
             {
-                DefaultedList<ItemStack> items = DefaultedList.of();
-                NbtList tagList = tagBlockEntity.getList("Items", Constants.NBT.TAG_COMPOUND);
-                final int count = tagList.size();
-
-                for (int i = 0; i < count; ++i)
-                {
-                    ItemStack stack = ItemStack.fromNbt(tagList.getCompound(i));
-
-                    if (stack.isEmpty() == false)
-                    {
-                        items.add(stack);
-                    }
-                }
-
-                return items;
+                items.add(iter.next());
             }
+
+            return items;
         }
 
         return DefaultedList.of();
@@ -348,53 +414,161 @@ public class InventoryUtils
      */
     public static DefaultedList<ItemStack> getStoredItems(ItemStack stackIn, int slotCount)
     {
-        NbtCompound nbt = stackIn.getNbt();
+        ContainerComponent itemContainer = stackIn.getComponents().get(DataComponentTypes.CONTAINER);
 
-        if (nbt != null && nbt.contains("BlockEntityTag", Constants.NBT.TAG_COMPOUND))
+        // Using itemContainer.copyTo() does not preserve empty stacks.  Iterator again.
+        if (itemContainer != null)
         {
-            NbtCompound tagBlockEntity = nbt.getCompound("BlockEntityTag");
+            long defSlotCount = itemContainer.stream().count();
 
-            if (tagBlockEntity.contains("Items", Constants.NBT.TAG_LIST))
+            // ContainerComponent.MAX_SLOTS = 256; (private)
+            if (slotCount < 1)
             {
-                NbtList tagList = tagBlockEntity.getList("Items", Constants.NBT.TAG_COMPOUND);
-                final int count = tagList.size();
-                int maxSlot = -1;
-
-                if (slotCount <= 0)
-                {
-                    for (int i = 0; i < count; ++i)
-                    {
-                        NbtCompound tag = tagList.getCompound(i);
-                        int slot = tag.getByte("Slot");
-
-                        if (slot > maxSlot)
-                        {
-                            maxSlot = slot;
-                        }
-                    }
-
-                    slotCount = maxSlot + 1;
-                }
-
-                DefaultedList<ItemStack> items = DefaultedList.ofSize(slotCount, ItemStack.EMPTY);
-
-                for (int i = 0; i < count; ++i)
-                {
-                    NbtCompound tag = tagList.getCompound(i);
-                    ItemStack stack = ItemStack.fromNbt(tag);
-                    int slot = tag.getByte("Slot");
-
-                    if (slot >= 0 && slot < items.size() && stack.isEmpty() == false)
-                    {
-                        items.set(slot, stack);
-                    }
-                }
-
-                return items;
+                slotCount = defSlotCount < 256 ? (int) defSlotCount : 256;
             }
+            else
+            {
+                slotCount = Math.min(slotCount, 256);
+            }
+
+            DefaultedList<ItemStack> items = DefaultedList.ofSize(slotCount);
+            Iterator<ItemStack> iter = itemContainer.stream().iterator();
+
+            for (int i = 0; i < slotCount; i++)
+            {
+                if (iter.hasNext())
+                {
+                    items.add(iter.next());
+                }
+                else
+                {
+                    items.add(ItemStack.EMPTY);
+                }
+            }
+
+            return items;
+        }
+        else
+        {
+            return DefaultedList.of();
+        }
+    }
+
+    // Same code as above, but for BUNDLE_CONTENTS, such as for the Materials List under Litematica.
+    public static boolean bundleHasItems(ItemStack stack)
+    {
+        BundleContentsComponent bundleContainer = stack.getComponents().get(DataComponentTypes.BUNDLE_CONTENTS);
+
+        if (bundleContainer != null)
+        {
+            return bundleContainer.isEmpty() == false;
         }
 
-        return EMPTY_LIST;
+        return false;
+    }
+
+    /**
+     * Returns a Fraction value, probably indicating fill % value, rather than an actual item count.
+     * @param stack
+     * @return
+     */
+    public static Fraction bundleOccupancy(ItemStack stack)
+    {
+        BundleContentsComponent bundleContainer = stack.getComponents().get(DataComponentTypes.BUNDLE_CONTENTS);
+
+        if (bundleContainer != null)
+        {
+            return bundleContainer.getOccupancy();
+        }
+
+        return Fraction.ZERO;
+    }
+
+    /**
+     * Returns the "slot count" (Item Stacks) in the Bundle.
+     * @param stack
+     * @return
+     */
+    public static int bundleCountItems(ItemStack stack)
+    {
+        BundleContentsComponent bundleContainer = stack.getComponents().get(DataComponentTypes.BUNDLE_CONTENTS);
+
+        if (bundleContainer != null)
+        {
+            return bundleContainer.size();
+        }
+
+        return -1;
+    }
+
+    /**
+     * Returns a list of ItemStacks from the Bundle.  Does not preserve Empty Stacks.
+     * @param stackIn
+     * @return
+     */
+    public static DefaultedList<ItemStack> getBundleItems(ItemStack stackIn)
+    {
+        BundleContentsComponent bundleContainer = stackIn.getComponents().getOrDefault(DataComponentTypes.BUNDLE_CONTENTS, BundleContentsComponent.DEFAULT);
+
+        if (bundleContainer != null && bundleContainer.equals(BundleContentsComponent.DEFAULT) == false)
+        {
+            int maxSlots = bundleContainer.size();
+            DefaultedList<ItemStack> items = DefaultedList.ofSize(maxSlots);
+            Iterator<ItemStack> iter = bundleContainer.stream().iterator();
+
+            while (iter.hasNext())
+            {
+                ItemStack slot = iter.next();
+
+                if (slot.isEmpty() == false)
+                {
+                    items.add(slot);
+                }
+            }
+
+            return items;
+        }
+
+        return DefaultedList.of();
+    }
+
+    /**
+     * Returns a list of ItemStacks from the Bundle.  Preserves Empty Stacks up to maxSlots.
+     * @param stackIn
+     * @param maxSlots
+     * @return
+     */
+    public static DefaultedList<ItemStack> getBundleItems(ItemStack stackIn, int maxSlots)
+    {
+        BundleContentsComponent bundleContainer = stackIn.getComponents().getOrDefault(DataComponentTypes.BUNDLE_CONTENTS, BundleContentsComponent.DEFAULT);
+
+        if (bundleContainer != null && bundleContainer.equals(BundleContentsComponent.DEFAULT) == false)
+        {
+            int defMaxSlots = bundleContainer.size();
+
+            if (maxSlots < 1)
+            {
+                maxSlots = defMaxSlots;
+            }
+            else
+            {
+                maxSlots = maxSlots < 64 ? maxSlots : defMaxSlots;
+            }
+
+            DefaultedList<ItemStack> items = DefaultedList.ofSize(maxSlots);
+            Iterator<ItemStack> iter = bundleContainer.stream().iterator();
+            int limit = 0;
+
+            while (iter.hasNext() && limit < maxSlots)
+            {
+                items.add(iter.next());
+                limit++;
+            }
+
+            return items;
+        }
+
+        return DefaultedList.of();
     }
 
     /**
@@ -440,8 +614,7 @@ public class InventoryUtils
                 map.addTo(new ItemType(stack, false, true), stack.getCount());
 
                 if (stack.getItem() instanceof BlockItem &&
-                    ((BlockItem) stack.getItem()).getBlock() instanceof ShulkerBoxBlock &&
-                    shulkerBoxHasItems(stack))
+                    ((BlockItem) stack.getItem()).getBlock() instanceof ShulkerBoxBlock)
                 {
                     Object2IntOpenHashMap<ItemType> boxCounts = getStoredItemCounts(stack);
 
@@ -471,5 +644,87 @@ public class InventoryUtils
         }
 
         return inv;
+    }
+
+    /**
+     * Creates an ItemStack via a String
+     * @param itemNameIn (String containing the item name)
+     * @return (The ItemStack object or ItemStack.EMPTY, aka Air)
+     */
+    public static ItemStack getItemStackFromString(String itemNameIn)
+    {
+        return getItemStackFromString(itemNameIn, -1, ComponentMap.EMPTY);
+    }
+
+    /**
+     * Creates an ItemStack via a String
+     * @param itemNameIn (String containing the item name)
+     * @param data (ComponentMap data to import)
+     * @return (The ItemStack object or ItemStack.EMPTY, aka Air)
+     */
+    public static ItemStack getItemStackFromString(String itemNameIn, ComponentMap data)
+    {
+        return getItemStackFromString(itemNameIn, -1, data);
+    }
+
+    /**
+     * Creates an ItemStack via a String
+     * @param itemNameIn (String containing the item name)
+     * @param count (How many in this stack)
+     * @return (The ItemStack object or ItemStack.EMPTY, aka Air)
+     */
+    public static ItemStack getItemStackFromString(String itemNameIn, int count)
+    {
+        return getItemStackFromString(itemNameIn, count, ComponentMap.EMPTY);
+    }
+
+    /**
+     * Creates an ItemStack via a String
+     * @param itemNameIn (String containing the item name)
+     * @param count (How many in this stack)
+     * @param data (ComponentMap data to import)
+     * @return (The ItemStack object or ItemStack.EMPTY, aka Air)
+     */
+    public static ItemStack getItemStackFromString(String itemNameIn, int count, ComponentMap data)
+    {
+        if (itemNameIn.isEmpty() || itemNameIn.equals("empty") || itemNameIn.equals("minecraft:air") || itemNameIn.equals("air"))
+        {
+            return ItemStack.EMPTY;
+        }
+        Matcher matcherBase = PATTERN_ITEM_BASE.matcher(itemNameIn);
+        String itemName;
+        ItemStack stackOut;
+
+        if (matcherBase.matches())
+        {
+            itemName = matcherBase.group("name");
+
+            if (itemName != null)
+            {
+                Identifier itemId = new Identifier(itemName);
+                Item item = Registries.ITEM.get(itemId);
+                RegistryEntry<Item> itemEntry = RegistryEntry.of(item);
+
+                if (item != Items.AIR && itemEntry.hasKeyAndValue())
+                {
+                    if (count < 0)
+                    {
+                        stackOut = new ItemStack(itemEntry);
+                    }
+                    else
+                    {
+                        stackOut = new ItemStack(itemEntry, count);
+                    }
+                    if (data.isEmpty() == false && data.equals(ComponentMap.EMPTY) == false)
+                    {
+                        stackOut.applyComponentsFrom(data);
+                    }
+
+                    return stackOut;
+                }
+            }
+        }
+
+        return ItemStack.EMPTY;
     }
 }

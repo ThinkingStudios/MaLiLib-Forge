@@ -7,7 +7,6 @@ import org.joml.Matrix4f;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gl.Framebuffer;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 
 import fi.dy.masa.malilib.interfaces.IRenderDispatcher;
@@ -94,8 +93,9 @@ public class RenderEventHandler implements IRenderDispatcher
 
     /**
      * NOT PUBLIC API - DO NOT CALL
+     * --> Changed to Matrix4f for all Downstream Mods.
      */
-    public void onRenderWorldLast(MatrixStack matrixStack, Matrix4f projMatrix, MinecraftClient mc)
+    public void onRenderWorldLast(Matrix4f matrix4f, Matrix4f projMatrix, MinecraftClient mc)
     {
         if (this.worldLastRenderers.isEmpty() == false)
         {
@@ -111,7 +111,7 @@ public class RenderEventHandler implements IRenderDispatcher
             for (IRenderer renderer : this.worldLastRenderers)
             {
                 mc.getProfiler().push(renderer.getProfilerSectionSupplier());
-                renderer.onRenderWorldLast(matrixStack, projMatrix);
+                renderer.onRenderWorldLast(matrix4f, projMatrix);
                 mc.getProfiler().pop();
             }
 

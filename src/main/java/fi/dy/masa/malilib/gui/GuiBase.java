@@ -81,6 +81,7 @@ public abstract class GuiBase extends Screen implements IMessageConsumer, IStrin
     protected GuiBase()
     {
         super(ScreenTexts.EMPTY);
+        this.client = mc;
     }
 
     public GuiBase setParent(@Nullable Screen parent)
@@ -530,12 +531,12 @@ public abstract class GuiBase extends Screen implements IMessageConsumer, IStrin
 
     protected void clearElements()
     {
-        this.clearGuiWidgets();
+        this.clearWidgets();
         this.clearButtons();
         this.clearTextFields();
     }
 
-    protected void clearGuiWidgets()
+    protected void clearWidgets()
     {
         this.widgets.clear();
     }

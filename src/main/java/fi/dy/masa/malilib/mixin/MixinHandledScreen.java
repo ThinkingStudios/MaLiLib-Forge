@@ -22,7 +22,8 @@ public abstract class MixinHandledScreen
             target = "Lnet/minecraft/client/gui/DrawContext;renderTooltip(Lnet/minecraft/client/font/TextRenderer;Ljava/util/List;Ljava/util/Optional;Lnet/minecraft/item/ItemStack;II)V"))
     private void onRenderTooltip(DrawContext drawContext, int x, int y, CallbackInfo ci)
     {
-        if (this.focusedSlot != null && this.focusedSlot.hasStack()) {
+        if (this.focusedSlot != null && this.focusedSlot.hasStack())
+        {
             ((RenderEventHandler) RenderEventHandler.getInstance()).onRenderTooltipLast(drawContext, this.focusedSlot.getStack(), x, y);
         }
     }

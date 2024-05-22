@@ -5,7 +5,9 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.server.integrated.IntegratedServer;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.ChunkSectionPos;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.WorldChunk;
 
 public class WorldUtils
@@ -67,5 +69,18 @@ public class WorldUtils
         }
 
         return mc.world != null ? mc.world.getChunk(chunkX, chunkZ) : null;
+    }
+
+    /**
+     * Replaces getHighestNonEmptySectionYOffset() marked for removal from Minecraft and used across downstream mods
+     * Returns Maximum Y Offset Value of a Chunk.
+     */
+    public static int getHighestSectionYOffset(Chunk chunk)
+    {
+        int yMax = chunk.getHighestNonEmptySection();
+
+        yMax = yMax == -1 ? chunk.getBottomY() : ChunkSectionPos.getBlockCoord(chunk.sectionIndexToCoord(yMax));
+
+        return yMax;
     }
 }

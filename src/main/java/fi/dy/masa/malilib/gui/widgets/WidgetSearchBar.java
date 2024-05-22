@@ -1,6 +1,5 @@
 package fi.dy.masa.malilib.gui.widgets;
 
-import net.minecraft.SharedConstants;
 import net.minecraft.client.gui.DrawContext;
 
 import fi.dy.masa.malilib.gui.GuiBase;
@@ -8,6 +7,7 @@ import fi.dy.masa.malilib.gui.GuiTextFieldGeneric;
 import fi.dy.masa.malilib.gui.LeftRight;
 import fi.dy.masa.malilib.gui.interfaces.IGuiIcon;
 import fi.dy.masa.malilib.render.RenderUtils;
+import fi.dy.masa.malilib.util.Constants;
 import fi.dy.masa.malilib.util.KeyCodes;
 
 public class WidgetSearchBar extends WidgetBase
@@ -107,7 +107,7 @@ public class WidgetSearchBar extends WidgetBase
                 return true;
             }
         }
-        else if (SharedConstants.isValidChar(charIn))
+        else if (Constants.isValidChar(charIn))
         {
             this.searchOpen = true;
             this.searchBox.setFocused(true);

@@ -66,6 +66,7 @@ public abstract class GuiTextInputBase extends GuiDialogBase
             this.getParent().render(drawContext, mouseX, mouseY, partialTicks);
         }
 
+        // TODO - DrawContext still uses MatrixStack
         MatrixStack matrixStack = drawContext.getMatrices();
         matrixStack.push();
         matrixStack.translate(0, 0, 1.f);

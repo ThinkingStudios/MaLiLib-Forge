@@ -8,10 +8,14 @@
     "MixinDrawContext",
     "MixinHandledScreen",
     "MixinInGameHud",
+    "MixinIntegratedServer",
     "MixinKeyboard",
     "MixinMinecraftClient",
     "MixinMouse",
     "MixinWorldRenderer"
+  ],
+  "mixins": [
+    "MixinMinecraftServer"
   ],
   "injectors": {
     "defaultRequire": 1
