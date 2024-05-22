@@ -1,2 +1,2 @@
 ## Change
-- try fix `registerConfigScreen`
+- Separate source code and Forge side compatible code
