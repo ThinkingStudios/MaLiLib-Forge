@@ -15,7 +15,7 @@ public class MaLiLibConfigGui extends GuiConfigsBase
 
     public MaLiLibConfigGui()
     {
-        super(10, 50, MaLiLibReference.MOD_ID, null, "malilib.gui.title.configs");
+        super(10, 50, MaLiLibReference.MOD_ID, null, "malilib.gui.title.configs", MaLiLibReference.MOD_NAME);
     }
 
     @Override

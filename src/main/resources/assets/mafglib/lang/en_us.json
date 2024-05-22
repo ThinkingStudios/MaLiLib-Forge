@@ -62,7 +62,7 @@
 
     "malilib.gui.title.all_hotkeys": "All registered hotkeys",
     "malilib.gui.title.color_editor": "Color Editor",
-    "malilib.gui.title.configs": "malilib Configs",
+    "malilib.gui.title.configs": "%s Configs",
     "malilib.gui.title.create_directory": "Create a new directory",
     "malilib.gui.title.debug": "Debug",
     "malilib.gui.title.generic": "Generic",
