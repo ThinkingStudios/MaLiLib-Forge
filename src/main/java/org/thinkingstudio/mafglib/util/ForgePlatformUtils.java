@@ -1,26 +1,15 @@
 package org.thinkingstudio.mafglib.util;
 
 import net.minecraftforge.client.ConfigGuiHandler;
-import org.thinkingstudio.mafglib.util.register.ModConfigScreenRegister;
-import org.thinkingstudio.mafglib.util.register.impl.ModConfigScreenRegisterImpl;
 import net.minecraftforge.fml.IExtensionPoint;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.network.NetworkConstants;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 public class ForgePlatformUtils {
-    private static final Map<String, ModConfigScreenRegister> mods = new ConcurrentHashMap<>();
     private static final ModLoadingContext context = ModLoadingContext.get();
 
     public static ForgePlatformUtils getInstance() {
         return new ForgePlatformUtils();
-    }
-
-    @Deprecated
-    public ModConfigScreenRegister getMod(String id) {
-        return mods.computeIfAbsent(id, ModConfigScreenRegisterImpl::new);
     }
 
     public void getClientModIgnoredServerOnly() {
