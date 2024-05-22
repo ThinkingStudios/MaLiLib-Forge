@@ -1,7 +1,6 @@
 package fi.dy.masa.malilib;
 
 import fi.dy.masa.malilib.event.InitializationHandler;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
