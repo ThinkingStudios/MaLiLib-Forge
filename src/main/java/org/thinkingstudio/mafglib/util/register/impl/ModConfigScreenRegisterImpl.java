@@ -1,6 +1,7 @@
-package fi.dy.masa.malilib.compat.neoforge.register.impl;
+package org.thinkingstudio.mafglib.util.register.impl;
 
-import fi.dy.masa.malilib.compat.neoforge.register.ModConfigScreenRegister;
+import org.thinkingstudio.mafglib.util.ModConfigScreenProvider;
+import org.thinkingstudio.mafglib.util.register.ModConfigScreenRegister;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.ModList;
 import net.neoforged.neoforge.client.ConfigScreenHandler;

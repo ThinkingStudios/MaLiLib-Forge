@@ -1,7 +1,7 @@
-package fi.dy.masa.malilib.compat.neoforge;
+package org.thinkingstudio.mafglib.util;
 
-import fi.dy.masa.malilib.compat.neoforge.register.ModConfigScreenRegister;
-import fi.dy.masa.malilib.compat.neoforge.register.impl.ModConfigScreenRegisterImpl;
+import org.thinkingstudio.mafglib.util.register.ModConfigScreenRegister;
+import org.thinkingstudio.mafglib.util.register.impl.ModConfigScreenRegisterImpl;
 import net.neoforged.fml.IExtensionPoint;
 import net.neoforged.fml.ModLoadingContext;
 import net.neoforged.neoforge.client.ConfigScreenHandler;
@@ -26,7 +26,7 @@ public class ForgePlatformUtils {
         context.registerExtensionPoint(IExtensionPoint.DisplayTest.class, () -> new IExtensionPoint.DisplayTest(() -> IExtensionPoint.DisplayTest.IGNORESERVERONLY, (a, b) -> true));
     }
 
-    public void registerModConfigScreen(ModConfigScreenRegister.ModConfigScreenProvider configScreenProvider) {
+    public void registerModConfigScreen(ModConfigScreenProvider configScreenProvider) {
         context.registerExtensionPoint(ConfigScreenHandler.ConfigScreenFactory.class, () -> new ConfigScreenHandler.ConfigScreenFactory((client, screen) -> configScreenProvider.provide(screen)));
     }
 }
