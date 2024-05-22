@@ -81,11 +81,11 @@ publisher {
 
     setCurseID("${project.curseforge_id}")
     setModrinthID("${project.modrinth_id}")
-    setVersionType("release")
+    setVersionType("alpha")
     setChangelog(file("CHANGELOG.md").getText("UTF-8"))
     setVersion("${project.version}")
     setDisplayName("${project.version}")
-    setGameVersions("1.20.3", "1.20.4")
+    setGameVersions("1.20.5", "1.20.6")
     setLoaders("neoforge")
     setCurseEnvironment("client")
     setArtifact(remapJar)
