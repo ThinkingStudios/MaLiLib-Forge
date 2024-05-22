@@ -1,15 +1,17 @@
-package fi.dy.masa.malilib.compat.forge.register.impl;
+package org.thinkingstudio.mafglib.util.register.impl;
 
-import fi.dy.masa.malilib.compat.forge.register.ModConfigScreenRegister;
+import org.thinkingstudio.mafglib.util.ModConfigScreenProvider;
+import org.thinkingstudio.mafglib.util.register.ModConfigScreenRegister;
 import net.minecraftforge.client.ConfigScreenHandler;
 import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.ModList;
 
+@Deprecated
 public class ModConfigScreenRegisterImpl implements ModConfigScreenRegister {
     private final ModContainer container;
 
     public ModConfigScreenRegisterImpl(String id) {
-        this.container = ModList.get().getModContainerById(id).get();
+        this.container = ModList.get().getModContainerById(id).orElseThrow();
     }
 
     @Override

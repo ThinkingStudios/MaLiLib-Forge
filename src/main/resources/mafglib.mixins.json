@@ -6,7 +6,6 @@
   "client": [
     "MixinClientPlayNetworkHandler",
     "MixinCreativeInventoryScreen",
-    "MixinInGameHud",
     "MixinKeyboard",
     "MixinMinecraftClient",
     "MixinMouse",
