@@ -62,7 +62,7 @@
 
     "malilib.gui.title.all_hotkeys": "Tüm kayıtlı tuş kısayolları",
     "malilib.gui.title.color_editor": "Renk Düzenleyici",
-    "malilib.gui.title.configs": "malilib Ayarları",
+    "malilib.gui.title.configs": "%s Ayarları",
     "malilib.gui.title.create_directory": "Yeni bir dizin yarat",
     "malilib.gui.title.debug": "Hata Ayıklama",
     "malilib.gui.title.generic": "Genel",

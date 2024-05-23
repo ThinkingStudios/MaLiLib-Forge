@@ -18,7 +18,7 @@ public class MaFgLib {
             MaLiLib.onInitialize();
 
             // Config Screen
-            ForgePlatformUtils.getInstance().registerModConfigScreen((screen) -> {
+            ForgePlatformUtils.getInstance().registerModConfigScreen(MaLiLibReference.MOD_ID, (screen) -> {
                 MaLiLibConfigGui gui = new MaLiLibConfigGui();
                 gui.setParent(screen);
                 return gui;
