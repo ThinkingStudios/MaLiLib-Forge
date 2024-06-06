@@ -1,6 +1,6 @@
-package fi.dy.masa.malilib.mixin;
+package org.thinkingstudio.mafglib.mixin;
 
-import net.minecraft.client.gui.hud.InGameHud;
+import net.neoforged.neoforge.client.gui.overlay.ExtendedGui;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -12,8 +12,8 @@ import net.minecraft.client.gui.DrawContext;
 
 import fi.dy.masa.malilib.event.RenderEventHandler;
 
-@Mixin(InGameHud.class)
-public abstract class MixinInGameHud
+@Mixin(ExtendedGui.class)
+public abstract class MixinExtendedGui
 {
     @Inject(method = "render", at = @At("RETURN"))
     private void onGameOverlayPost(DrawContext drawContext, float partialTicks, CallbackInfo ci)

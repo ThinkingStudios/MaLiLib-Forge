@@ -1,0 +1,12 @@
+{
+  "required": true,
+  "package": "org.thinkingstudio.mafglib.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "minVersion": "0.8",
+  "client": [
+    "MixinExtendedGui"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

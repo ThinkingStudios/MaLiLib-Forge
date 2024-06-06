@@ -7,7 +7,6 @@
     "MixinClientPlayNetworkHandler",
     "MixinDrawContext",
     "MixinHandledScreen",
-    "MixinInGameHud",
     "MixinKeyboard",
     "MixinMinecraftClient",
     "MixinMouse",
