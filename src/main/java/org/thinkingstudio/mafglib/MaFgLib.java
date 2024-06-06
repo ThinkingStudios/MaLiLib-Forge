@@ -3,9 +3,13 @@ package org.thinkingstudio.mafglib;
 import fi.dy.masa.malilib.MaLiLib;
 import fi.dy.masa.malilib.MaLiLibConfigGui;
 import fi.dy.masa.malilib.MaLiLibReference;
+import fi.dy.masa.malilib.event.RenderEventHandler;
+import net.minecraft.client.MinecraftClient;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.loading.FMLLoader;
+import net.neoforged.neoforge.client.event.RenderGuiEvent;
+import net.neoforged.neoforge.common.NeoForge;
 import org.thinkingstudio.mafglib.util.ForgePlatformUtils;
 
 @Mod(MaLiLibReference.MOD_ID)
@@ -22,6 +26,10 @@ public class MaFgLib {
                 MaLiLibConfigGui gui = new MaLiLibConfigGui();
                 gui.setParent(screen);
                 return gui;
+            });
+
+            NeoForge.EVENT_BUS.addListener(RenderGuiEvent.Post.class, event -> {
+                ((RenderEventHandler) RenderEventHandler.getInstance()).onRenderGameOverlayPost(event.getGuiGraphics(), MinecraftClient.getInstance(), event.getPartialTick());
             });
         }
     }
