@@ -1124,8 +1124,6 @@ public class RenderUtils
 
             matrix4fStack.popMatrix();
             RenderSystem.applyModelViewMatrix();
-
-            items.clear();
         }
     }
 

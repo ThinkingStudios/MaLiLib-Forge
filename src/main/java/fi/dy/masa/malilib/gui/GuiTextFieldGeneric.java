@@ -76,33 +76,6 @@ public class GuiTextFieldGeneric extends TextFieldWidget
                mouseY >= this.y && mouseY < this.y + this.height;
     }
 
-    // Make public
-    @Override
-    public void setFocused(boolean isFocusedIn)
-    {
-        super.setFocused(isFocusedIn);
-    }
-
-    public int getCursorPosition()
-    {
-        return this.getCursor();
-    }
-
-    public void setCursorPosition(int pos)
-    {
-        this.setCursor(pos, GuiBase.isShiftDown());
-    }
-
-    public void setCursorPositionZero()
-    {
-        this.setCursorToStart(GuiBase.isShiftDown());
-    }
-
-    public void setCursorPositionEnd()
-    {
-        this.setCursorToEnd(GuiBase.isShiftDown());
-    }
-
     public GuiTextFieldGeneric setZLevel(int zLevel)
     {
         this.zLevel = zLevel;
