@@ -12,4 +12,12 @@ public class MaLiLib
     {
         InitializationHandler.getInstance().registerInitializationHandler(new MaLiLibInitHandler());
     }
+
+    public static void printDebug(String key, Object... args)
+    {
+        if (MaLiLibConfigs.Debug.DEBUG_MESSAGES.getBooleanValue())
+        {
+            logger.info(key, args);
+        }
+    }
 }

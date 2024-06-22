@@ -21,7 +21,7 @@ public class ItemRestriction extends UsageRestriction<Item>
 
             try
             {
-                rl = new Identifier(name);
+                rl = Identifier.tryParse(name);
             }
             catch (Exception ignore) {}
 

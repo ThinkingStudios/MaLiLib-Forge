@@ -10,6 +10,10 @@ import net.minecraft.client.RunArgs;
 import net.minecraft.client.gui.screen.DownloadingTerrainScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.world.ClientWorld;
+import net.minecraft.resource.ResourcePackManager;
+import net.minecraft.server.SaveLoader;
+import net.minecraft.world.level.storage.LevelStorage;
+import fi.dy.masa.malilib.MaLiLib;
 import fi.dy.masa.malilib.event.InitializationHandler;
 import fi.dy.masa.malilib.event.TickHandler;
 import fi.dy.masa.malilib.event.WorldLoadHandler;
@@ -28,6 +32,15 @@ public abstract class MixinMinecraftClient
     {
         // Register all mod handlers
         ((InitializationHandler) InitializationHandler.getInstance()).onGameInitDone();
+    }
+
+    @Inject(method = "startIntegratedServer", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/UserCache;setUseRemote(Z)V",
+            shift = At.Shift.BEFORE))
+    private void malilib_onStartIntegratedServer(LevelStorage.Session session, ResourcePackManager dataPackManager, SaveLoader saveLoader, boolean newWorld, CallbackInfo ci)
+    {
+        MaLiLib.printDebug("malilib_onStartIntegratedServer(): Get DynamicRegistry from IntegratedServer");
+
+        ((WorldLoadHandler) WorldLoadHandler.getInstance()).onWorldLoadImmutable(saveLoader.combinedDynamicRegistries().getCombinedRegistryManager());
     }
 
     @Inject(method = "tick()V", at = @At("RETURN"))

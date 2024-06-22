@@ -13,7 +13,7 @@ import fi.dy.masa.malilib.MaLiLib;
 
 /**
  * This class has been directly taken from Schematica by Lunatrius & contributors
- * <a href="https://github.com/Lunatrius/Schematica/blob/master/src/main/java/com/github/lunatrius/schematica/client/renderer/shader/ShaderProgram.java">Lunatrius/Schematica's ShaderProgram.java</a>
+ * https://github.com/Lunatrius/Schematica/blob/master/src/main/java/com/github/lunatrius/schematica/client/renderer/shader/ShaderProgram.java
  */
 public class ShaderProgram
 {
@@ -87,7 +87,7 @@ public class ShaderProgram
             return 0;
         }
 
-        final String code = this.loadFile(new Identifier(domain, filename));
+        final String code = this.loadFile(Identifier.of(domain, filename));
 
         if (code == null)
         {

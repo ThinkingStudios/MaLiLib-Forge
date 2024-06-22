@@ -3,12 +3,10 @@ package fi.dy.masa.malilib.event;
 import java.util.ArrayList;
 import java.util.List;
 import org.joml.Matrix4f;
-
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gl.Framebuffer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.item.ItemStack;
-
 import fi.dy.masa.malilib.interfaces.IRenderDispatcher;
 import fi.dy.masa.malilib.interfaces.IRenderer;
 import fi.dy.masa.malilib.util.InfoUtils;

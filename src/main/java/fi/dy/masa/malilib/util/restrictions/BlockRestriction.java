@@ -21,7 +21,7 @@ public class BlockRestriction extends UsageRestriction<Block>
 
             try
             {
-                rl = new Identifier(name);
+                rl = Identifier.tryParse(name);
             }
             catch (Exception ignore) {}
 

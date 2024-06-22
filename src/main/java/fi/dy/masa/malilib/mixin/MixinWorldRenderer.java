@@ -8,13 +8,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Slice;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.render.Camera;
-import net.minecraft.client.render.GameRenderer;
-import net.minecraft.client.render.LightmapTextureManager;
-import net.minecraft.client.render.WorldRenderer;
-
+import net.minecraft.client.render.*;
 import fi.dy.masa.malilib.event.RenderEventHandler;
 
 @Mixin(WorldRenderer.class)
@@ -25,14 +20,7 @@ public abstract class MixinWorldRenderer
     @Inject(method = "render",
             at = @At(value = "INVOKE", ordinal = 1,
                      target = "Lnet/minecraft/client/render/WorldRenderer;renderWeather(Lnet/minecraft/client/render/LightmapTextureManager;FDDD)V"))
-    private void onRenderWorldLastNormal(
-            float tickDelta, long limitTime, boolean renderBlockOutline,
-            Camera camera,
-            GameRenderer gameRenderer,
-            LightmapTextureManager lightmapTextureManager,
-            Matrix4f matrix4f,
-            Matrix4f matrix4f2,
-            CallbackInfo ci)
+    private void onRenderWorldLastNormal(RenderTickCounter tickCounter, boolean renderBlockOutline, Camera camera, GameRenderer gameRenderer, LightmapTextureManager lightmapTextureManager, Matrix4f matrix4f, Matrix4f matrix4f2, CallbackInfo ci)
     {
         ((RenderEventHandler) RenderEventHandler.getInstance()).onRenderWorldLast(matrix4f, matrix4f2, this.client);
     }
@@ -44,14 +32,7 @@ public abstract class MixinWorldRenderer
                                      target = "Lnet/minecraft/client/render/WorldRenderer;renderWeather(Lnet/minecraft/client/render/LightmapTextureManager;FDDD)V")),
             at = @At(value = "INVOKE",
                     target = "Lnet/minecraft/client/gl/PostEffectProcessor;render(F)V"))
-    private void onRenderWorldLastFabulous(
-            float tickDelta, long limitTime, boolean renderBlockOutline,
-            Camera camera,
-            GameRenderer gameRenderer,
-            LightmapTextureManager lightmapTextureManager,
-            Matrix4f matrix4f,
-            Matrix4f matrix4f2,
-            CallbackInfo ci)
+    private void onRenderWorldLastFabulous(RenderTickCounter tickCounter, boolean renderBlockOutline, Camera camera, GameRenderer gameRenderer, LightmapTextureManager lightmapTextureManager, Matrix4f matrix4f, Matrix4f matrix4f2, CallbackInfo ci)
     {
         ((RenderEventHandler) RenderEventHandler.getInstance()).onRenderWorldLast(matrix4f, matrix4f2, this.client);
     }
