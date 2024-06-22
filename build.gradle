@@ -27,7 +27,7 @@ dependencies {
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
     mappings loom.layered {
         mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
-        mappings "dev.architectury:yarn-mappings-patch-${loom.platform.get().id()}:${project.yarn_patch}"
+        mappings "dev.architectury:yarn-mappings-patch-neoforge:${project.mappings_patch}"
     }
     neoForge "net.neoforged:neoforge:${project.neoforge_version}"
 

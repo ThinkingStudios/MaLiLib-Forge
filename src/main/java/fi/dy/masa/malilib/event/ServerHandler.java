@@ -2,6 +2,7 @@ package fi.dy.masa.malilib.event;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.jetbrains.annotations.ApiStatus;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.integrated.IntegratedServer;
 import fi.dy.masa.malilib.interfaces.IServerListener;
@@ -31,9 +32,7 @@ public class ServerHandler implements IServerManager
         this.handlers.remove(handler);
     }
 
-    /**
-     * NOT PUBLIC API - DO NOT CALL
-     */
+    @ApiStatus.Internal
     public void onServerStarting(MinecraftServer server)
     {
         if (!this.handlers.isEmpty())
@@ -45,9 +44,7 @@ public class ServerHandler implements IServerManager
         }
     }
 
-    /**
-     * NOT PUBLIC API - DO NOT CALL
-     */
+    @ApiStatus.Internal
     public void onServerStarted(MinecraftServer server)
     {
         if (!this.handlers.isEmpty())
@@ -59,9 +56,7 @@ public class ServerHandler implements IServerManager
         }
     }
 
-    /**
-     * NOT PUBLIC API - DO NOT CALL
-     */
+    @ApiStatus.Internal
     public void onServerIntegratedSetup(IntegratedServer server)
     {
         if (!this.handlers.isEmpty())
@@ -73,9 +68,7 @@ public class ServerHandler implements IServerManager
         }
     }
 
-    /**
-     * NOT PUBLIC API - DO NOT CALL
-     */
+    @ApiStatus.Internal
     public void onServerOpenToLan(IntegratedServer server)
     {
         if (!this.handlers.isEmpty())
@@ -87,9 +80,7 @@ public class ServerHandler implements IServerManager
         }
     }
 
-    /**
-     * NOT PUBLIC API - DO NOT CALL
-     */
+    @ApiStatus.Internal
     public void onServerStopping(MinecraftServer server)
     {
         if (!this.handlers.isEmpty())
@@ -101,9 +92,7 @@ public class ServerHandler implements IServerManager
         }
     }
 
-    /**
-     * NOT PUBLIC API - DO NOT CALL
-     */
+    @ApiStatus.Internal
     public void onServerStopped(MinecraftServer server)
     {
         if (!this.handlers.isEmpty())

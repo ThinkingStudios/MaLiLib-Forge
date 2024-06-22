@@ -651,6 +651,7 @@ public class InventoryUtils
      * @param itemNameIn (String containing the item name)
      * @return (The ItemStack object or ItemStack.EMPTY, aka Air)
      */
+    @Nullable
     public static ItemStack getItemStackFromString(String itemNameIn)
     {
         return getItemStackFromString(itemNameIn, -1, ComponentMap.EMPTY);
@@ -662,6 +663,7 @@ public class InventoryUtils
      * @param data (ComponentMap data to import)
      * @return (The ItemStack object or ItemStack.EMPTY, aka Air)
      */
+    @Nullable
     public static ItemStack getItemStackFromString(String itemNameIn, ComponentMap data)
     {
         return getItemStackFromString(itemNameIn, -1, data);
@@ -673,6 +675,7 @@ public class InventoryUtils
      * @param count (How many in this stack)
      * @return (The ItemStack object or ItemStack.EMPTY, aka Air)
      */
+    @Nullable
     public static ItemStack getItemStackFromString(String itemNameIn, int count)
     {
         return getItemStackFromString(itemNameIn, count, ComponentMap.EMPTY);
@@ -685,6 +688,7 @@ public class InventoryUtils
      * @param data (ComponentMap data to import)
      * @return (The ItemStack object or ItemStack.EMPTY, aka Air)
      */
+    @Nullable
     public static ItemStack getItemStackFromString(String itemNameIn, int count, ComponentMap data)
     {
         if (itemNameIn.isEmpty() || itemNameIn.equals("empty") || itemNameIn.equals("minecraft:air") || itemNameIn.equals("air"))
@@ -725,6 +729,6 @@ public class InventoryUtils
             }
         }
 
-        return ItemStack.EMPTY;
+        return null;
     }
 }

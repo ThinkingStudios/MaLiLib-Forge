@@ -13,7 +13,7 @@ import fi.dy.masa.malilib.MaLiLib;
 
 /**
  * This class has been directly taken from Schematica by Lunatrius & contributors
- * https://github.com/Lunatrius/Schematica/blob/master/src/main/java/com/github/lunatrius/schematica/client/renderer/shader/ShaderProgram.java
+ * <a href="https://github.com/Lunatrius/Schematica/blob/master/src/main/java/com/github/lunatrius/schematica/client/renderer/shader/ShaderProgram.java">Lunatrius/Schematica's ShaderProgram.java</a>
  */
 public class ShaderProgram
 {

@@ -8,6 +8,7 @@ import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.packet.CustomPayload;
@@ -150,7 +151,7 @@ public interface IPluginClientPlayHandler<T extends CustomPayload> extends Clien
     default void receivePlayPayload(T payload, ClientPlayNetworkHandler handler, CallbackInfo ci) {}
 
     /**
-     * Payload Decoder wrapper function [OPTIONAL]
+     * Payload Decoder wrapper function.
      * Implements how the data is processed after being decoded from the receivePlayPayload().
      * You can ignore these and implement your own helper class/methods.
      * These are provided as an example, and can be used in your HANDLER directly.
@@ -163,7 +164,7 @@ public interface IPluginClientPlayHandler<T extends CustomPayload> extends Clien
     default <D> void decodeObject(Identifier channel, D data1) {}
 
     /**
-     * Payload Encoder wrapper function [OPTIONAL]
+     * Payload Encoder wrapper function.
      * Implements how to encode() your Payload, then forward complete Payload to sendPlayPayload().
      * -
      * @param data (Data Codec)
@@ -171,6 +172,13 @@ public interface IPluginClientPlayHandler<T extends CustomPayload> extends Clien
     default void encodeNbtCompound(NbtCompound data) {}
     default void encodeByteBuf(MaLiLibBuf data) {}
     default <D> void encodeObject(D data1) {}
+
+    /**
+     * Used as an iterative "wrapper" for Payload Splitter to send individual Packets
+     * @param buf (Sliced Buffer to send)
+     * @param handler (Network Handler as a fail-over option)
+     */
+    void encodeWithSplitter(PacketByteBuf buf, ClientPlayNetworkHandler handler);
 
     /**
      * Sends the Payload to the server using the Fabric-API interface.

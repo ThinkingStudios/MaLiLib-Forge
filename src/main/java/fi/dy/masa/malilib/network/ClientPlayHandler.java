@@ -1,7 +1,7 @@
 package fi.dy.masa.malilib.network;
 
 import com.google.common.collect.ArrayListMultimap;
-import net.minecraft.nbt.NbtCompound;
+import org.jetbrains.annotations.ApiStatus;
 import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.util.Identifier;
 
@@ -44,9 +44,7 @@ public class ClientPlayHandler<T extends CustomPayload> implements IClientPlayHa
         }
     }
 
-    /**
-     * API CALLS DO NOT USE ANYWHERE ELSE (DANGEROUS!)
-     */
+    @ApiStatus.Internal
     public void reset(Identifier channel)
     {
         if (this.handlers.isEmpty() == false)
@@ -54,48 +52,6 @@ public class ClientPlayHandler<T extends CustomPayload> implements IClientPlayHa
             for (IPluginClientPlayHandler<T> handler : this.handlers.get(channel))
             {
                 handler.reset(channel);
-            }
-        }
-    }
-
-    /**
-     * API CALLS DO NOT USE ANYWHERE ELSE (DANGEROUS!)
-     */
-    public void decodeNbtCompound(Identifier channel, NbtCompound data)
-    {
-        if (!this.handlers.isEmpty())
-        {
-            for (IPluginClientPlayHandler<T> handler : this.handlers.get(channel))
-            {
-                handler.decodeNbtCompound(channel, data);
-            }
-        }
-    }
-
-    /**
-     * API CALLS DO NOT USE ANYWHERE ELSE (DANGEROUS!)
-     */
-    public void decodeByteBuf(Identifier channel, MaLiLibBuf data)
-    {
-        if (!this.handlers.isEmpty())
-        {
-            for (IPluginClientPlayHandler<T> handler : this.handlers.get(channel))
-            {
-                handler.decodeByteBuf(channel, data);
-            }
-        }
-    }
-
-    /**
-     * API CALLS DO NOT USE ANYWHERE ELSE (DANGEROUS!)
-     */
-    public <D> void decodeObject(Identifier channel, D data1)
-    {
-        if (!this.handlers.isEmpty())
-        {
-            for (IPluginClientPlayHandler<T> handler : this.handlers.get(channel))
-            {
-                handler.decodeObject(channel, data1);
             }
         }
     }
