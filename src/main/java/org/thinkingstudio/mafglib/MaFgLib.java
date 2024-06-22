@@ -8,7 +8,7 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.loading.FMLLoader;
 import org.thinkingstudio.mafglib.util.ForgePlatformUtils;
 
-@Mod(MaLiLibReference.MOD_ID)
+@Mod(value = MaLiLibReference.MOD_ID, dist = Dist.CLIENT)
 public class MaFgLib {
     public MaFgLib() {
         if (FMLLoader.getDist() == Dist.CLIENT) {
