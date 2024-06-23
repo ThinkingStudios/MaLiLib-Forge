@@ -1,2 +1,2 @@
 ## Change
-- sync with `sakura-ryoko/malilib`
+- fix button icon
