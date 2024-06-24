@@ -33,6 +33,7 @@ dependencies {
 
     modApi(libs.networking.api)
     include(libs.networking.api)
+    modApi(modApi "dev.architectury:architectury-neoforge:13.0.1")
 
     implementation libs.jsr305
 }
