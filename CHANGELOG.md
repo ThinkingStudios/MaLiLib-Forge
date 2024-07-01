@@ -1,2 +1,2 @@
 ## Changelog
-- fix `registerModConfigScreen`
+- fix `mafglib.forge.mixins.json`
