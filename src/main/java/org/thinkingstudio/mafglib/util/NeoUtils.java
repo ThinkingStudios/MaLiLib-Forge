@@ -17,7 +17,7 @@ public class NeoUtils {
 
     @OnlyIn(Dist.CLIENT)
     @FunctionalInterface
-    public static interface ModConfigScreenProvider {
+    public interface ModConfigScreenProvider {
         Screen provide(Screen parent);
     }
 }

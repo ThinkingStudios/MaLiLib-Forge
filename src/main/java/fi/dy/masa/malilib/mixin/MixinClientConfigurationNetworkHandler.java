@@ -8,7 +8,6 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import net.minecraft.client.network.ClientConfigurationNetworkHandler;
 import net.minecraft.network.packet.s2c.config.ReadyS2CPacket;
 import net.minecraft.registry.DynamicRegistryManager;
-import fi.dy.masa.malilib.MaLiLib;
 import fi.dy.masa.malilib.event.WorldLoadHandler;
 
 @Mixin(ClientConfigurationNetworkHandler.class)
@@ -21,8 +20,6 @@ public class MixinClientConfigurationNetworkHandler
     )
     private void malilib_onPlayLogin(ReadyS2CPacket packet, CallbackInfo ci, DynamicRegistryManager.Immutable immutable)
     {
-        MaLiLib.printDebug("malilib_onPlayLogin() --> Get DynamicRegistry at Login");
-
         ((WorldLoadHandler) WorldLoadHandler.getInstance()).onWorldLoadImmutable(immutable);
     }
 }

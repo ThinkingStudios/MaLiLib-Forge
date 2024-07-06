@@ -11,9 +11,9 @@ logoFile="icon.png" #optional
 credits="masa" #optional
 authors="TexTrue, ThinkingStudio" #optional
 description = '''
-MaLiLib unofficial Forge port.
+MaLiLib unofficial (Neo)Forge port.
 
-A library mod required by masa's client-side mods.
+Library mod for the (Neo)Forge port of masa's mods.
 '''
 
 [[mixins]]

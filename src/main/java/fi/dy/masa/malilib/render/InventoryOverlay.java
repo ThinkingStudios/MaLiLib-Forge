@@ -3,6 +3,7 @@ package fi.dy.masa.malilib.render;
 import java.util.ArrayList;
 import java.util.List;
 import com.mojang.blaze3d.systems.RenderSystem;
+import fi.dy.masa.malilib.util.IEntityOwnedInventory;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.*;
 import net.minecraft.client.MinecraftClient;
@@ -11,9 +12,10 @@ import net.minecraft.client.render.*;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.mob.PiglinEntity;
+import net.minecraft.entity.passive.AbstractHorseEntity;
 import net.minecraft.inventory.DoubleInventory;
 import net.minecraft.inventory.Inventory;
-import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -44,6 +46,8 @@ public class InventoryOverlay
             Identifier.ofVanilla("item/empty_armor_slot_leggings"),
             Identifier.ofVanilla("item/empty_armor_slot_chestplate"),
             Identifier.ofVanilla("item/empty_armor_slot_helmet") };
+
+    private static ItemStack hoveredStack = null;
 
     public static void renderInventoryBackground(InventoryRenderType type, int x, int y, int slotsPerRow, int totalSlots, MinecraftClient mc)
     {
@@ -265,14 +269,18 @@ public class InventoryOverlay
         {
             return InventoryRenderType.HOPPER;
         }
-        else if (inv.getClass() == SimpleInventory.class) // FIXME
+        else if (inv instanceof IEntityOwnedInventory inventory)
         {
-            return InventoryRenderType.HORSE;
+            if (inventory.malilib$getEntityOwner() instanceof AbstractHorseEntity)
+            {
+                return InventoryRenderType.HORSE;
+            }
+            else if (inventory.malilib$getEntityOwner() instanceof PiglinEntity)
+            {
+                return InventoryRenderType.VILLAGER;
+            }
         }
-        else
-        {
-            return InventoryRenderType.GENERIC;
-        }
+        return InventoryRenderType.GENERIC;
     }
 
     public static InventoryRenderType getInventoryType(ItemStack stack)
@@ -405,19 +413,24 @@ public class InventoryOverlay
 
     public static void renderInventoryStacks(InventoryRenderType type, Inventory inv, int startX, int startY, int slotsPerRow, int startSlot, int maxSlots, MinecraftClient mc, DrawContext drawContext)
     {
+        renderInventoryStacks(type, inv, startX, startY, slotsPerRow, startSlot, maxSlots, mc, drawContext, 0, 0);
+    }
+
+    public static void renderInventoryStacks(InventoryRenderType type, Inventory inv, int startX, int startY, int slotsPerRow, int startSlot, int maxSlots, MinecraftClient mc, DrawContext drawContext, double mouseX, double mouseY)
+    {
         if (type == InventoryRenderType.FURNACE)
         {
-            renderStackAt(inv.getStack(0), startX +   8, startY +  8, 1, mc, drawContext);
-            renderStackAt(inv.getStack(1), startX +   8, startY + 44, 1, mc, drawContext);
-            renderStackAt(inv.getStack(2), startX +  68, startY + 26, 1, mc, drawContext);
+            renderStackAt(inv.getStack(0), startX +   8, startY +  8, 1, mc, drawContext, mouseX, mouseY);
+            renderStackAt(inv.getStack(1), startX +   8, startY + 44, 1, mc, drawContext, mouseX, mouseY);
+            renderStackAt(inv.getStack(2), startX +  68, startY + 26, 1, mc, drawContext, mouseX, mouseY);
         }
         else if (type == InventoryRenderType.BREWING_STAND)
         {
-            renderStackAt(inv.getStack(0), startX +  47, startY + 42, 1, mc, drawContext);
-            renderStackAt(inv.getStack(1), startX +  70, startY + 49, 1, mc, drawContext);
-            renderStackAt(inv.getStack(2), startX +  93, startY + 42, 1, mc, drawContext);
-            renderStackAt(inv.getStack(3), startX +  70, startY +  8, 1, mc, drawContext);
-            renderStackAt(inv.getStack(4), startX +   8, startY +  8, 1, mc, drawContext);
+            renderStackAt(inv.getStack(0), startX +  47, startY + 42, 1, mc, drawContext, mouseX, mouseY);
+            renderStackAt(inv.getStack(1), startX +  70, startY + 49, 1, mc, drawContext, mouseX, mouseY);
+            renderStackAt(inv.getStack(2), startX +  93, startY + 42, 1, mc, drawContext, mouseX, mouseY);
+            renderStackAt(inv.getStack(3), startX +  70, startY +  8, 1, mc, drawContext, mouseX, mouseY);
+            renderStackAt(inv.getStack(4), startX +   8, startY +  8, 1, mc, drawContext, mouseX, mouseY);
         }
         else
         {
@@ -438,7 +451,7 @@ public class InventoryOverlay
 
                     if (stack.isEmpty() == false)
                     {
-                        renderStackAt(stack, x, y, 1, mc, drawContext);
+                        renderStackAt(stack, x, y, 1, mc, drawContext, mouseX, mouseY);
                     }
 
                     x += 18;
@@ -448,9 +461,22 @@ public class InventoryOverlay
                 y += 18;
             }
         }
+
+        if (hoveredStack != null)
+        {
+            var stack = hoveredStack;
+            hoveredStack = null;
+            // Some mixin / side effects can happen here
+            drawContext.drawItemTooltip(mc.textRenderer, stack, (int) mouseX, (int) mouseY);
+        }
     }
 
     public static void renderEquipmentStacks(LivingEntity entity, int x, int y, MinecraftClient mc, DrawContext drawContext)
+    {
+        renderEquipmentStacks(entity, x, y, mc, drawContext, 0, 0);
+    }
+
+    public static void renderEquipmentStacks(LivingEntity entity, int x, int y, MinecraftClient mc, DrawContext drawContext, double mouseX, double mouseY)
     {
         for (int i = 0, xOff = 7, yOff = 7; i < 4; ++i, yOff += 18)
         {
@@ -459,7 +485,7 @@ public class InventoryOverlay
 
             if (stack.isEmpty() == false)
             {
-                renderStackAt(stack, x + xOff + 1, y + yOff + 1, 1, mc, drawContext);
+                renderStackAt(stack, x + xOff + 1, y + yOff + 1, 1, mc, drawContext, mouseX, mouseY);
             }
         }
 
@@ -467,14 +493,22 @@ public class InventoryOverlay
 
         if (stack.isEmpty() == false)
         {
-            renderStackAt(stack, x + 28, y + 2 * 18 + 7 + 1, 1, mc, drawContext);
+            renderStackAt(stack, x + 28, y + 2 * 18 + 7 + 1, 1, mc, drawContext, mouseX, mouseY);
         }
 
         stack = entity.getEquippedStack(EquipmentSlot.OFFHAND);
 
         if (stack.isEmpty() == false)
         {
-            renderStackAt(stack, x + 28, y + 3 * 18 + 7 + 1, 1, mc, drawContext);
+            renderStackAt(stack, x + 28, y + 3 * 18 + 7 + 1, 1, mc, drawContext, mouseX, mouseY);
+        }
+
+        if (hoveredStack != null)
+        {
+            stack = hoveredStack;
+            hoveredStack = null;
+            // Some mixin / side effects can happen here, so reset hoveredStack
+            drawContext.drawItemTooltip(mc.textRenderer, stack, (int) mouseX, (int) mouseY);
         }
     }
 
@@ -510,6 +544,11 @@ public class InventoryOverlay
 
     public static void renderStackAt(ItemStack stack, float x, float y, float scale, MinecraftClient mc, DrawContext drawContext)
     {
+        renderStackAt(stack, x, y, scale, mc, drawContext, 0, 0);
+    }
+
+    public static void renderStackAt(ItemStack stack, float x, float y, float scale, MinecraftClient mc, DrawContext drawContext, double mouseX, double mouseY)
+    {
         MatrixStack matrixStack = drawContext.getMatrices();
         matrixStack.push();
         matrixStack.translate(x, y, 0.f);
@@ -525,6 +564,10 @@ public class InventoryOverlay
 
         RenderUtils.color(1f, 1f, 1f, 1f);
         matrixStack.pop();
+        if (mouseX >= x && mouseX < x + 16 * scale && mouseY >= y && mouseY < y + 16 * scale)
+        {
+            hoveredStack = stack;
+        }
     }
 
     public static void renderStackToolTip(int x, int y, ItemStack stack, MinecraftClient mc, DrawContext drawContext)

@@ -44,10 +44,8 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.random.LocalRandom;
-import fi.dy.masa.malilib.MaLiLib;
 import fi.dy.masa.malilib.config.HudAlignment;
 import fi.dy.masa.malilib.gui.GuiBase;
-import fi.dy.masa.malilib.mixin.IMixinBufferBuilder;
 import fi.dy.masa.malilib.util.*;
 import fi.dy.masa.malilib.util.PositionUtils.HitPart;
 
@@ -1456,50 +1454,4 @@ public class RenderUtils
      * Only required for translating the values to their RotationAxis.POSITIVE_?.rotationDegrees() equivalence
      */
     public static float matrix4fRotateFix(float ang) { return (ang * 0.017453292F); }
-
-    /**
-     * Check if a BufferBuilder is safe to use.
-     * This is cursed, but nesscary so we can be sure things won't crash due to 'BufferBuilder' issues
-     * @return (true|false)
-     */
-    public static boolean isBufferBuilderSafe(BufferBuilder buffer)
-    {
-        if (buffer == null)
-        {
-            return false;
-        }
-
-        // To be on the safe side, these things are angry
-        try
-        {
-            IMixinBufferBuilder test = (IMixinBufferBuilder) buffer;
-
-            if (test.getVertexCount() == 0)
-            {
-                return false;
-            }
-
-            if (test.getVertexSize() == 0)
-            {
-                return false;
-            }
-
-            if (test.getDrawMode() == null)
-            {
-                return false;
-            }
-
-            if (test.getBuffer() == null)
-            {
-                return false;
-            }
-
-            return test.isBuilding();
-        }
-        catch (Exception e)
-        {
-            MaLiLib.logger.warn("Exception caught testing if BufferBuilder is safe (it's not) --> Reason: {}", e.getLocalizedMessage());
-            return false;
-        }
-    }
 }

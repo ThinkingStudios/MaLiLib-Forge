@@ -1,4 +1,6 @@
 {
+  "fml.menu.mods.info.description.mafglib": "MaLiLib 非官方 (Neo)Forge 移植。用于 masa 的 (Neo)Forge 移植 mod 的代码库 mod。",
+
   "malilib.config.comment.keybind_settings.activate_on": "设置在何时触发快捷键对应的功能。 \n注：\"按住\"实际上是在按下和松开时各触发一次，并不是真正的按下。",
   "malilib.config.comment.keybind_settings.allow_empty_keybind": "空按键是否有效(开启此项后，空按键=持续触发)。",
   "malilib.config.comment.keybind_settings.allow_extra_keys": "是否允许一个按键绑定多个功能。",
