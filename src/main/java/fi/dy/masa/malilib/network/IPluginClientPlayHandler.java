@@ -3,8 +3,6 @@ package fi.dy.masa.malilib.network;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Objects;
-import net.minecraft.client.MinecraftClient;
-import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import net.neoforged.neoforge.network.handling.IPayloadHandler;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -75,12 +73,12 @@ public interface IPluginClientPlayHandler<T extends CustomPayload> extends IPayl
             {
                 switch (direction)
                 {
-                    case TO_SERVER, FROM_CLIENT -> NeoNetwork.registrar.playToServer(id, codec, this);
-                    case FROM_SERVER, TO_CLIENT -> NeoNetwork.registrar.playToClient(id, codec, this);
+                    case TO_SERVER, FROM_CLIENT -> NeoNetwork.getPayloadRegistrar().playToServer(id, codec, this);
+                    case FROM_SERVER, TO_CLIENT -> NeoNetwork.getPayloadRegistrar().playToClient(id, codec, this);
                     default ->
                     {
-                        NeoNetwork.registrar.playToServer(id, codec, this);
-                        NeoNetwork.registrar.playToClient(id, codec, this);
+                        NeoNetwork.getPayloadRegistrar().playToServer(id, codec, this);
+                        NeoNetwork.getPayloadRegistrar().playToClient(id, codec, this);
                     }
                 }
             }
@@ -113,7 +111,7 @@ public interface IPluginClientPlayHandler<T extends CustomPayload> extends IPayl
         {
             try
             {
-                NeoNetwork.registrar.playToClient(id, codec, Objects.requireNonNullElse(receiver, this::receivePlayPayload));
+                NeoNetwork.getPayloadRegistrar().playToClient(id, codec, Objects.requireNonNullElse(receiver, this::receivePlayPayload));
                 return true;
             }
             catch (IllegalArgumentException e)
@@ -197,9 +195,9 @@ public interface IPluginClientPlayHandler<T extends CustomPayload> extends IPayl
     {
         if (payload.getId().id().equals(this.getPayloadChannel()) && this.isPlayRegistered(this.getPayloadChannel()))
         {
-            if (Objects.requireNonNull(MinecraftClient.getInstance().getNetworkHandler()).hasChannel(payload.getId()))
+            if (NeoNetwork.canSend(payload.getId()))
             {
-                PacketDistributor.sendToServer(payload);
+                NeoNetwork.sendToServer(payload);
                 return true;
             }
         }
