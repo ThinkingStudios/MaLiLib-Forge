@@ -31,8 +31,6 @@ dependencies {
     }
     neoForge "net.neoforged:neoforge:${project.neoforge_version}"
 
-    modApi(include("maven.modrinth:forged-networking-api:0.1.0+mc1.20.6"))
-
     implementation "com.google.code.findbugs:jsr305:3.0.2"
 }
 

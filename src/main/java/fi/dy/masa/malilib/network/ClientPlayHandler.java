@@ -40,7 +40,7 @@ public class ClientPlayHandler<T extends CustomPayload> implements IClientPlayHa
         if (this.handlers.remove(channel, handler))
         {
             handler.reset(channel);
-            handler.unregisterPlayReceiver();
+            //handler.unregisterPlayReceiver();
         }
     }
 
