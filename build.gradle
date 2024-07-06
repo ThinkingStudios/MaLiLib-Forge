@@ -42,7 +42,7 @@ processResources {
     }
 }
 
-tasks.withType(JavaCompile) {
+tasks.withType(JavaCompile).configureEach {
     options.encoding = "UTF-8"
     options.release = 21
 }
@@ -58,6 +58,7 @@ java {
 publishing {
     publications {
         mavenJava(MavenPublication) {
+            artifactId = base.archivesName.get()
 			from components.java
 		}
     }
@@ -83,7 +84,7 @@ publisher {
     setChangelog(file("CHANGELOG.md").getText("UTF-8"))
     setVersion("${project.version}")
     setDisplayName("${project.version}")
-    setGameVersions("1.20.5", "1.20.6")
+    setGameVersions("1.20.6")
     setLoaders("neoforge")
     setCurseEnvironment("client")
     setArtifact(remapJar)
