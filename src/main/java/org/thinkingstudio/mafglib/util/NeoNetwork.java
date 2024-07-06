@@ -1,6 +1,5 @@
 package org.thinkingstudio.mafglib.util;
 
-import fi.dy.masa.malilib.MaLiLibReference;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.network.packet.CustomPayload;
 import net.neoforged.bus.api.IEventBus;
@@ -11,15 +10,15 @@ import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import java.util.Objects;
 
 public class NeoNetwork {
-    private static PayloadRegistrar registrar;
+    public static PayloadRegistrar registrar;
 
-    public static void init(IEventBus modEventBus) {
+    public static void setRegistrar(IEventBus modEventBus, String version) {
         modEventBus.addListener(RegisterPayloadHandlersEvent.class, event -> {
-            registrar = event.registrar(MaLiLibReference.MOD_ID).versioned("1").optional();
+            registrar = event.registrar(version).optional();
         });
     }
 
-    public static PayloadRegistrar getPayloadRegistrar() {
+    public static PayloadRegistrar getRegistrar() {
         return registrar;
     }
 

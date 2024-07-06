@@ -15,7 +15,7 @@ public class MaFgLib {
     public MaFgLib(IEventBus modEventBus) {
         if (FMLLoader.getDist() == Dist.CLIENT) {
             MaLiLib.onInitialize();
-            NeoNetwork.init(modEventBus);
+            NeoNetwork.setRegistrar(modEventBus, MaLiLibReference.MOD_ID);
 
             // Config Screen
             NeoUtils.getInstance().registerModConfigScreen(MaLiLibReference.MOD_ID, (screen) -> {
