@@ -73,13 +73,9 @@ public interface IPluginClientPlayHandler<T extends CustomPayload> extends IPayl
             {
                 switch (direction)
                 {
-                    case TO_SERVER, FROM_CLIENT -> NeoNetwork.getRegistrar().playToServer(id, codec, this);
-                    case FROM_SERVER, TO_CLIENT -> NeoNetwork.getRegistrar().playToClient(id, codec, this);
-                    default ->
-                    {
-                        NeoNetwork.getRegistrar().playToServer(id, codec, this);
-                        NeoNetwork.getRegistrar().playToClient(id, codec, this);
-                    }
+                    case TO_SERVER, FROM_CLIENT -> NeoNetwork.playToServer(id, codec, this);
+                    case FROM_SERVER, TO_CLIENT -> NeoNetwork.playToClient(id, codec, this);
+                    default -> NeoNetwork.playBidirectional(id, codec, this);
                 }
             }
             catch (IllegalArgumentException e)
@@ -111,7 +107,7 @@ public interface IPluginClientPlayHandler<T extends CustomPayload> extends IPayl
         {
             try
             {
-                NeoNetwork.getRegistrar().playToClient(id, codec, Objects.requireNonNullElse(receiver, this::receivePlayPayload));
+                NeoNetwork.playToClient(id, codec, Objects.requireNonNullElse(receiver, this::receivePlayPayload));
                 return true;
             }
             catch (IllegalArgumentException e)
