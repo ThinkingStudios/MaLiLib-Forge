@@ -30,7 +30,7 @@ dependencies {
         mappings "dev.architectury:yarn-mappings-patch-neoforge:${project.mappings_patch}"
     }
     neoForge "net.neoforged:neoforge:${project.neoforge_version}"
-    modImplementation "maven.modrinth:neonetwork:${project.neonetwork_version}"
+    include(modImplementation("maven.modrinth:neonetwork:${project.neonetwork_version}"))
 
     implementation "com.google.code.findbugs:jsr305:3.0.2"
 }
@@ -90,6 +90,6 @@ publisher {
     setCurseEnvironment("client")
     setArtifact(remapJar)
     addAdditionalFile(sourcesJar)
-    modrinthDepends.required("neonetwork")
-    curseDepends.required("neonetwork")
+    //modrinthDepends.required("neonetwork")
+    //curseDepends.required("neonetwork")
 }
