@@ -11,8 +11,7 @@ logoFile="icon.png" #optional
 credits="masa" #optional
 authors="TexTrue, ThinkingStudio" #optional
 description = '''
-MaLiLib unofficial Forge port.
-
+MaLiLib unofficial (Neo)Forge port.
 A library mod required by masa's client-side mods.
 '''
 
@@ -29,6 +28,13 @@ side = "BOTH"
 [[dependencies.mafglib]]
 modId = "minecraft"
 type = "required"
-versionRange = "[1.20.3,)"
+versionRange = "[1.20.6,]"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.mafglib]]
+modId = "neonetwork"
+type = "required"
+versionRange = "*"
 ordering = "NONE"
 side = "BOTH"

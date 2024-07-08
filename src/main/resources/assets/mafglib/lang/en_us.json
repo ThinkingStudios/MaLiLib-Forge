@@ -1,4 +1,6 @@
 {
+    "fml.menu.mods.info.description.mafglib": "MaLiLib unofficial (Neo)Forge port. Library mod for the (Neo)Forge port of masa's mods.",
+
     "malilib.config.comment.keybind_settings.activate_on": "Does the keybind activate on press or release of the key combination",
     "malilib.config.comment.keybind_settings.allow_empty_keybind": "Is an empty keybind valid\n(will always be considered to be active)",
     "malilib.config.comment.keybind_settings.allow_extra_keys": "Are extra keys allowed to be held to still activate the keybind",
