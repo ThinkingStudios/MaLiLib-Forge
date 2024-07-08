@@ -1,2 +1,2 @@
 ## Change
-- try fix network issue with other mod
+- use NeoNetwork replace ForgedNetworkingAPI and NeoForge native network api

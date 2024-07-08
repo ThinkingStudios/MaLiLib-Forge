@@ -30,6 +30,7 @@ dependencies {
         mappings libs.yarn.mappings.patch
     }
     neoForge libs.neoforge
+    modImplementation libs.neonetwork
 
     implementation libs.jsr305
 }
@@ -88,4 +89,6 @@ publisher {
     setCurseEnvironment("client")
     setArtifact(remapJar)
     addAdditionalFile(sourcesJar)
+    modrinthDepends.required("neonetwork")
+    curseDepends.required("neonetwork")
 }
