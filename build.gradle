@@ -4,9 +4,9 @@ plugins {
     id "maven-publish"
 }
 
-base.archivesName = libs.versions.archives.name
+base.archivesName = libs.versions.archives.name.get()
 version = "${libs.versions.version.get()}-mc${libs.versions.minecraft.version.get()}"
-group = libs.versions.maven.group
+group = libs.versions.maven.group.get()
 
 repositories {
     maven { url "https://maven.neoforged.net/releases/" }
