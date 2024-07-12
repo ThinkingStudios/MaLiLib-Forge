@@ -24,7 +24,7 @@ neonetwork="0.1.5+mc1.21"
 jsr305="3.0.2"
 
 # Gradle plugin
-architectury-loom = "1.6-SNAPSHOT"
+architectury-loom = "1.7.409"
 modpublisher = "2.1.+"
 
 [libraries]
