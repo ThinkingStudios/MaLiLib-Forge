@@ -1,2 +1,2 @@
 ## Change
-- use BadPackets replace NeoNetwork
+- fix `neoforge.mods.toml`
