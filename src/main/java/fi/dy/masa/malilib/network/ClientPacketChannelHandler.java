@@ -1,8 +1,10 @@
 package fi.dy.masa.malilib.network;
 
 import com.google.common.collect.ArrayListMultimap;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+//import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 
+import lol.bai.badpackets.api.play.PlayPackets;
+import lol.bai.badpackets.impl.registry.ChannelRegistry;
 import net.minecraft.util.Identifier;
 
 public class ClientPacketChannelHandler implements IClientPacketChannelHandler
@@ -31,7 +33,8 @@ public class ClientPacketChannelHandler implements IClientPacketChannelHandler
 
             if (handler.registerToServer())
             {
-                ClientPlayNetworking.registerGlobalReceiver(channel, handler.getClientPacketHandler());
+                PlayPackets.registerClientReceiver(channel, handler.getClientPacketHandler());
+                //ClientPlayNetworking.registerGlobalReceiver(channel, handler.getClientPacketHandler());
             }
         }
     }
@@ -43,7 +46,8 @@ public class ClientPacketChannelHandler implements IClientPacketChannelHandler
 
         if (this.handlers.remove(channel, handler) && handler.registerToServer())
         {
-            ClientPlayNetworking.unregisterGlobalReceiver(channel);
+            ChannelRegistry.PLAY_C2S.getChannels().remove(channel);
+            //ClientPlayNetworking.unregisterGlobalReceiver(channel);
         }
     }
 }

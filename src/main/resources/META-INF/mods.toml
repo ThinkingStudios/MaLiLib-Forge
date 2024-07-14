@@ -32,3 +32,10 @@ type = "required"
 versionRange = "[1.20.3,)"
 ordering = "NONE"
 side = "BOTH"
+
+[[dependencies.mafglib]]
+modId = "badpackets"
+type = "required"
+versionRange = "*"
+ordering = "NONE"
+side = "BOTH"

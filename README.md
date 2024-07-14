@@ -4,6 +4,8 @@
 
 # MaFgLib
 
+**This mod requires [BadPackets](https://modrinth.com/mod/badpackets) in 1.20.4 and above.**
+
 MaLiLib unofficial forge port.
 
 <img alt="forge" height="56" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/supported/forge_vector.svg">
