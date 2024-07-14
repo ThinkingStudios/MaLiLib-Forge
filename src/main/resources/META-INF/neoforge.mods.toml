@@ -33,7 +33,7 @@ ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.mafglib]]
-modId = "neonetwork"
+modId = "badpackets"
 type = "required"
 versionRange = "*"
 ordering = "NONE"
