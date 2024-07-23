@@ -89,7 +89,7 @@ public class StringUtils
      */
     public static void splitTextToLines(List<String> linesOut, String textIn, int maxLineLength)
     {
-        String[] lines = textIn.split("\\\\n");
+        String[] lines = textIn.split("\\\\n|\\n");
 
         for (String line : lines)
         {

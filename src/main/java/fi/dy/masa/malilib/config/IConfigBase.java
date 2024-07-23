@@ -43,7 +43,16 @@ public interface IConfigBase
      */
     default String getConfigGuiDisplayName()
     {
-        return StringUtils.getTranslatedOrFallback("config.name." + this.getName().toLowerCase(), this.getName());
+        return StringUtils.getTranslatedOrFallback(this.getTranslatedName(), this.getName());
+    }
+
+    /**
+     * Get translated name
+     * @return (Defaults to Name)
+     */
+    default String getTranslatedName()
+    {
+        return this.getName();
     }
 
     /**

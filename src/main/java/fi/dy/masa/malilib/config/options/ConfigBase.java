@@ -14,6 +14,7 @@ public abstract class ConfigBase<T extends IConfigBase> implements IConfigBase, 
     private final String name;
     private final String prettyName;
     private String comment;
+    private String translatedName;
     @Nullable
     private IValueChangeCallback<T> callback;
 
@@ -28,6 +29,7 @@ public abstract class ConfigBase<T extends IConfigBase> implements IConfigBase, 
         this.name = name;
         this.prettyName = prettyName;
         this.comment = comment;
+        this.translatedName = name;
     }
 
     @Override
@@ -53,6 +55,25 @@ public abstract class ConfigBase<T extends IConfigBase> implements IConfigBase, 
     public String getComment()
     {
         return StringUtils.getTranslatedOrFallback("config.comment." + this.getName().toLowerCase(), this.comment);
+    }
+
+    @SuppressWarnings("unchecked")
+    public T translatedName(String translatedName)
+    {
+        this.translatedName = translatedName;
+        return (T) this;
+    }
+
+    @Override
+    @Nullable
+    public String getTranslatedName()
+    {
+        return this.translatedName;
+    }
+
+    public void setTranslatedName(String translatedName)
+    {
+        this.translatedName = translatedName;
     }
 
     public void setComment(String comment)
