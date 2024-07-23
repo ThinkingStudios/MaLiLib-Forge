@@ -1,2 +1,2 @@
 ## Change
-- fix `neoforge.mods.toml`
+- sync from `sakura-ryoko/malilib` 0.20.0
