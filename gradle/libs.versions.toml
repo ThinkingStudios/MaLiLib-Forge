@@ -6,10 +6,10 @@ minecraft-range="1.21"
 minecraft_version="1.21"
 yarn_mappings="1.21+build.2"
 mappings_patch="1.21+build.4"
-neoforge="21.0.60-beta"
+neoforge="21.0.133-beta"
 
 # Mod properties
-version="0.1.17"
+version="0.1.18"
 maven-group="org.thinkingstudio.mafglib"
 archives-name="MaFgLib"
 
@@ -25,7 +25,7 @@ jsr305="3.0.2"
 
 # Gradle plugin
 architectury-loom = "1.6-SNAPSHOT"
-modpublisher = "2.1.+"
+modpublisher = "2.+"
 
 [libraries]
 minecraft = { group = "com.mojang", name = "minecraft", version.ref = "minecraft_version" }
