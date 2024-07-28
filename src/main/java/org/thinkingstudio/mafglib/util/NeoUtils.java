@@ -1,14 +1,22 @@
 package org.thinkingstudio.mafglib.util;
 
-import net.neoforged.fml.ModList;
+import net.minecraft.client.gui.screen.Screen;
+import net.neoforged.fml.ModContainer;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 
+import java.util.function.Function;
+
 public class NeoUtils {
-    public static NeoUtils getInstance() {
-        return new NeoUtils();
+    private static NeoUtils INSTANCE;
+
+    public void registerModConfigScreen(ModContainer modContainer, Function<Screen, Screen> screenFunction) {
+        modContainer.registerExtensionPoint(IConfigScreenFactory.class, (client, screen) -> screenFunction.apply(screen));
     }
 
-    public void registerModConfigScreen(String modid, ModConfigScreenProvider configScreenProvider) {
-        ModList.get().getModContainerById(modid).orElseThrow().registerExtensionPoint(IConfigScreenFactory.class, (client, screen) -> configScreenProvider.provide(screen));
+    public static NeoUtils getInstance() {
+        if (INSTANCE == null) {
+            INSTANCE = new NeoUtils();
+        }
+        return INSTANCE;
     }
 }
