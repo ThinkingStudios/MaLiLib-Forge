@@ -1,3 +1,3 @@
 ## Changelog
 - rewrite `ForgeUtils`
-- update Forge 
+- update Forge `1.18.2-40.2.21`
