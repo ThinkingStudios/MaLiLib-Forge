@@ -1,2 +1,3 @@
 ## Changelog
-- fix `registerModConfigScreen`
+- rewrite `ForgeUtils`
+- update Forge 
