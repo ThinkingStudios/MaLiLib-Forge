@@ -6,23 +6,24 @@ import fi.dy.masa.malilib.MaLiLibReference;
 import fi.dy.masa.malilib.event.RenderEventHandler;
 import net.minecraft.client.MinecraftClient;
 import net.neoforged.api.distmarker.Dist;
+import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.loading.FMLLoader;
 import net.neoforged.neoforge.client.event.RenderGuiEvent;
 import net.neoforged.neoforge.common.NeoForge;
-import org.thinkingstudio.mafglib.util.ForgePlatformUtils;
+import org.thinkingstudio.mafglib.util.NeoUtils;
 
 @Mod(MaLiLibReference.MOD_ID)
 public class MaFgLib {
-    public MaFgLib() {
+    public MaFgLib(ModContainer modContainer) {
         if (FMLLoader.getDist() == Dist.CLIENT) {
             // Make sure the mod being absent on the other network side does not cause
             // the client to display the server as incompatible
-            ForgePlatformUtils.getInstance().getClientModIgnoredServerOnly();
+            NeoUtils.getInstance().getClientModIgnoredServerOnly(modContainer);
             MaLiLib.onInitialize();
 
             // Config Screen
-            ForgePlatformUtils.getInstance().registerModConfigScreen(MaLiLibReference.MOD_ID, (screen) -> {
+            NeoUtils.getInstance().registerModConfigScreen(modContainer, (screen) -> {
                 MaLiLibConfigGui gui = new MaLiLibConfigGui();
                 gui.setParent(screen);
                 return gui;
