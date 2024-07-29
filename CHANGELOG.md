@@ -1,2 +1,2 @@
 ## Changelog
-- rewrite `ForgeUtils`
+- fix compat
