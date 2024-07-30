@@ -10,19 +10,12 @@ import java.util.regex.Pattern;
 import net.minecraft.text.ClickEvent;
 import net.minecraft.text.Text;
 import fi.dy.masa.malilib.MaLiLibConfigs;
-import net.neoforged.fml.loading.FMLLoader;
-import net.neoforged.fml.loading.moddiscovery.ModInfo;
+import org.thinkingstudio.mafglib.util.NeoUtils;
 
 public class StringUtils
 {
     public static String getModVersionString(String modId) {
-        for(ModInfo modInfo: FMLLoader.getLoadingModList().getMods()) {
-            if(modInfo.getModId().equals(modId)) {
-                return modInfo.getVersion().toString();
-            }
-        }
-
-        return "?";
+        return NeoUtils.getInstance().getModVersionString(modId).toString();
     }
 
     /**
@@ -89,7 +82,7 @@ public class StringUtils
      */
     public static void splitTextToLines(List<String> linesOut, String textIn, int maxLineLength)
     {
-        String[] lines = textIn.split("\\\\n");
+        String[] lines = textIn.split("\\\\n|\\n");
 
         for (String line : lines)
         {
