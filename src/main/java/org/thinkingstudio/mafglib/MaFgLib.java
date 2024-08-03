@@ -16,7 +16,7 @@ public class MaFgLib {
             MaLiLib.onInitialize();
 
             // Config Screen
-            NeoUtils.getInstance().registerModConfigScreen(modContainer, (screen) -> {
+            NeoUtils.getInstance().registerConfigScreen(modContainer, (screen) -> {
                 MaLiLibConfigGui gui = new MaLiLibConfigGui();
                 gui.setParent(screen);
                 return gui;
