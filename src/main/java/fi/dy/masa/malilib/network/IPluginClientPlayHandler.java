@@ -3,8 +3,6 @@ package fi.dy.masa.malilib.network;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Objects;
-//import org.thinkingstudio.fabric.api.client.networking.v1.ClientPlayNetworking;
-//import org.thinkingstudio.fabric.api.networking.v1.PayloadTypeRegistry;
 import lol.bai.badpackets.api.PacketReceiver;
 import lol.bai.badpackets.api.PacketSender;
 import lol.bai.badpackets.api.play.ClientPlayContext;
@@ -114,7 +112,6 @@ public interface IPluginClientPlayHandler<T extends CustomPayload> extends Packe
         {
             try
             {
-                //return ClientPlayNetworking.registerGlobalReceiver(id, Objects.requireNonNullElse(receiver, this::receivePlayPayload));
                 PlayPackets.registerClientReceiver(id, Objects.requireNonNullElse(receiver, this::receivePlayPayload));
                 return true;
             }
@@ -136,7 +133,6 @@ public interface IPluginClientPlayHandler<T extends CustomPayload> extends Packe
     default void unregisterPlayReceiver()
     {
         ChannelRegistry.PLAY_C2S.getChannels().remove(this.getPayloadChannel());
-        //ClientPlayNetworking.unregisterGlobalReceiver(this.getPayloadChannel());
     }
 
     /**

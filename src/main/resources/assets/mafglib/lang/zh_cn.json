@@ -1,6 +1,4 @@
 {
-  "fml.menu.mods.info.description.mafglib": "MaLiLib 非官方 (Neo)Forge 移植。用于 masa 的 (Neo)Forge 移植 mod 的代码库 mod。",
-
   "malilib.config.name.ignoredKeys": "忽略按键",
   "malilib.config.name.openGuiConfigs": "打开设置界面",
   "malilib.config.name.realmsCommonConfig": "领域服通用配置",

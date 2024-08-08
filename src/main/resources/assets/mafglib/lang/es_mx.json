@@ -84,7 +84,7 @@
 
     "malilib.gui.title.all_hotkeys": "Todas las teclas de acceso rápido guardadas",
     "malilib.gui.title.color_editor": "Editor de color",
-    "malilib.gui.title.configs": "Configuración de %s - %s",
+    "malilib.gui.title.configs": "Configuración de %s- %s",
     "malilib.gui.title.create_directory": "Crear un nuevo directorio",
     "malilib.gui.title.debug": "Debug",
     "malilib.gui.title.generic": "Genérico",

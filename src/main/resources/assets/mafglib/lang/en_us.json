@@ -1,6 +1,4 @@
 {
-    "fml.menu.mods.info.description.mafglib": "MaLiLib unofficial (Neo)Forge port. Library mod for the (Neo)Forge port of masa's mods.",
-
     "malilib.config.name.ignoredKeys": "ignoredKeys",
     "malilib.config.name.openGuiConfigs": "openGuiConfigs",
     "malilib.config.name.realmsCommonConfig": "realmsCommonConfig",
