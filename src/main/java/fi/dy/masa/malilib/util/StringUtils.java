@@ -15,7 +15,7 @@ import org.thinkingstudio.mafglib.util.NeoUtils;
 public class StringUtils
 {
     public static String getModVersionString(String modId) {
-        return NeoUtils.getInstance().getModVersionString(modId).toString();
+        return NeoUtils.getInstance().getModVersion(modId).toString();
     }
 
     /**

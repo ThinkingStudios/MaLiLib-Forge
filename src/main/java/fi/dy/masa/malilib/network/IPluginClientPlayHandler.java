@@ -112,7 +112,6 @@ public interface IPluginClientPlayHandler<T extends CustomPayload> extends Packe
         {
             try
             {
-                //return ClientPlayNetworking.registerGlobalReceiver(id, Objects.requireNonNullElse(receiver, this::receivePlayPayload));
                 PlayPackets.registerClientReceiver(id, Objects.requireNonNullElse(receiver, this::receivePlayPayload));
                 return true;
             }
@@ -134,7 +133,6 @@ public interface IPluginClientPlayHandler<T extends CustomPayload> extends Packe
     default void unregisterPlayReceiver()
     {
         ChannelRegistry.PLAY_C2S.getChannels().remove(this.getPayloadChannel());
-        //ClientPlayNetworking.unregisterGlobalReceiver(this.getPayloadChannel());
     }
 
     /**
