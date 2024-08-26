@@ -6,7 +6,7 @@
 
 **This mod requires [BadPackets](https://modrinth.com/mod/badpackets) in 1.20.4 and above.**
 
-MaLiLib unofficial forge port.
+MaLiLib unofficial (Neo)Forge port.
 
 <img alt="forge" height="56" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/supported/forge_vector.svg">
 
@@ -22,6 +22,9 @@ MaLiLib unofficial forge port.
 MaFgLib (or MaLiLib-Forge) is a library mod used by Masa's mods Forge port. It contains some common code previously
 duplicated in most of the mods, such as multi-key capable keybinds, configuration GUIs and **config screen register** etc.
 For compiled builds (= downloads), see [Releases](https://github.com/ThinkingStudios/MaLiLib-Forge/releases) or [Modrinth](https://modrinth.com/mod/mafglib)
+
+## How to use in Minecraft
+See [malilib wiki](https://github.com/maruohon/malilib/wiki)
 
 ## Development
 
@@ -44,3 +47,7 @@ dependencies {
 - Open a command prompt/terminal to the repository directory
 - run 'gradlew build'
 - The built jar file will be in build/libs/
+
+## Credits
+- [maruohon/malilib](https://github.com/maruohon/malilib)
+- [sakura-ryoko/malilib](https://github.com/sakura-ryoko/malilib)
