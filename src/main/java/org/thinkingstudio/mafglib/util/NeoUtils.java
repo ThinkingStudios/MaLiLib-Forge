@@ -24,7 +24,7 @@ public class NeoUtils {
         modContainer.registerExtensionPoint(IConfigScreenFactory.class, (container, screen) -> screenFunction.apply(screen));
     }
 
-    public ArtifactVersion getModVersion(String modId) {
+    public ArtifactVersion getModArtifactVersion(String modId) {
         for(ModInfo modInfo: FMLLoader.getLoadingModList().getMods()) {
             if(modInfo.getModId().equals(modId)) {
                 return modInfo.getVersion();

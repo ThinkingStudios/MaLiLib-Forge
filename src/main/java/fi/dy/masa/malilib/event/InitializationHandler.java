@@ -5,6 +5,7 @@ import java.util.List;
 import fi.dy.masa.malilib.config.ConfigManager;
 import fi.dy.masa.malilib.interfaces.IInitializationDispatcher;
 import fi.dy.masa.malilib.interfaces.IInitializationHandler;
+import org.jetbrains.annotations.ApiStatus;
 
 public class InitializationHandler implements IInitializationDispatcher
 {
@@ -26,9 +27,7 @@ public class InitializationHandler implements IInitializationDispatcher
         }
     }
 
-    /**
-     * NOT PUBLIC API - DO NOT CALL
-     */
+    @ApiStatus.Internal
     public void onGameInitDone()
     {
         if (this.handlers.isEmpty() == false)

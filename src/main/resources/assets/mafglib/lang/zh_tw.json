@@ -89,6 +89,7 @@
   "malilib.gui.title.debug": "除錯",
   "malilib.gui.title.generic": "通用",
   "malilib.gui.title.keybind_settings.advanced": "高級按鍵設置 %s",
+  "malilib.gui.title.locked_list_edit": "編輯 '%s' 的鎖定列表",
   "malilib.gui.title.string_list_edit": "編輯 '%s' 的字符串列表",
   "malilib.gui.title.color_list_edit": "編輯 '%s' 的顏色列表",
 

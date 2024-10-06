@@ -89,6 +89,7 @@
     "malilib.gui.title.debug": "Debug",
     "malilib.gui.title.generic": "Generic",
     "malilib.gui.title.keybind_settings.advanced": "Advanced Keybind Settings for %s",
+    "malilib.gui.title.locked_list_edit": "Edit locked list for '%s'",
     "malilib.gui.title.string_list_edit": "Edit string list for '%s'",
     "malilib.gui.title.color_list_edit": "Edit color list for '%s'",
 

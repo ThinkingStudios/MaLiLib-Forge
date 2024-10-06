@@ -15,7 +15,7 @@ import org.thinkingstudio.mafglib.util.NeoUtils;
 public class StringUtils
 {
     public static String getModVersionString(String modId) {
-        return NeoUtils.getInstance().getModVersion(modId).toString();
+        return NeoUtils.getInstance().getModArtifactVersion(modId).toString();
     }
 
     /**
@@ -377,6 +377,16 @@ public class StringUtils
     public static String translate(String translationKey, Object... args)
     {
         return net.minecraft.client.resource.language.I18n.translate(translationKey, args);
+    }
+
+    /**
+     * Return if this translationKey has been found
+     * @param translationKey (Key th check)
+     * @return (True|False)
+     */
+    public static boolean hasTranslation(String translationKey)
+    {
+        return net.minecraft.client.resource.language.I18n.hasTranslation(translationKey);
     }
 
     /**

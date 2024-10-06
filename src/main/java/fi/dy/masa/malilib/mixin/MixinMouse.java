@@ -28,7 +28,7 @@ public abstract class MixinMouse
         int mouseX = (int) (((Mouse) (Object) this).getX() * (double) window.getScaledWidth() / (double) window.getWidth());
         int mouseY = (int) (((Mouse) (Object) this).getY() * (double) window.getScaledHeight() / (double) window.getHeight());
 
-        ((InputEventHandler) InputEventHandler.getInputManager()).onMouseMove(mouseX, mouseY);
+        ((InputEventHandler) InputEventHandler.getInputManager()).onMouseMove(mouseX, mouseY, this.client);
     }
 
     @Inject(method = "onMouseScroll", cancellable = true,
@@ -39,7 +39,7 @@ public abstract class MixinMouse
         int mouseX = (int) (((Mouse) (Object) this).getX() * (double) window.getScaledWidth() / (double) window.getWidth());
         int mouseY = (int) (((Mouse) (Object) this).getY() * (double) window.getScaledHeight() / (double) window.getHeight());
 
-        if (((InputEventHandler) InputEventHandler.getInputManager()).onMouseScroll(mouseX, mouseY, xOffset, yOffset))
+        if (((InputEventHandler) InputEventHandler.getInputManager()).onMouseScroll(mouseX, mouseY, xOffset, yOffset, this.client))
         {
             this.eventDeltaHorizontalWheel = 0.0;
             this.eventDeltaVerticalWheel = 0.0;
@@ -55,7 +55,7 @@ public abstract class MixinMouse
         int mouseX = (int) (((Mouse) (Object) this).getX() * (double) window.getScaledWidth() / (double) window.getWidth());
         int mouseY = (int) (((Mouse) (Object) this).getY() * (double) window.getScaledHeight() / (double) window.getHeight());
 
-        if (((InputEventHandler) InputEventHandler.getInputManager()).onMouseClick(mouseX, mouseY, button, action))
+        if (((InputEventHandler) InputEventHandler.getInputManager()).onMouseClick(mouseX, mouseY, button, action, this.client))
         {
             ci.cancel();
         }

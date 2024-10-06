@@ -4,10 +4,10 @@
 minecraft_version="1.21.1"
 yarn_mappings="1.21.1+build.3"
 mappings_patch="1.21+build.4"
-neoforge="21.1.27"
+neoforge="21.1.66"
 
 # Mod properties
-version="0.1.22"
+version="0.1.23"
 maven-group="org.thinkingstudio.mafglib"
 archives-name="MaFgLib"
 
@@ -22,7 +22,7 @@ badpackets="neo-0.8.1"
 jsr305="3.0.2"
 
 # Gradle plugin
-architectury-loom = "1.6-SNAPSHOT"
+architectury-loom = "1.7-SNAPSHOT"
 modpublisher = "2.+"
 
 [libraries]

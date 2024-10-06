@@ -9,6 +9,11 @@ import net.minecraft.item.ItemStack;
 public interface IRenderer
 {
     /**
+     * Called after the vanilla "drawer" overlays have been rendered
+     */
+    default void onRenderGameOverlayLastDrawer(DrawContext drawContext) {}
+
+    /**
      * Called after the vanilla overlays have been rendered
      */
     default void onRenderGameOverlayPost(DrawContext drawContext) {}

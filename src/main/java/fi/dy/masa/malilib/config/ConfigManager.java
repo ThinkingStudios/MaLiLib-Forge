@@ -1,5 +1,7 @@
 package fi.dy.masa.malilib.config;
 
+import org.jetbrains.annotations.ApiStatus;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,9 +33,7 @@ public class ConfigManager implements IConfigManager
         }
     }
 
-    /**
-     * NOT PUBLIC API - DO NOT CALL
-     */
+    @ApiStatus.Internal
     public void loadAllConfigs()
     {
         for (IConfigHandler handler : this.configHandlers.values())
@@ -42,9 +42,7 @@ public class ConfigManager implements IConfigManager
         }
     }
 
-    /**
-     * NOT PUBLIC API - DO NOT CALL
-     */
+    @ApiStatus.Internal
     public void saveAllConfigs()
     {
         for (IConfigHandler handler : this.configHandlers.values())

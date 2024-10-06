@@ -469,6 +469,8 @@ public class RenderUtils
             }
 
             Collection<StatusEffectInstance> effects = player.getStatusEffects();
+            boolean hasTurtleHelmet = EntityUtils.hasTurtleHelmetEquipped(player);
+            // Turtle Helmets only add their status effects when in water
 
             if (effects.isEmpty() == false)
             {
@@ -493,7 +495,16 @@ public class RenderUtils
                     }
                 }
 
+                if (hasTurtleHelmet && y1 == 0)
+                {
+                    y1 = 26;
+                }
+
                 return (int) (Math.max(y1, y2) / scale);
+            }
+            else if (hasTurtleHelmet)
+            {
+                return (int) ((int) 26 / scale);
             }
         }
 
@@ -1221,7 +1232,7 @@ public class RenderUtils
     {
         if (InventoryUtils.hasNbtItems(itemsTag))
         {
-            DefaultedList<ItemStack> items = InventoryUtils.getNbtItems(itemsTag, -1);
+            DefaultedList<ItemStack> items = InventoryUtils.getNbtItems(itemsTag);
 
             if (items.size() == 0)
             {

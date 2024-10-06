@@ -89,6 +89,7 @@
   "malilib.gui.title.debug": "调试",
   "malilib.gui.title.generic": "通用",
   "malilib.gui.title.keybind_settings.advanced": "高级按键设置 %s",
+  "malilib.gui.title.locked_list_edit": "编辑的锁定列表 '%s'",
   "malilib.gui.title.string_list_edit": "编辑字符串列表为 '%s'",
   "malilib.gui.title.color_list_edit": "编辑颜色列表为 '%s'",
 

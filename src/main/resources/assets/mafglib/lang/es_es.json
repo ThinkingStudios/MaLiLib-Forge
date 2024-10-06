@@ -89,6 +89,7 @@
     "malilib.gui.title.debug": "Depurar",
     "malilib.gui.title.generic": "Genérico",
     "malilib.gui.title.keybind_settings.advanced": "Configuración avanzada de combinación de teclas para %s",
+    "malilib.gui.title.locked_list_edit": "Editar lista de bloqueada para '%s'",
     "malilib.gui.title.string_list_edit": "Editar lista de cadenas para '%s'",
     "malilib.gui.title.color_list_edit": "Editar lista de colores para '%s'",
 
