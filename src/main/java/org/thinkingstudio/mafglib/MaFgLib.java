@@ -17,7 +17,7 @@ import org.thinkingstudio.mafglib.util.NeoUtils;
 @Mod(value = MaLiLibReference.MOD_ID, dist = Dist.CLIENT)
 public class MaFgLib {
     public MaFgLib(ModContainer modContainer) {
-        if (FMLLoader.getDist() == Dist.CLIENT) {
+        if (FMLLoader.getDist().isClient()) {
             MaLiLib.onInitialize();
 
             NeoForge.EVENT_BUS.addListener(EventPriority.HIGHEST, RenderGuiLayerEvent.Post.class, event -> {
