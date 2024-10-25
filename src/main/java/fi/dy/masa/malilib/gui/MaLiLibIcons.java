@@ -1,7 +1,9 @@
 package fi.dy.masa.malilib.gui;
 
-import fi.dy.masa.malilib.MaLiLibReference;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.util.Identifier;
+
+import fi.dy.masa.malilib.MaLiLibReference;
 import fi.dy.masa.malilib.gui.interfaces.IGuiIcon;
 import fi.dy.masa.malilib.render.RenderUtils;
 
@@ -25,12 +27,12 @@ public enum MaLiLibIcons implements IGuiIcon
     private final int hoverOffU;
     private final int hoverOffV;
 
-    private MaLiLibIcons(int u, int v, int w, int h)
+    MaLiLibIcons(int u, int v, int w, int h)
     {
         this(u, v, w, h, w, 0);
     }
 
-    private MaLiLibIcons(int u, int v, int w, int h, int hoverOffU, int hoverOffV)
+    MaLiLibIcons(int u, int v, int w, int h, int hoverOffU, int hoverOffV)
     {
         this.u = u;
         this.v = v;
@@ -65,7 +67,7 @@ public enum MaLiLibIcons implements IGuiIcon
     }
 
     @Override
-    public void renderAt(int x, int y, float zLevel, boolean enabled, boolean selected)
+    public void renderAt(int x, int y, float zLevel, boolean enabled, boolean selected, DrawContext drawContext)
     {
         int u = this.u;
         int v = this.v;
@@ -82,7 +84,9 @@ public enum MaLiLibIcons implements IGuiIcon
             v += this.hoverOffV;
         }
 
-        RenderUtils.drawTexturedRect(x, y, u, v, this.w, this.h, zLevel);
+        //RenderUtils.drawTexturedRect(x, y, u, v, this.w, this.h, zLevel);
+        RenderUtils.drawTexturedRect(this.getTexture(), x, y, u, v, this.w, this.h, zLevel, drawContext);
+        RenderUtils.forceDraw(drawContext);
     }
 
     @Override
