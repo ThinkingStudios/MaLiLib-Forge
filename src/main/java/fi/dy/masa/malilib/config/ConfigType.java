@@ -5,6 +5,7 @@ public enum ConfigType
     BOOLEAN,
     INTEGER,
     DOUBLE,
+    FLOAT,
     COLOR,
     STRING,
     STRING_LIST,

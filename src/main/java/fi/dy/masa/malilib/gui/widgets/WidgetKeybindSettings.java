@@ -3,10 +3,10 @@ package fi.dy.masa.malilib.gui.widgets;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
-
-import fi.dy.masa.malilib.MaLiLibReference;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.util.Identifier;
+
+import fi.dy.masa.malilib.MaLiLibReference;
 import fi.dy.masa.malilib.gui.GuiBase;
 import fi.dy.masa.malilib.gui.GuiKeybindSettings;
 import fi.dy.masa.malilib.gui.interfaces.IDialogHandler;
@@ -18,7 +18,7 @@ import fi.dy.masa.malilib.util.StringUtils;
 
 public class WidgetKeybindSettings extends WidgetBase
 {
-    public static final Identifier TEXTURE = Identifier.splitOn(MaLiLibReference.MOD_ID + ":textures/gui/gui_widgets.png", ':');
+    public static final Identifier TEXTURE = Identifier.of(MaLiLibReference.MOD_ID, "textures/gui/gui_widgets.png");
 
     protected final String keybindName;
     protected final IKeybind keybind;
@@ -85,17 +85,27 @@ public class WidgetKeybindSettings extends WidgetBase
         RenderUtils.drawRect(x    , y + 0, 20, 20, edgeColor);
         RenderUtils.drawRect(x + 1, y + 1, 18, 18, 0xFF000000);
 
+        RenderUtils.forceDraw(drawContext);
+
         x += 1;
         y += 1;
         float z = 0;
 
         RenderUtils.color(1f, 1f, 1f, 1f);
 
-        RenderUtils.drawTexturedRect(x, y,  0, v1, w, w, z);
-        RenderUtils.drawTexturedRect(x, y, 18, v2, w, w, z);
-        RenderUtils.drawTexturedRect(x, y, 36, v3, w, w, z);
-        RenderUtils.drawTexturedRect(x, y, 54, v4, w, w, z);
-        RenderUtils.drawTexturedRect(x, y, 72, v5, w, w, z);
+        //RenderUtils.drawTexturedRect(x, y,  0, v1, w, w, z);
+        //RenderUtils.drawTexturedRect(x, y, 18, v2, w, w, z);
+        //RenderUtils.drawTexturedRect(x, y, 36, v3, w, w, z);
+        //RenderUtils.drawTexturedRect(x, y, 54, v4, w, w, z);
+        //RenderUtils.drawTexturedRect(x, y, 72, v5, w, w, z);
+
+        RenderUtils.drawTexturedRect(TEXTURE, x, y,  0,  v1, w, w, z, drawContext);
+        RenderUtils.drawTexturedRect(TEXTURE, x, y,  18, v2, w, w, z, drawContext);
+        RenderUtils.drawTexturedRect(TEXTURE, x, y,  36, v3, w, w, z, drawContext);
+        RenderUtils.drawTexturedRect(TEXTURE, x, y,  54, v4, w, w, z, drawContext);
+        RenderUtils.drawTexturedRect(TEXTURE, x, y,  72, v5, w, w, z, drawContext);
+
+        RenderUtils.forceDraw(drawContext);
     }
 
     @Override
@@ -145,5 +155,6 @@ public class WidgetKeybindSettings extends WidgetBase
         }
 
         RenderUtils.drawHoverText(mouseX + 10, mouseY, text, drawContext);
+        RenderUtils.forceDraw(drawContext);
     }
 }

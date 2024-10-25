@@ -4,6 +4,7 @@ import java.io.File;
 import com.google.common.collect.ImmutableList;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+
 import fi.dy.masa.malilib.config.ConfigUtils;
 import fi.dy.masa.malilib.config.IConfigHandler;
 import fi.dy.masa.malilib.config.IConfigValue;
@@ -16,26 +17,30 @@ public class MaLiLibConfigs implements IConfigHandler
 {
     private static final String CONFIG_FILE_NAME = MaLiLibReference.MOD_ID + ".json";
 
+    private static final String GENERIC_KEY = MaLiLibReference.MOD_ID+".config";
     public static class Generic
     {
-        public static final ConfigHotkey    IGNORED_KEYS            = new ConfigHotkey("ignoredKeys", "", "malilib.config.comment.ignoredKeys").translatedName("malilib.config.name.ignoredKeys");
-        public static final ConfigHotkey    OPEN_GUI_CONFIGS        = new ConfigHotkey("openGuiConfigs", "A,C", "malilib.config.comment.openGuiConfigs").translatedName("malilib.config.name.openGuiConfigs");
-        public static final ConfigBoolean   REALMS_COMMON_CONFIG    = new ConfigBoolean("realmsCommonConfig", true, "malilib.config.comment.realmsCommonConfig").translatedName("malilib.config.name.realmsCommonConfig");
+        public static final ConfigHotkey      IGNORED_KEYS              = new ConfigHotkey("ignoredKeys", "").apply(GENERIC_KEY);
+        public static final ConfigHotkey      OPEN_GUI_CONFIGS          = new ConfigHotkey("openGuiConfigs", "A,C").apply(GENERIC_KEY);
+        public static final ConfigBoolean     REALMS_COMMON_CONFIG      = new ConfigBoolean("realmsCommonConfig", true).apply(GENERIC_KEY);
+        public static final ConfigBoolean     ENABLE_ACTIONBAR_MESSAGES = new ConfigBoolean("enableActionbarMessages", true).apply(GENERIC_KEY);
 
         public static final ImmutableList<IConfigValue> OPTIONS = ImmutableList.of(
                 IGNORED_KEYS,
                 OPEN_GUI_CONFIGS,
-                REALMS_COMMON_CONFIG
+                REALMS_COMMON_CONFIG,
+                ENABLE_ACTIONBAR_MESSAGES
         );
     }
 
+    private static final String DEBUG_KEY = MaLiLibReference.MOD_ID+".config";
     public static class Debug
     {
-        public static final ConfigBoolean DEBUG_MESSAGES            = new ConfigBoolean("debugMessages",false, "malilib.config.comment.debugMessages").translatedName("malilib.config.name.debugMessages");
-        public static final ConfigBoolean INPUT_CANCELLATION_DEBUG  = new ConfigBoolean("inputCancellationDebugging", false, "malilib.config.comment.inputCancellationDebugging").translatedName("malilib.config.name.inputCancellationDebugging");
-        public static final ConfigBoolean KEYBIND_DEBUG             = new ConfigBoolean("keybindDebugging", false, "malilib.config.comment.keybindDebugging").translatedName("malilib.config.name.keybindDebugging");
-        public static final ConfigBoolean KEYBIND_DEBUG_ACTIONBAR   = new ConfigBoolean("keybindDebuggingIngame", false, "malilib.config.comment.keybindDebuggingIngame").translatedName("malilib.config.name.keybindDebuggingIngame");
-        public static final ConfigBoolean MOUSE_SCROLL_DEBUG        = new ConfigBoolean("mouseScrollDebug", false, "malilib.config.comment.mouseScrollDebug").translatedName("malilib.config.name.mouseScrollDebug");
+        public static final ConfigBoolean DEBUG_MESSAGES            = new ConfigBoolean("debugMessages",false).apply(DEBUG_KEY);
+        public static final ConfigBoolean INPUT_CANCELLATION_DEBUG  = new ConfigBoolean("inputCancellationDebugging", false).apply(DEBUG_KEY);
+        public static final ConfigBoolean KEYBIND_DEBUG             = new ConfigBoolean("keybindDebugging", false).apply(DEBUG_KEY);
+        public static final ConfigBoolean KEYBIND_DEBUG_ACTIONBAR   = new ConfigBoolean("keybindDebuggingIngame", false).apply(DEBUG_KEY);
+        public static final ConfigBoolean MOUSE_SCROLL_DEBUG        = new ConfigBoolean("mouseScrollDebug", false).apply(DEBUG_KEY);
 
         public static final ImmutableList<IConfigValue> OPTIONS = ImmutableList.of(
                 DEBUG_MESSAGES,

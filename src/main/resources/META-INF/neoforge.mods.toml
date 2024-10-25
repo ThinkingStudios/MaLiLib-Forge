@@ -29,7 +29,7 @@ side = "BOTH"
 [[dependencies.mafglib]]
 modId = "minecraft"
 type = "required"
-versionRange = "[1.21,)"
+versionRange = "[1.21.2,)"
 ordering = "NONE"
 side = "BOTH"
 
