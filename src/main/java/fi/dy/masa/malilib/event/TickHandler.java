@@ -2,8 +2,6 @@ package fi.dy.masa.malilib.event;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.jetbrains.annotations.ApiStatus;
-
 import net.minecraft.client.MinecraftClient;
 import fi.dy.masa.malilib.interfaces.IClientTickHandler;
 
@@ -26,7 +24,9 @@ public class TickHandler
         }
     }
 
-    @ApiStatus.Internal
+    /**
+     * NOT PUBLIC API - DO NOT CALL
+     */
     public void onClientTick(MinecraftClient mc)
     {
         if (this.clientTickHandlers.isEmpty() == false)

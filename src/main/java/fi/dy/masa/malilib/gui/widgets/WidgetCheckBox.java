@@ -93,7 +93,7 @@ public class WidgetCheckBox extends WidgetBase
 
         RenderUtils.color(1f, 1f, 1f, 1f);
         this.bindTexture(icon.getTexture());
-        icon.renderAt(this.x, this.y, this.zLevel, false, false, drawContext);
+        icon.renderAt(this.x, this.y, this.zLevel, false, false);
 
         int iw = icon.getWidth();
         int y = this.y + 1 + (this.height - this.fontHeight) / 2;

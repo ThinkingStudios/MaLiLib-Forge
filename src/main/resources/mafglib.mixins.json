@@ -5,7 +5,6 @@
   "minVersion": "0.8",
   "client": [
     "IMixinAbstractHorseEntity",
-    "IMixinDrawContext",
     "IMixinPiglinEntity",
     "MixinClientConfigurationNetworkHandler",
     "MixinClientPlayNetworkHandler",
@@ -24,9 +23,5 @@
   ],
   "injectors": {
     "defaultRequire": 1
-  },
-  "mixins": [
-    "IMixinPlayerEntity",
-    "MixinAbstractHorseEntity"
-  ]
+  }
 }

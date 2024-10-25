@@ -13,44 +13,24 @@ public class ConfigHotkey extends ConfigBase<ConfigHotkey> implements IHotkey
 {
     private final IKeybind keybind;
 
-    public ConfigHotkey(String name, String defaultStorageString)
-    {
-        this(name, defaultStorageString, KeybindSettings.DEFAULT, name+" Comment?", StringUtils.splitCamelCase(name), name);
-    }
-
     public ConfigHotkey(String name, String defaultStorageString, String comment)
     {
-        this(name, defaultStorageString, KeybindSettings.DEFAULT, comment, StringUtils.splitCamelCase(name), name);
-    }
-
-    public ConfigHotkey(String name, String defaultStorageString, String comment, String prettyName)
-    {
-        this(name, defaultStorageString, KeybindSettings.DEFAULT, comment, prettyName, name);
-    }
-
-    public ConfigHotkey(String name, String defaultStorageString, String comment, String prettyName, String translatedName)
-    {
-        this(name, defaultStorageString, KeybindSettings.DEFAULT, comment, prettyName, translatedName);
-    }
-
-    public ConfigHotkey(String name, String defaultStorageString, KeybindSettings settings)
-    {
-        this(name, defaultStorageString, settings, name+" Comment?", StringUtils.splitCamelCase(name), name);
+        this(name, defaultStorageString, comment, name);
     }
 
     public ConfigHotkey(String name, String defaultStorageString, KeybindSettings settings, String comment)
     {
-        this(name, defaultStorageString, settings, comment, StringUtils.splitCamelCase(name), name);
+        this(name, defaultStorageString, settings, comment, StringUtils.splitCamelCase(name));
+    }
+
+    public ConfigHotkey(String name, String defaultStorageString, String comment, String prettyName)
+    {
+        this(name, defaultStorageString, KeybindSettings.DEFAULT, comment, prettyName);
     }
 
     public ConfigHotkey(String name, String defaultStorageString, KeybindSettings settings, String comment, String prettyName)
     {
-        this(name, defaultStorageString, settings, comment, prettyName, name);
-    }
-
-    public ConfigHotkey(String name, String defaultStorageString, KeybindSettings settings, String comment, String prettyName, String translatedName)
-    {
-        super(ConfigType.HOTKEY, name, comment, prettyName, translatedName);
+        super(ConfigType.HOTKEY, name, comment, prettyName);
 
         this.keybind = KeybindMulti.fromStorageString(defaultStorageString, settings);
     }

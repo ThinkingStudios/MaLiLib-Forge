@@ -5,7 +5,6 @@ import com.google.gson.JsonPrimitive;
 import fi.dy.masa.malilib.MaLiLib;
 import fi.dy.masa.malilib.config.ConfigType;
 import fi.dy.masa.malilib.config.IConfigValue;
-import fi.dy.masa.malilib.util.StringUtils;
 
 public class ConfigString extends ConfigBase<ConfigString> implements IConfigValue
 {
@@ -13,24 +12,14 @@ public class ConfigString extends ConfigBase<ConfigString> implements IConfigVal
     private String value;
     private String previousValue;
 
-    public ConfigString(String name, String defaultValue)
-    {
-        this(name, defaultValue, name+" Comment?", StringUtils.splitCamelCase(name), name);
-    }
-
     public ConfigString(String name, String defaultValue, String comment)
     {
-        this(name, defaultValue, comment, StringUtils.splitCamelCase(name), name);
+        this(name, defaultValue, comment, name);
     }
 
     public ConfigString(String name, String defaultValue, String comment, String prettyName)
     {
-        this(name, defaultValue, comment, prettyName, name);
-    }
-
-    public ConfigString(String name, String defaultValue, String comment, String prettyName, String translatedName)
-    {
-        super(ConfigType.STRING, name, comment, prettyName, translatedName);
+        super(ConfigType.STRING, name, comment, prettyName);
 
         this.defaultValue = defaultValue;
         this.value = defaultValue;

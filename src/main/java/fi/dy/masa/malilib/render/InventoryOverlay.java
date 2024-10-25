@@ -8,14 +8,11 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import fi.dy.masa.malilib.MaLiLib;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.*;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gl.ShaderProgramKeys;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.*;
-import net.minecraft.client.render.model.BakedModel;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -25,7 +22,7 @@ import net.minecraft.entity.mob.PiglinEntity;
 import net.minecraft.entity.passive.AbstractHorseEntity;
 import net.minecraft.entity.passive.VillagerEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.vehicle.AbstractChestBoatEntity;
+import net.minecraft.entity.vehicle.ChestBoatEntity;
 import net.minecraft.entity.vehicle.ChestMinecartEntity;
 import net.minecraft.entity.vehicle.HopperMinecartEntity;
 import net.minecraft.inventory.DoubleInventory;
@@ -34,7 +31,6 @@ import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.ModelTransformationMode;
 import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
@@ -48,7 +44,6 @@ import net.minecraft.world.World;
 
 import fi.dy.masa.malilib.gui.GuiBase;
 import fi.dy.masa.malilib.mixin.IMixinAbstractHorseEntity;
-import fi.dy.masa.malilib.mixin.IMixinDrawContext;
 import fi.dy.masa.malilib.mixin.IMixinPiglinEntity;
 import fi.dy.masa.malilib.util.*;
 
@@ -86,9 +81,8 @@ public class InventoryOverlay
         BufferBuilder buffer = tessellator.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_TEXTURE);
         BuiltBuffer builtBuffer;
 
-        RenderSystem.setShader(ShaderProgramKeys.POSITION_TEX);
-        //RenderSystem.setShader(GameRenderer::getPositionTexProgram);
-        //RenderSystem.applyModelViewMatrix();
+        RenderSystem.setShader(GameRenderer::getPositionTexProgram);
+        RenderSystem.applyModelViewMatrix();
 
         if (type == InventoryRenderType.FURNACE)
         {
@@ -183,7 +177,7 @@ public class InventoryOverlay
             }
         }
 
-        //RenderSystem.enableDepthTest();
+        RenderSystem.enableDepthTest();
         RenderSystem.enableBlend();
 
         try
@@ -223,9 +217,8 @@ public class InventoryOverlay
         BufferBuilder buffer = tessellator.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_TEXTURE);
         BuiltBuffer builtBuffer;
 
-        RenderSystem.setShader(ShaderProgramKeys.POSITION_TEX);
-        //RenderSystem.setShader(GameRenderer::getPositionTexProgram);
-        //RenderSystem.applyModelViewMatrix();
+        RenderSystem.setShader(GameRenderer::getPositionTexProgram);
+        RenderSystem.applyModelViewMatrix();
 
         RenderUtils.bindTexture(TEXTURE_DISPENSER);
 
@@ -280,7 +273,7 @@ public class InventoryOverlay
         {
             return InventoryRenderType.FIXED_54;
         }
-        else if (inv instanceof AbstractChestBoatEntity)
+        else if (inv instanceof ChestBoatEntity)
         {
             return InventoryRenderType.FIXED_27;
         }
@@ -364,11 +357,6 @@ public class InventoryOverlay
         return InventoryRenderType.GENERIC;
     }
 
-    /**
-     * Attempts to get the Inventory Type based on raw NBT tags.
-     * @param nbt
-     * @return
-     */
     public static InventoryRenderType getInventoryType(@Nonnull NbtCompound nbt)
     {
         BlockEntityType<?> blockType = BlockUtils.getBlockEntityTypeFromNbt(nbt);
@@ -421,15 +409,7 @@ public class InventoryOverlay
         if (entityType != null)
         {
             if (entityType.equals(EntityType.CHEST_MINECART) ||
-                entityType.equals(EntityType.ACACIA_CHEST_BOAT) ||
-                entityType.equals(EntityType.BAMBOO_CHEST_RAFT) ||
-                entityType.equals(EntityType.BIRCH_CHEST_BOAT) ||
-                entityType.equals(EntityType.CHERRY_CHEST_BOAT) ||
-                entityType.equals(EntityType.DARK_OAK_CHEST_BOAT) ||
-                entityType.equals(EntityType.JUNGLE_CHEST_BOAT) ||
-                entityType.equals(EntityType.MANGROVE_CHEST_BOAT) ||
-                entityType.equals(EntityType.OAK_CHEST_BOAT) ||
-                entityType.equals(EntityType.SPRUCE_CHEST_BOAT))
+                entityType.equals(EntityType.CHEST_BOAT))
             {
                 return InventoryRenderType.FIXED_27;
             }
@@ -462,12 +442,6 @@ public class InventoryOverlay
         return InventoryRenderType.GENERIC;
     }
 
-    /**
-     * Two-Way match to try to get the Best Inventory Type based on the INV Object, or NBT Tags.
-     * @param inv
-     * @param nbt
-     * @return
-     */
     public static InventoryRenderType getBestInventoryType(@Nonnull Inventory inv, @Nonnull NbtCompound nbt)
     {
         InventoryRenderType i = getInventoryType(inv);
@@ -482,13 +456,6 @@ public class InventoryOverlay
         return i;
     }
 
-    /**
-     * Three-Way match to try to get the Best Inventory Type based on the INV Object, NBT tags, or an Overlay Context.
-     * @param inv
-     * @param nbt
-     * @param ctx
-     * @return
-     */
     public static InventoryRenderType getBestInventoryType(@Nonnull Inventory inv, @Nonnull NbtCompound nbt, Context ctx)
     {
         InventoryRenderType i = getInventoryType(inv);
@@ -604,19 +571,6 @@ public class InventoryOverlay
         renderInventoryStacks(type, inv, startX, startY, slotsPerRow, startSlot, maxSlots, Set.of(), mc, drawContext, 0, 0);
     }
 
-    /**
-     * Supports lockable Crafter Slots
-     * @param type
-     * @param inv
-     * @param startX
-     * @param startY
-     * @param slotsPerRow
-     * @param startSlot
-     * @param maxSlots
-     * @param disabledSlots (Locked Crafter Slots as a numbered Set)
-     * @param mc
-     * @param drawContext
-     */
     public static void renderInventoryStacks(InventoryRenderType type, Inventory inv, int startX, int startY, int slotsPerRow, int startSlot, int maxSlots, Set<Integer> disabledSlots, MinecraftClient mc, DrawContext drawContext)
     {
         renderInventoryStacks(type, inv, startX, startY, slotsPerRow, startSlot, maxSlots, disabledSlots, mc, drawContext, 0, 0);
@@ -627,22 +581,6 @@ public class InventoryOverlay
         renderInventoryStacks(type, inv, startX, startY, slotsPerRow, startSlot, maxSlots, Set.of(), mc, drawContext, mouseX, mouseY);
     }
 
-    /**
-     * Render the Inventory Stacks.  Now Supports Lockable Crafter Slots.
-     *
-     * @param type
-     * @param inv
-     * @param startX
-     * @param startY
-     * @param slotsPerRow
-     * @param startSlot
-     * @param maxSlots
-     * @param disabledSlots  (Locked Crafter Slots as a numbered Set)
-     * @param mc
-     * @param drawContext
-     * @param mouseX
-     * @param mouseY
-     */
     public static void renderInventoryStacks(InventoryRenderType type, Inventory inv, int startX, int startY, int slotsPerRow, int startSlot, int maxSlots, Set<Integer> disabledSlots, MinecraftClient mc, DrawContext drawContext, double mouseX, double mouseY)
     {
         if (type == InventoryRenderType.FURNACE)
@@ -750,19 +688,6 @@ public class InventoryOverlay
         renderItemStacks(items, startX, startY, slotsPerRow, startSlot, maxSlots, Set.of(), mc, drawContext);
     }
 
-    /**
-     * Renders an ItemList.  Now supports Lockable Crafter Slots.
-     *
-     * @param items
-     * @param startX
-     * @param startY
-     * @param slotsPerRow
-     * @param startSlot
-     * @param maxSlots
-     * @param disabledSlots  (Locked Crafter Slots as a numbered Set)
-     * @param mc
-     * @param drawContext
-     */
     public static void renderItemStacks(DefaultedList<ItemStack> items, int startX, int startY, int slotsPerRow, int startSlot, int maxSlots, Set<Integer> disabledSlots, MinecraftClient mc, DrawContext drawContext)
     {
         final int slots = items.size();
@@ -813,11 +738,10 @@ public class InventoryOverlay
         RenderUtils.enableDiffuseLightingGui3D();
         RenderUtils.color(1f, 1f, 1f, 1f);
 
-        drawContext.drawItem(stack.copy(), 0, 0);
+        drawContext.drawItem(stack, 0, 0);
 
         RenderUtils.color(1f, 1f, 1f, 1f);
-        drawContext.drawStackOverlay(mc.textRenderer, stack.copyWithCount(stack.getCount()), 0, 0);
-        RenderUtils.forceDraw(drawContext);
+        drawContext.drawItemInSlot(mc.textRenderer, stack, 0, 0);
 
         RenderUtils.color(1f, 1f, 1f, 1f);
         matrixStack.pop();
@@ -828,20 +752,10 @@ public class InventoryOverlay
         }
     }
 
-    /**
-     * Render's a locked Crafter Slot at the specified location.
-     *
-     * @param x
-     * @param y
-     * @param scale
-     * @param drawContext
-     * @param mouseX
-     * @param mouseY
-     */
     public static void renderLockedSlotAt(float x, float y, float scale, DrawContext drawContext, double mouseX, double mouseY)
     {
         MatrixStack matrixStack = drawContext.getMatrices();
-        int color = -1;
+        //int color = -1;
 
         matrixStack.push();
         matrixStack.translate(x, y, 0.f);
@@ -850,8 +764,7 @@ public class InventoryOverlay
         RenderUtils.enableDiffuseLightingGui3D();
         RenderUtils.color(1f, 1f, 1f, 1f);
 
-        drawContext.drawGuiTexture(RenderLayer::getGuiTextured, TEXTURE_LOCKED_SLOT, 0, 0, 18, 18, color);
-        RenderUtils.forceDraw(drawContext);
+        drawContext.drawGuiTexture(TEXTURE_LOCKED_SLOT, 0, 0, 18, 18, 18);
 
         RenderUtils.color(1f, 1f, 1f, 1f);
         matrixStack.pop();
@@ -906,22 +819,8 @@ public class InventoryOverlay
         GENERIC;
     }
 
-   /**
-     * New InventoryOverlay Context interface.
-     *
-     * @param type
-     * @param inv
-     * @param be
-     * @param entity
-     * @param nbt
-     */
     public record Context(InventoryRenderType type, @Nullable Inventory inv, @Nullable BlockEntity be, @Nullable LivingEntity entity, @Nullable NbtCompound nbt) {}
 
-    /**
-     * Returns a Context based on NBT Tags
-     * @param nbtIn
-     * @return
-     */
     public static @Nullable Context invFromNbt(NbtCompound nbtIn)
     {
         if (nbtIn != null)
@@ -937,12 +836,6 @@ public class InventoryOverlay
         return null;
     }
 
-    /**
-     * Returns a Context based on a Block Entity World / Pos
-     * @param world
-     * @param pos
-     * @return
-     */
     public static @Nullable Context invFromBlockPos(World world, BlockPos pos)
     {
         if (world != null && pos == null)
@@ -958,13 +851,6 @@ public class InventoryOverlay
         return null;
     }
 
-    /**
-     * Returns a Context based on a Block Entity Object.  Attempts to generate the NBT tags.
-     *
-     * @param blockEntity
-     * @param world
-     * @return
-     */
     public static @Nullable Context invFromBlockEntity(BlockEntity blockEntity, @Nonnull World world)
     {
         if (blockEntity != null)
@@ -981,12 +867,6 @@ public class InventoryOverlay
         return null;
     }
 
-    /**
-     * Returns a Context based on an Entity, and attempts to generate the NBT tags.
-     *
-     * @param ent
-     * @return
-     */
     public static @Nullable Context invFromEntity(Entity ent)
     {
         if (ent != null)

@@ -1,12 +1,10 @@
 package fi.dy.masa.malilib.util.restrictions;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 import net.minecraft.block.Block;
 import net.minecraft.registry.Registries;
-import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.Identifier;
 
 import fi.dy.masa.malilib.MaLiLib;
@@ -27,11 +25,11 @@ public class BlockRestriction extends UsageRestriction<Block>
             }
             catch (Exception ignore) {}
 
-            Optional<RegistryEntry.Reference<Block>> opt = Registries.BLOCK.getEntry(rl);
+            Block block = rl != null ? Registries.BLOCK.get(rl) : null;
 
-            if (opt.isPresent())
+            if (block != null)
             {
-                set.add(opt.get().value());
+                set.add(block);
             }
             else
             {

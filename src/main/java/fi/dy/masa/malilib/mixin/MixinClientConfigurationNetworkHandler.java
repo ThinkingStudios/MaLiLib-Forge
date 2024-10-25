@@ -1,6 +1,5 @@
 package fi.dy.masa.malilib.mixin;
 
-import com.llamalad7.mixinextras.sugar.Local;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -16,9 +15,10 @@ public class MixinClientConfigurationNetworkHandler
 {
     @Inject(method = "onReady", at = @At(value = "INVOKE",
             target = "Lnet/minecraft/network/ClientConnection;transitionInbound(Lnet/minecraft/network/NetworkState;Lnet/minecraft/network/listener/PacketListener;)V",
-            shift = At.Shift.BEFORE)
+            shift = At.Shift.BEFORE),
+            locals = LocalCapture.CAPTURE_FAILHARD
     )
-    private void malilib_onPlayLogin(ReadyS2CPacket packet, CallbackInfo ci, @Local DynamicRegistryManager.Immutable immutable)
+    private void malilib_onPlayLogin(ReadyS2CPacket packet, CallbackInfo ci, DynamicRegistryManager.Immutable immutable)
     {
         ((WorldLoadHandler) WorldLoadHandler.getInstance()).onWorldLoadImmutable(immutable);
     }
