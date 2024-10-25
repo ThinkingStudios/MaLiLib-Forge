@@ -1,9 +1,13 @@
 package fi.dy.masa.malilib.util;
 
+import org.jetbrains.annotations.ApiStatus;
+
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.world.World;
+
+import fi.dy.masa.malilib.MaLiLibConfigs;
 import fi.dy.masa.malilib.gui.GuiBase;
 import fi.dy.masa.malilib.gui.Message.MessageType;
 import fi.dy.masa.malilib.gui.interfaces.IMessageConsumer;
@@ -139,7 +143,10 @@ public class InfoUtils
 
     public static void printActionbarMessage(String key, Object... args)
     {
-        sendVanillaMessage(Text.translatable(key, args));
+        if (MaLiLibConfigs.Generic.ENABLE_ACTIONBAR_MESSAGES.getBooleanValue())
+        {
+            sendVanillaMessage(Text.translatable(key, args));
+        }
     }
 
     /**
@@ -174,9 +181,7 @@ public class InfoUtils
         printActionbarMessage(message);
     }
 
-    /**
-     * NOT PUBLIC API - DO NOT CALL
-     */
+    @ApiStatus.Internal
     public static void renderInGameMessages(net.minecraft.client.gui.DrawContext drawContext)
     {
         int x = GuiUtils.getScaledWindowWidth() / 2;

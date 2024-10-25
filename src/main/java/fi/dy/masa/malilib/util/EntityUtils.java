@@ -7,6 +7,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import com.google.common.collect.Maps;
 import com.llamalad7.mixinextras.lib.apache.commons.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
 
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Dynamic;
@@ -21,6 +22,7 @@ import net.minecraft.entity.decoration.painting.PaintingVariant;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.passive.*;
+import net.minecraft.entity.player.HungerManager;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -28,11 +30,13 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtHelper;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.nbt.NbtOps;
+import net.minecraft.recipe.ServerRecipeManager;
 import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.server.network.ServerRecipeBook;
 import net.minecraft.text.Text;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Identifier;
@@ -65,7 +69,7 @@ public class EntityUtils
     }
 
     /**
-     * Returns weather or not the Entity has a Turtle Helmet equipped
+     * Returns if the Entity has a Turtle Helmet equipped
      *
      * @param player (The Player)
      * @return (True / False)
@@ -92,12 +96,7 @@ public class EntityUtils
     {
         if (nbt.contains(NbtKeys.ID, Constants.NBT.TAG_STRING))
         {
-             RegistryEntry<EntityType<?>> entry = Registries.ENTITY_TYPE.getEntry(Identifier.tryParse(nbt.getString(NbtKeys.ID))).orElse(null);
-
-             if (entry != null && entry.hasKeyAndValue())
-             {
-                 return entry.value();
-             }
+            return Registries.ENTITY_TYPE.getOptionalValue(Identifier.tryParse(nbt.getString(NbtKeys.ID))).orElse(null);
         }
 
         return null;
@@ -195,7 +194,9 @@ public class EntityUtils
         {
             health = nbt.getFloat(NbtKeys.HEALTH);
         }
-        maxHealth = getAttributeValueFromNbt(nbt, EntityAttributes.GENERIC_MAX_HEALTH);
+      
+        maxHealth = getAttributeValueFromNbt(nbt, EntityAttributes.MAX_HEALTH);
+
         if (maxHealth < 0)
         {
             maxHealth = (float) 20;
@@ -212,8 +213,8 @@ public class EntityUtils
      */
     public static Pair<Float, Float> getSpeedAndJumpStrengthFromNbt(@Nonnull NbtCompound nbt)
     {
-        float moveSpeed = (float) getAttributeValueFromNbt(nbt, EntityAttributes.GENERIC_MOVEMENT_SPEED);
-        float jumpStrength = (float) getAttributeValueFromNbt(nbt, EntityAttributes.GENERIC_JUMP_STRENGTH);
+        float moveSpeed = (float) getAttributeValueFromNbt(nbt, EntityAttributes.MOVEMENT_SPEED);
+        float jumpStrength = (float) getAttributeValueFromNbt(nbt, EntityAttributes.JUMP_STRENGTH);
 
         return Pair.of(moveSpeed, jumpStrength);
     }
@@ -543,7 +544,7 @@ public class EntityUtils
     {
         try
         {
-            return registry.getOptional(Registries.ENTITY_TYPE.getKey()).flatMap(optional -> optional.getEntry(id)).orElse(null);
+            return registry.getOrThrow(Registries.ENTITY_TYPE.getKey()).getEntry(id).orElseThrow();
         }
         catch (Exception e)
         {
@@ -610,6 +611,12 @@ public class EntityUtils
         return Pair.of(mainGene, hiddenGene);
     }
 
+    /**
+     * Get an Item Frame's Rotation and Facing Directions from NBT.
+     *
+     * @param nbt ()
+     * @return ()
+     */
     public static Pair<Direction, Direction> getItemFrameDirectionsFromNbt(@Nonnull NbtCompound nbt)
     {
         Direction facing = null;
@@ -627,6 +634,13 @@ public class EntityUtils
         return Pair.of(facing, rotation);
     }
 
+    /**
+     * Get a Painting's Direction and Variant from BNT.
+     *
+     * @param nbt ()
+     * @param registry ()
+     * @return ()
+     */
     public static Pair<Direction, PaintingVariant> getPaintingDataFromNbt(@Nonnull NbtCompound nbt, @Nonnull DynamicRegistryManager registry)
     {
         Direction facing = null;
@@ -644,6 +658,12 @@ public class EntityUtils
         return Pair.of(facing, variant != null ? variant.value() : null);
     }
 
+    /**
+     * Get an Axolotl's Variant from NBT.
+     *
+     * @param nbt ()
+     * @return ()
+     */
     public static @Nullable AxolotlEntity.Variant getAxolotlVariantFromNbt(@Nonnull NbtCompound nbt)
     {
         if (nbt.contains(NbtKeys.VARIANT_2, Constants.NBT.TAG_INT))
@@ -654,6 +674,12 @@ public class EntityUtils
         return null;
     }
 
+    /**
+     * Get a Cat's Variant, and Collar Color from NBT.
+     *
+     * @param nbt ()
+     * @return ()
+     */
     public static Pair<RegistryKey<CatVariant>, DyeColor> getCatVariantFromNbt(@Nonnull NbtCompound nbt)
     {
         RegistryKey<CatVariant> variantKey = null;
@@ -676,6 +702,12 @@ public class EntityUtils
         return Pair.of(variantKey, collar);
     }
 
+    /**
+     * Get a Frog's Variant from NBT.
+     *
+     * @param nbt ()
+     * @return ()
+     */
     public static @Nullable RegistryKey<FrogVariant> getFrogVariantFromNbt(@Nonnull NbtCompound nbt)
     {
         if (nbt.contains(NbtKeys.VARIANT, Constants.NBT.TAG_STRING))
@@ -693,6 +725,11 @@ public class EntityUtils
         return null;
     }
 
+    /**
+     * Get a Horse's Variant (Color, Markings) from NBT.
+     * @param nbt ()
+     * @return ()
+     */
     public static Pair<HorseColor, HorseMarking> getHorseVariantFromNbt(@Nonnull NbtCompound nbt)
     {
         HorseColor color = null;
@@ -708,6 +745,12 @@ public class EntityUtils
         return Pair.of(color, marking);
     }
 
+    /**
+     * Get a Parrot's Variant from NBT.
+     *
+     * @param nbt ()
+     * @return ()
+     */
     public static @Nullable ParrotEntity.Variant getParrotVariantFromNbt(@Nonnull NbtCompound nbt)
     {
         if (nbt.contains(NbtKeys.VARIANT_2, Constants.NBT.TAG_INT))
@@ -732,6 +775,12 @@ public class EntityUtils
         return null;
     }
 
+    /**
+     * Get a Wolves' Variant and Collar Color from NBT.
+     *
+     * @param nbt ()
+     * @return ()
+     */
     public static Pair<RegistryKey<WolfVariant>, DyeColor> getWolfVariantFromNbt(@Nonnull NbtCompound nbt)
     {
         RegistryKey<WolfVariant> variantKey = null;
@@ -754,6 +803,12 @@ public class EntityUtils
         return Pair.of(variantKey, collar);
     }
 
+    /**
+     * Get a Sheep's Color from NBT.
+     *
+     * @param nbt ()
+     * @return ()
+     */
     public static @Nullable DyeColor getSheepColorFromNbt(@Nonnull NbtCompound nbt)
     {
         if (nbt.contains(NbtKeys.COLOR, Constants.NBT.TAG_BYTE))
@@ -762,5 +817,71 @@ public class EntityUtils
         }
 
         return null;
+    }
+
+    /**
+     * Get a player's Experience values from NBT.
+     *
+      * @param nbt ()
+     * @return ()
+     */
+    public static Triple<Integer, Integer, Float> getPlayerExpFromNbt(@Nonnull NbtCompound nbt)
+    {
+        int level = -1;
+        int total = -1;
+        float progress = 0.0f;
+
+        if (nbt.contains(NbtKeys.EXP_LEVEL, Constants.NBT.TAG_INT))
+        {
+            level = nbt.getInt(NbtKeys.EXP_LEVEL);
+        }
+        if (nbt.contains(NbtKeys.EXP_TOTAL, Constants.NBT.TAG_INT))
+        {
+            total = nbt.getInt(NbtKeys.EXP_TOTAL);
+        }
+        if (nbt.contains(NbtKeys.EXP_PROGRESS, Constants.NBT.TAG_FLOAT))
+        {
+            progress = nbt.getFloat(NbtKeys.EXP_PROGRESS);
+        }
+
+        return Triple.of(level, total, progress);
+    }
+
+    /**
+     * Get a Player's Hunger Manager from NBT.
+     *
+     * @param nbt ()
+     * @return ()
+     */
+    public static @Nullable HungerManager getPlayerHungerFromNbt(@Nonnull NbtCompound nbt)
+    {
+        HungerManager hunger = null;
+
+        if (nbt.contains(NbtKeys.FOOD_LEVEL, Constants.NBT.TAG_ANY_NUMERIC))
+        {
+            hunger = new HungerManager();
+            hunger.readNbt(nbt);
+        }
+
+        return hunger;
+    }
+
+    /**
+     * Get a Players' Unlocked Recipe Book from NBT.  (Server Side only)
+     * @param nbt ()
+     * @param manager ()
+     * @return ()
+     */
+    public static @Nullable ServerRecipeBook getPlayerRecipeBookFromNbt(@Nonnull NbtCompound nbt, @Nonnull ServerRecipeManager manager)
+    {
+        ServerRecipeBook book = null;
+
+        if (nbt.contains(NbtKeys.RECIPE_BOOK, Constants.NBT.TAG_COMPOUND))
+        {
+            book = new ServerRecipeBook(manager::forEachRecipeDisplay);
+            book.readNbt(nbt.getCompound(NbtKeys.RECIPE_BOOK), (key) -> manager.get(key).isPresent());
+        }
+
+        return book;
     }
 }
