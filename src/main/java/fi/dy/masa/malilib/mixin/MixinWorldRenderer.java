@@ -1,11 +1,9 @@
 package fi.dy.masa.malilib.mixin;
 
 import com.llamalad7.mixinextras.sugar.Local;
-import net.minecraft.util.profiler.Profilers;
 import org.joml.Matrix4f;
 
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gl.PostEffectProcessor;
 import net.minecraft.client.render.*;
 import net.minecraft.client.util.ObjectAllocator;
 import net.minecraft.util.profiler.Profiler;
@@ -29,15 +27,14 @@ public abstract class MixinWorldRenderer
 
     @Inject(method = "render",
             at = @At(value = "INVOKE",
-                     target = "Lnet/minecraft/client/render/WorldRenderer;addWeatherPass(Lnet/minecraft/client/render/FrameGraphBuilder;Lnet/minecraft/client/render/LightmapTextureManager;Lnet/minecraft/util/math/Vec3d;FLnet/minecraft/client/render/Fog;Lorg/joml/Matrix4f;Lorg/joml/Matrix4f;Lnet/minecraft/client/render/Camera;)V",
+                     target = "Lnet/minecraft/client/render/WorldRenderer;addParticlesPass(Lnet/minecraft/client/render/FrameGraphBuilder;Lnet/minecraft/client/render/Camera;Lnet/minecraft/client/render/LightmapTextureManager;FLnet/minecraft/client/render/Fog;Lnet/minecraft/client/render/Frustum;Lorg/joml/Matrix4f;Lorg/joml/Matrix4f;)V",
                      shift = At.Shift.BEFORE))
-    private void malilib_onRenderWorldPreWeather(ObjectAllocator allocator, RenderTickCounter tickCounter,
-                                                 boolean renderBlockOutline, Camera camera, GameRenderer gameRenderer,
-                                                 LightmapTextureManager lightmapTextureManager, Matrix4f positionMatrix,
-                                                 Matrix4f projectionMatrix, CallbackInfo ci,
+    private void malilib_onRenderWorldPreWeather(ObjectAllocator allocator, RenderTickCounter tickCounter, boolean bl,
+                                                 Camera camera, GameRenderer gameRenderer, LightmapTextureManager lightmapTextureManager,
+                                                 Matrix4f positionMatrix, Matrix4f projectionMatrix, CallbackInfo ci,
+                                                 @Local Profiler profiler, @Local Frustum frustum,
                                                  @Local FrameGraphBuilder frameGraphBuilder,
-                                                 @Local Frustum frustum,
-                                                 @Local Profiler profiler)
+                                                 @Local(ordinal = 0) int i, @Local(ordinal = 1) int j)
     {
         ((RenderEventHandler) RenderEventHandler.getInstance()).runRenderWorldPreWeather(positionMatrix, projectionMatrix, this.client, frameGraphBuilder, this.framebufferSet, frustum, camera, profiler);
 

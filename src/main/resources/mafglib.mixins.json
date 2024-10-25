@@ -1,17 +1,18 @@
 {
   "required": true,
   "package": "fi.dy.masa.malilib.mixin",
-  "compatibilityLevel": "JAVA_17",
+  "compatibilityLevel": "JAVA_21",
   "minVersion": "0.8",
   "client": [
     "IMixinAbstractHorseEntity",
     "IMixinDrawContext",
     "IMixinPiglinEntity",
+    "IMixinPlayerEntity",
+    "MixinAbstractHorseEntity",
     "MixinClientConfigurationNetworkHandler",
     "MixinClientPlayNetworkHandler",
     "MixinDrawContext",
     "MixinHandledScreen",
-    "MixinHorseEntity",
     "MixinInGameHud",
     "MixinIntegratedServer",
     "MixinKeyboard",
@@ -24,9 +25,5 @@
   ],
   "injectors": {
     "defaultRequire": 1
-  },
-  "mixins": [
-    "IMixinPlayerEntity",
-    "MixinAbstractHorseEntity"
-  ]
+  }
 }
