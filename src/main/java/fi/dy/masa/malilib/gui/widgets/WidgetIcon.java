@@ -1,7 +1,5 @@
 package fi.dy.masa.malilib.gui.widgets;
 
-import net.minecraft.client.gui.DrawContext;
-
 import fi.dy.masa.malilib.gui.interfaces.IGuiIcon;
 import fi.dy.masa.malilib.render.RenderUtils;
 
@@ -16,11 +14,11 @@ public class WidgetIcon extends WidgetBase
         this.icon = icon;
     }
 
-    public void render(boolean enabled, boolean selected, DrawContext drawContext)
+    public void render(boolean enabled, boolean selected)
     {
         RenderUtils.color(1f, 1f, 1f, 1f);
         this.bindTexture(this.icon.getTexture());
-        this.icon.renderAt(this.x, this.y, this.zLevel, enabled, selected, drawContext);
+        this.icon.renderAt(this.x, this.y, this.zLevel, enabled, selected);
 
         if (selected)
         {

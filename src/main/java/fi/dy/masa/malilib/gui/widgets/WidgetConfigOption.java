@@ -161,8 +161,7 @@ public class WidgetConfigOption extends WidgetConfigOptionBase<ConfigOptionWrapp
         else if (type == ConfigType.STRING ||
                  type == ConfigType.COLOR ||
                  type == ConfigType.INTEGER ||
-                 type == ConfigType.DOUBLE ||
-                 type == ConfigType.FLOAT)
+                 type == ConfigType.DOUBLE)
         {
             int resetX = x + configWidth + 2;
 
@@ -172,13 +171,13 @@ public class WidgetConfigOption extends WidgetConfigOptionBase<ConfigOptionWrapp
                 this.colorDisplayPosX = x + configWidth + 2;
                 this.addWidget(new WidgetColorIndicator(this.colorDisplayPosX, y + 1, 19, 19, (IConfigInteger) config));
             }
-            else if (type == ConfigType.INTEGER || type == ConfigType.DOUBLE || type == ConfigType.FLOAT)
+            else if (type == ConfigType.INTEGER || type == ConfigType.DOUBLE)
             {
                 configWidth -= 18;
                 this.colorDisplayPosX = x + configWidth + 2;
             }
 
-            if ((type == ConfigType.INTEGER || type == ConfigType.DOUBLE || type == ConfigType.FLOAT) &&
+            if ((type == ConfigType.INTEGER || type == ConfigType.DOUBLE) &&
                 config instanceof IConfigSlider && ((IConfigSlider) config).shouldUseSlider())
             {
                 this.addConfigSliderEntry(x, y, resetX, configWidth, configHeight, (IConfigSlider) config);
@@ -336,10 +335,6 @@ public class WidgetConfigOption extends WidgetConfigOptionBase<ConfigOptionWrapp
         if (config instanceof IConfigDouble)
         {
             callback = new SliderCallbackDouble((IConfigDouble) config, resetButton);
-        }
-        else if (config instanceof IConfigFloat)
-        {
-            callback = new SliderCallbackFloat((IConfigFloat) config, resetButton);
         }
         else if (config instanceof IConfigInteger)
         {

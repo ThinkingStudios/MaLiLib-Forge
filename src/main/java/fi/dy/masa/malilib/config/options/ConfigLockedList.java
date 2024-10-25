@@ -38,7 +38,9 @@ public class ConfigLockedList extends ConfigBase<ConfigLockedList> implements IC
 
     public ConfigLockedList(String name, IConfigLockedListType handler, String comment, String prettyName, String translatedName)
     {
-        super(ConfigType.LOCKED_LIST, name, comment, prettyName, translatedName);
+        super(ConfigType.LOCKED_LIST, name, comment, prettyName);
+
+        this.setTranslatedName(translatedName);
         this.handler = handler;
         this.defaultList = handler.getDefaultEntries();
         this.values.addAll(this.defaultList);

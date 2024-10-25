@@ -2,21 +2,13 @@ package fi.dy.masa.malilib.event;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.jetbrains.annotations.ApiStatus;
 import org.joml.Matrix4f;
-
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gl.Framebuffer;
-import net.minecraft.client.gl.ShaderProgram;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.render.*;
-import net.minecraft.client.util.Handle;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.profiler.Profiler;
-import net.minecraft.util.profiler.Profilers;
-
-import fi.dy.masa.malilib.MaLiLibReference;
 import fi.dy.masa.malilib.interfaces.IRenderDispatcher;
 import fi.dy.masa.malilib.interfaces.IRenderer;
 import fi.dy.masa.malilib.util.InfoUtils;
@@ -27,7 +19,6 @@ public class RenderEventHandler implements IRenderDispatcher
 
     private final List<IRenderer> overlayRenderers = new ArrayList<>();
     private final List<IRenderer> tooltipLastRenderers = new ArrayList<>();
-    private final List<IRenderer> worldPreWeatherRenderers = new ArrayList<>();
     private final List<IRenderer> worldLastRenderers = new ArrayList<>();
 
     public static IRenderDispatcher getInstance()
@@ -54,15 +45,6 @@ public class RenderEventHandler implements IRenderDispatcher
     }
 
     @Override
-    public void registerWorldPreWeatherRenderer(IRenderer renderer)
-    {
-        if (this.worldPreWeatherRenderers.contains(renderer) == false)
-        {
-            this.worldPreWeatherRenderers.add(renderer);
-        }
-    }
-
-    @Override
     public void registerWorldLastRenderer(IRenderer renderer)
     {
         if (this.worldLastRenderers.contains(renderer) == false)
@@ -74,46 +56,41 @@ public class RenderEventHandler implements IRenderDispatcher
     @ApiStatus.Internal
     public void onRenderGameOverlayLastDrawer(DrawContext drawContext, MinecraftClient mc, float partialTicks)
     {
-        Profiler profiler = Profilers.get();
-
-        profiler.push("malilib_rendergameoverlaydrawer");
+        mc.getProfiler().push("malilib_rendergameoverlaydrawer");
 
         if (this.overlayRenderers.isEmpty() == false)
         {
             for (IRenderer renderer : this.overlayRenderers)
             {
-                profiler.push(renderer.getProfilerSectionSupplier());
-                renderer.onRenderGameOverlayLastDrawer(drawContext, partialTicks, profiler, mc);
-                profiler.pop();
+                mc.getProfiler().push(renderer.getProfilerSectionSupplier());
+                renderer.onRenderGameOverlayLastDrawer(drawContext);
+                mc.getProfiler().pop();
             }
         }
 
-        profiler.pop();
+        mc.getProfiler().pop();
     }
 
     @ApiStatus.Internal
     public void onRenderGameOverlayPost(DrawContext drawContext, MinecraftClient mc, float partialTicks)
     {
-        Profiler profiler = Profilers.get();
-
-        profiler.push("malilib_rendergameoverlaypost");
+        mc.getProfiler().push("malilib_rendergameoverlaypost");
 
         if (this.overlayRenderers.isEmpty() == false)
         {
             for (IRenderer renderer : this.overlayRenderers)
             {
-                profiler.push(renderer.getProfilerSectionSupplier());
-                renderer.onRenderGameOverlayPostAdvanced(drawContext, partialTicks, profiler, mc);
+                mc.getProfiler().push(renderer.getProfilerSectionSupplier());
                 renderer.onRenderGameOverlayPost(drawContext);
-                profiler.pop();
+                mc.getProfiler().pop();
             }
         }
 
-        profiler.push("malilib_ingamemessages");
+        mc.getProfiler().push("malilib_ingamemessages");
         InfoUtils.renderInGameMessages(drawContext);
-        profiler.pop();
+        mc.getProfiler().pop();
 
-        profiler.pop();
+        mc.getProfiler().pop();
     }
 
     @ApiStatus.Internal
@@ -129,175 +106,30 @@ public class RenderEventHandler implements IRenderDispatcher
     }
 
     @ApiStatus.Internal
-    public void runRenderWorldPreWeather(Matrix4f posMatrix, Matrix4f projMatrix, MinecraftClient mc,
-                                         FrameGraphBuilder frameGraphBuilder, DefaultFramebufferSet fbSet, Frustum frustum, Camera camera, Profiler profiler)
-    {
-        if (this.worldPreWeatherRenderers.isEmpty() == false)
-        {
-            Handle<Framebuffer> handleMain;
-            //Handle<Framebuffer> handleTranslucent;
-            RenderPass renderPass = frameGraphBuilder.createPass(MaLiLibReference.MOD_ID);
-
-            profiler.push(MaLiLibReference.MOD_ID+"_render_pre_weather");
-
-            /*
-            if (fbSet.translucentFramebuffer != null)
-            {
-                fbSet.translucentFramebuffer = renderPass.transfer(fbSet.translucentFramebuffer);
-                handleTranslucent = fbSet.translucentFramebuffer;
-            }
-            else
-            {
-                handleTranslucent = null;
-            }
-             */
-
-            fbSet.mainFramebuffer = renderPass.transfer(fbSet.mainFramebuffer);
-            handleMain = fbSet.mainFramebuffer;
-
-            renderPass.setRenderer(() ->
-            {
-                Fog fog = RenderSystem.getShaderFog();
-                ShaderProgram shaders = RenderSystem.getShader();
-
-                /*
-                if (handleTranslucent != null)
-                {
-                    handleTranslucent.get().setClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-                    handleTranslucent.get().clear();
-                    handleTranslucent.get().copyDepthFrom(handleMain.get());
-                }
-                 */
-
-                if (shaders != null)
-                {
-                    shaders.initializeUniforms(VertexFormat.DrawMode.QUADS, posMatrix, projMatrix, mc.getWindow());
-                    shaders.bind();
-                }
-
-                /*
-                if (handleTranslucent != null)
-                {
-                    handleTranslucent.get().beginWrite(false);
-                }
-                 */
-                handleMain.get().beginWrite(false);
-                for (IRenderer renderer : this.worldPreWeatherRenderers)
-                {
-                    profiler.push(renderer.getProfilerSectionSupplier());
-                    renderer.onRenderWorldPreWeather(posMatrix, projMatrix, frustum, camera, fog, profiler);
-                    profiler.pop();
-                }
-
-                if (shaders != null)
-                {
-                    shaders.unbind();
-                }
-            });
-        }
-
-        profiler.pop();
-    }
-
-    @ApiStatus.Internal
-    public void runRenderWorldLast(Matrix4f posMatrix, Matrix4f projMatrix, MinecraftClient mc,
-                                   FrameGraphBuilder frameGraphBuilder, DefaultFramebufferSet fbSet, Frustum frustum, Camera camera, Profiler profiler)
+    public void onRenderWorldLast(Matrix4f matrix4f, Matrix4f projMatrix, MinecraftClient mc)
     {
         if (this.worldLastRenderers.isEmpty() == false)
         {
-            Handle<Framebuffer> handleMain;
-            //Handle<Framebuffer> handleTranslucent;
-            RenderPass renderPass = frameGraphBuilder.createPass(MaLiLibReference.MOD_ID);
+            mc.getProfiler().swap("malilib_renderworldlast");
 
-            profiler.push(MaLiLibReference.MOD_ID+"_render_post");
+            Framebuffer fb = MinecraftClient.isFabulousGraphicsOrBetter() ? mc.worldRenderer.getTranslucentFramebuffer() : null;
 
-            // Don't write to translucent Frame Buffer, bad things will happen,
-            //  at Best, the Player will be able to see through objects ...
-            //  or just through the world ...
-            /*
-            if (fbSet.translucentFramebuffer != null)
+            if (fb != null)
             {
-                fbSet.translucentFramebuffer = renderPass.transfer(fbSet.translucentFramebuffer);
-                handleTranslucent = fbSet.translucentFramebuffer;
+                fb.beginWrite(false);
             }
-            else
+
+            for (IRenderer renderer : this.worldLastRenderers)
             {
-                handleTranslucent = null;
+                mc.getProfiler().push(renderer.getProfilerSectionSupplier());
+                renderer.onRenderWorldLast(matrix4f, projMatrix);
+                mc.getProfiler().pop();
             }
-             */
 
-            fbSet.mainFramebuffer = renderPass.transfer(fbSet.mainFramebuffer);
-            handleMain = fbSet.mainFramebuffer;
-
-            renderPass.setRenderer(() ->
+            if (fb != null)
             {
-                Fog fog = RenderSystem.getShaderFog();
-                ShaderProgram shaders = RenderSystem.getShader();
-
-                //RenderSystem.setShaderFog(Fog.DUMMY);
-
-                /*
-                if (handleTranslucent != null)
-                {
-                    handleTranslucent.get().setClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-                    handleTranslucent.get().clear();
-                    handleTranslucent.get().copyDepthFrom(handleMain.get());
-                }
-                 */
-
-                if (shaders != null)
-                {
-                    shaders.initializeUniforms(VertexFormat.DrawMode.QUADS, posMatrix, projMatrix, mc.getWindow());
-                    shaders.bind();
-                }
-
-                /*
-                Framebuffer fb = null;
-                if (fbSet.translucentFramebuffer != null && mc.worldRenderer != null)
-                {
-                    try
-                    {
-                        fb = MinecraftClient.isFabulousGraphicsOrBetter() ? fbSet.translucentFramebuffer.get() : null;
-                    }
-                    catch (Exception e)
-                    {
-                        MaLiLib.logger.warn("onRenderWorldPost: getTranslucentFramebuffer() throw: [{}]", e.getMessage());
-                    }
-                }
-
-                if (fb != null)
-                {
-                    fb.beginWrite(false);
-                }
-                 */
-                // Trusty and reliable Main Framebuffer write.
-                handleMain.get().beginWrite(false);
-
-                for (IRenderer renderer : this.worldLastRenderers)
-                {
-                    profiler.push(renderer.getProfilerSectionSupplier());
-                    // This really should be used either or, and never both in the same mod.
-                    renderer.onRenderWorldLastAdvanced(posMatrix, projMatrix, frustum, camera, fog, profiler);
-                    renderer.onRenderWorldLast(posMatrix, projMatrix);
-                    profiler.pop();
-                }
-
-                /*
-                if (fb != null)
-                {
-                    mc.getFramebuffer().beginWrite(false);
-                }
-                 */
-
-                if (shaders != null)
-                {
-                    shaders.unbind();
-                }
-
-                //RenderSystem.setShaderFog(fog);
-            });
+                mc.getFramebuffer().beginWrite(false);
+            }
         }
-
-        profiler.pop();
     }
 }

@@ -1,9 +1,5 @@
 package fi.dy.masa.malilib.mixin;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.Mouse;
-import net.minecraft.client.input.Scroller;
-import net.minecraft.client.util.Window;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -11,13 +7,18 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.Mouse;
+import net.minecraft.client.util.Window;
+
 import fi.dy.masa.malilib.event.InputEventHandler;
 
 @Mixin(Mouse.class)
 public abstract class MixinMouse
 {
     @Shadow @Final private MinecraftClient client;
-    @Shadow @Final private Scroller scroller;
+    @Shadow private double eventDeltaHorizontalWheel;
+    @Shadow private double eventDeltaVerticalWheel;
 
     @Inject(method = "onCursorPos",
             at = @At(value = "FIELD", target = "Lnet/minecraft/client/Mouse;hasResolutionChanged:Z", ordinal = 0))
@@ -31,8 +32,7 @@ public abstract class MixinMouse
     }
 
     @Inject(method = "onMouseScroll", cancellable = true,
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/MinecraftClient;getOverlay()Lnet/minecraft/client/gui/screen/Overlay;",
-                    ordinal = 0, shift = At.Shift.AFTER))
+            at = @At(value = "FIELD", target = "Lnet/minecraft/client/MinecraftClient;currentScreen:Lnet/minecraft/client/gui/screen/Screen;", ordinal = 0))
     private void hookOnMouseScroll(long handle, double xOffset, double yOffset, CallbackInfo ci)
     {
         Window window = this.client.getWindow();
@@ -41,7 +41,8 @@ public abstract class MixinMouse
 
         if (((InputEventHandler) InputEventHandler.getInputManager()).onMouseScroll(mouseX, mouseY, xOffset, yOffset, this.client))
         {
-            this.scroller.update(0.0, 0.0);
+            this.eventDeltaHorizontalWheel = 0.0;
+            this.eventDeltaVerticalWheel = 0.0;
             ci.cancel();
         }
     }

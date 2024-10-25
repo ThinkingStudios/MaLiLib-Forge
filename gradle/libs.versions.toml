@@ -1,13 +1,13 @@
 [versions]
 
 # Base properties
-minecraft_version="1.21.3"
-yarn_mappings="1.21.3+build.2"
+minecraft_version="1.21.1"
+yarn_mappings="1.21.1+build.3"
 mappings_patch="1.21+build.4"
-neoforge="21.3.0-beta"
+neoforge="21.1.68"
 
 # Mod properties
-version="0.1.24"
+version="0.1.23"
 maven-group="org.thinkingstudio.mafglib"
 archives-name="MaFgLib"
 

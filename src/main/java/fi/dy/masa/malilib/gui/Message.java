@@ -72,7 +72,7 @@ public class Message
 
         private final String translationKey;
 
-        MessageType(String translationKey)
+        private MessageType(String translationKey)
         {
             this.translationKey = translationKey;
         }

@@ -4,7 +4,6 @@ import javax.annotation.Nullable;
 import org.apache.commons.lang3.StringUtils;
 
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.render.RenderLayer;
 
 import fi.dy.masa.malilib.gui.LeftRight;
 import fi.dy.masa.malilib.gui.interfaces.IGuiIcon;
@@ -35,7 +34,7 @@ public class ButtonGeneric extends ButtonBase
         this.textCentered = true;
     }
 
-    public ButtonGeneric(int x, int y, int width, int height, String text, @Nullable IGuiIcon icon, String... hoverStrings)
+    public ButtonGeneric(int x, int y, int width, int height, String text, IGuiIcon icon, String... hoverStrings)
     {
         super(x, y, width, height, text);
 
@@ -101,7 +100,7 @@ public class ButtonGeneric extends ButtonBase
 
             if (this.renderDefaultBackground)
             {
-                drawContext.drawGuiTexture(RenderLayer::getGuiTextured, this.getTexture(this.hovered), this.x, this.y, this.width, this.height);
+                drawContext.drawGuiTexture(this.getTexture(this.hovered), this.x, this.y, this.width, this. height);
             }
 
             if (this.icon != null)
@@ -112,9 +111,7 @@ public class ButtonGeneric extends ButtonBase
                 int u = this.icon.getU() + this.getTextureOffset(this.hovered) * this.icon.getWidth(); // FIXME: What happened here.
 
                 this.bindTexture(this.icon.getTexture());
-                //RenderUtils.drawTexturedRect(x, y, u, this.icon.getV(), this.icon.getWidth(), this.icon.getHeight());
-                RenderUtils.drawTexturedRect(this.icon.getTexture(), x, y, u, this.icon.getV(), this.icon.getWidth(), this.icon.getHeight(), drawContext);
-                RenderUtils.forceDraw(drawContext);
+                RenderUtils.drawTexturedRect(x, y, u, this.icon.getV(), this.icon.getWidth(), this.icon.getHeight());
             }
 
             if (StringUtils.isBlank(this.displayString) == false)
