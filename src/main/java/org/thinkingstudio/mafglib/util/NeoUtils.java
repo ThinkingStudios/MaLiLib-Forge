@@ -20,6 +20,7 @@ public class NeoUtils {
         registerConfigScreen(modContainer, configScreenProvider::provide);
     }
 
+    @Deprecated
     public void registerConfigScreen(ModContainer modContainer, Function<Screen, Screen> screenFunction) {
         modContainer.registerExtensionPoint(IConfigScreenFactory.class, (container, screen) -> screenFunction.apply(screen));
     }

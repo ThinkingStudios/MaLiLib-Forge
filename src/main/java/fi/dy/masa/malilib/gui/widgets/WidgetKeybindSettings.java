@@ -3,10 +3,10 @@ package fi.dy.masa.malilib.gui.widgets;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
-
-import fi.dy.masa.malilib.MaLiLibReference;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.util.Identifier;
+
+import fi.dy.masa.malilib.MaLiLibReference;
 import fi.dy.masa.malilib.gui.GuiBase;
 import fi.dy.masa.malilib.gui.GuiKeybindSettings;
 import fi.dy.masa.malilib.gui.interfaces.IDialogHandler;
@@ -18,7 +18,7 @@ import fi.dy.masa.malilib.util.StringUtils;
 
 public class WidgetKeybindSettings extends WidgetBase
 {
-    public static final Identifier TEXTURE = Identifier.splitOn(MaLiLibReference.MOD_ID + ":textures/gui/gui_widgets.png", ':');
+    public static final Identifier TEXTURE = Identifier.of(MaLiLibReference.MOD_ID, "textures/gui/gui_widgets.png");
 
     protected final String keybindName;
     protected final IKeybind keybind;

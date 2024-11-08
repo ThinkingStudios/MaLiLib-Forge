@@ -2,9 +2,7 @@ package fi.dy.masa.malilib.render;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import org.joml.Matrix4f;
 import org.joml.Matrix4fStack;
 import com.mojang.blaze3d.platform.GlStateManager;
@@ -32,6 +30,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.FilledMapItem;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.map.MapState;
 import net.minecraft.nbt.NbtCompound;
@@ -51,8 +50,8 @@ import fi.dy.masa.malilib.util.PositionUtils.HitPart;
 
 public class RenderUtils
 {
-    public static final Identifier TEXTURE_MAP_BACKGROUND = Identifier.of("minecraft:textures/map/map_background.png");
-    public static final Identifier TEXTURE_MAP_BACKGROUND_CHECKERBOARD = Identifier.of("minecraft:textures/map/map_background_checkerboard.png");
+    public static final Identifier TEXTURE_MAP_BACKGROUND = Identifier.ofVanilla("textures/map/map_background.png");
+    public static final Identifier TEXTURE_MAP_BACKGROUND_CHECKERBOARD = Identifier.ofVanilla("textures/map/map_background_checkerboard.png");
 
     private static final LocalRandom RAND = new LocalRandom(0);
     //private static final Vec3d LIGHT0_POS = (new Vec3d( 0.2D, 1.0D, -0.7D)).normalize();
@@ -72,6 +71,16 @@ public class RenderUtils
     public static void bindTexture(Identifier texture)
     {
         RenderSystem.setShaderTexture(0, texture);
+    }
+
+    /**
+     * Executes the draw() operation on the DrawContext.
+     *
+     * @param drawContext
+     */
+    public static void forceDraw(DrawContext drawContext)
+    {
+        drawContext.draw();
     }
 
     public static void color(float r, float g, float b, float a)
@@ -175,6 +184,16 @@ public class RenderUtils
         catch (Exception ignored) { }
 
         RenderSystem.disableBlend();
+    }
+
+    /**
+     * Draws the Vanilla "Screen Blur" effect.
+     *
+     * @param mc
+     */
+    public static void drawScreenBlur(MinecraftClient mc)
+    {
+        mc.gameRenderer.renderBlur(mc.options.getMenuBackgroundBlurrinessValue());
     }
 
     public static void drawTexturedRect(int x, int y, int u, int v, int width, int height, float zLevel)
@@ -875,7 +894,7 @@ public class RenderUtils
     }
 
     public static void renderBlockTargetingOverlay(Entity entity, BlockPos pos, Direction side, Vec3d hitVec,
-            Color4f color, Matrix4f matrix4f, MinecraftClient mc)
+            Color4f color, Matrix4f posMatrix, MinecraftClient mc)
     {
         Direction playerFacing = entity.getHorizontalFacing();
         HitPart part = PositionUtils.getHitPart(side, playerFacing, pos, hitVec);
@@ -1002,7 +1021,7 @@ public class RenderUtils
     }
 
     public static void renderBlockTargetingOverlaySimple(Entity entity, BlockPos pos, Direction side,
-            Color4f color, Matrix4f matrix4f, MinecraftClient mc)
+            Color4f color, Matrix4f posMatrix, MinecraftClient mc)
     {
         Direction playerFacing = entity.getHorizontalFacing();
         Vec3d cameraPos = mc.gameRenderer.getCamera().getPos();
@@ -1172,13 +1191,17 @@ public class RenderUtils
 
         if (stack.getComponents().contains(DataComponentTypes.CONTAINER))
         {
-            items = InventoryUtils.getStoredItems(stack, ShulkerBoxBlockEntity.INVENTORY_SIZE);
+            //items = InventoryUtils.getStoredItems(stack, ShulkerBoxBlockEntity.INVENTORY_SIZE);
+            items = InventoryUtils.getStoredItems(stack, -1);
 
             if (items.isEmpty())
             {
                 return;
             }
 
+            NbtCompound nbt = InventoryUtils.getStoredBlockEntityNbt(stack);
+            Set<Integer> lockedSlots = new HashSet<>();
+            Inventory inv = InventoryUtils.getAsInventory(items);
             InventoryOverlay.InventoryRenderType type = InventoryOverlay.getInventoryType(stack);
             InventoryOverlay.InventoryProperties props = InventoryOverlay.getInventoryPropsTemp(type, items.size());
 
@@ -1187,6 +1210,9 @@ public class RenderUtils
             int height = props.height + 18;
             int x = MathHelper.clamp(baseX + 8, 0, screenWidth - props.width);
             int y = MathHelper.clamp(baseY - height, 0, screenHeight - height);
+
+            // Mask items behind the shulker box display, trying to minimize the sharp corners
+            //drawTexturedRect(GuiBase.BG_TEXTURE, x + 1, y + 1, 0, 0, props.width - 2, props.height - 2, drawContext);
 
             if (stack.getItem() instanceof BlockItem && ((BlockItem) stack.getItem()).getBlock() instanceof ShulkerBoxBlock)
             {
@@ -1204,15 +1230,81 @@ public class RenderUtils
             matrix4fStack.translate(0, 0, 500);
             RenderSystem.applyModelViewMatrix();
 
-            InventoryOverlay.renderInventoryBackground(type, x, y, props.slotsPerRow, items.size(), mc());
+            InventoryOverlay.renderInventoryBackground(type, x, y, props.slotsPerRow, props.totalSlots, mc());
+            color(1f, 1f, 1f, 1f);
 
             enableDiffuseLightingGui3D();
 
-            Inventory inv = fi.dy.masa.malilib.util.InventoryUtils.getAsInventory(items);
-            InventoryOverlay.renderInventoryStacks(type, inv, x + props.slotOffsetX, y + props.slotOffsetY, props.slotsPerRow, 0, ShulkerBoxBlockEntity.INVENTORY_SIZE, mc(), drawContext);
+            // TODO 1.21.2+
+            /*
+            if (type == InventoryOverlay.InventoryRenderType.BREWING_STAND)
+            {
+                InventoryOverlay.renderBrewerBackgroundSlots(inv, x, y, drawContext);
+            }
+             */
+            if (type == InventoryOverlay.InventoryRenderType.CRAFTER && !nbt.isEmpty())
+            {
+                lockedSlots = BlockUtils.getDisabledSlotsFromNbt(nbt);
+                InventoryOverlay.renderInventoryStacks(type, inv, x + props.slotOffsetX, y + props.slotOffsetY, props.slotsPerRow, 0, -1, lockedSlots, mc(), drawContext);
+            }
+            else
+            {
+                InventoryOverlay.renderInventoryStacks(type, inv, x + props.slotOffsetX, y + props.slotOffsetY, props.slotsPerRow, 0, -1, mc(), drawContext);
+            }
 
             matrix4fStack.popMatrix();
             RenderSystem.applyModelViewMatrix();
+        }
+    }
+
+    public static void renderBundlePreview(ItemStack stack, int baseX, int baseY, boolean useBgColors, DrawContext drawContext)
+    {
+        DefaultedList<ItemStack> items;
+
+        if (stack.getComponents().contains(DataComponentTypes.BUNDLE_CONTENTS))
+        {
+            int count = InventoryUtils.bundleCountItems(stack);
+            items = InventoryUtils.getBundleItems(stack, count);
+
+            if (items.isEmpty())
+            {
+                return;
+            }
+
+            Inventory inv = InventoryUtils.getAsInventory(items);
+            InventoryOverlay.InventoryRenderType type = InventoryOverlay.getInventoryType(stack);
+            InventoryOverlay.InventoryProperties props = InventoryOverlay.getInventoryPropsTemp(type, count);
+
+            int screenWidth = GuiUtils.getScaledWindowWidth();
+            int screenHeight = GuiUtils.getScaledWindowHeight();
+            int height = props.height + 18;
+            int x = MathHelper.clamp(baseX + 8, 0, screenWidth - props.width);
+            int y = MathHelper.clamp(baseY - height, 0, screenHeight - height);
+
+            // Mask items behind the shulker box display, trying to minimize the sharp corners
+            //drawTexturedRect(GuiBase.BG_TEXTURE, x + 1, y + 1, 0, 0, props.width - 2, props.height - 2, drawContext);
+
+            setBundleBackgroundTintColor(stack, useBgColors);
+            disableDiffuseLighting();
+
+            Matrix4fStack matrix4fStack = RenderSystem.getModelViewStack();
+            matrix4fStack.pushMatrix();
+            matrix4fStack.translate(0, 0, 500);
+            //drawContext.getMatrices().push();
+            //drawContext.getMatrices().translate(0, 0, 500);
+            //RenderSystem.applyModelViewMatrix();
+
+            InventoryOverlay.renderInventoryBackground(type, x, y, props.slotsPerRow, props.totalSlots, mc());
+            color(1f, 1f, 1f, 1f);
+
+            enableDiffuseLightingGui3D();
+
+            InventoryOverlay.renderInventoryStacks(type, inv, x + props.slotOffsetX, y + props.slotOffsetY, props.slotsPerRow, 0, count, mc(), drawContext);
+
+            matrix4fStack.popMatrix();
+            //drawContext.getMatrices().pop();
+            //forceDraw(drawContext);
+            //RenderSystem.applyModelViewMatrix();
         }
     }
 
@@ -1232,7 +1324,7 @@ public class RenderUtils
     {
         if (InventoryUtils.hasNbtItems(itemsTag))
         {
-            DefaultedList<ItemStack> items = InventoryUtils.getNbtItems(itemsTag);
+            DefaultedList<ItemStack> items = InventoryUtils.getNbtItems(itemsTag, -1, mc().world.getRegistryManager());
 
             if (items.size() == 0)
             {
@@ -1260,7 +1352,7 @@ public class RenderUtils
 
             enableDiffuseLightingGui3D();
 
-            Inventory inv = fi.dy.masa.malilib.util.InventoryUtils.getAsInventory(items);
+            Inventory inv = InventoryUtils.getAsInventory(items);
             InventoryOverlay.renderInventoryStacks(type, inv, x + props.slotOffsetX, y + props.slotOffsetY, props.slotsPerRow, 0, -1, mc(), drawContext);
 
             matrix4fStack.popMatrix();
@@ -1301,6 +1393,106 @@ public class RenderUtils
         int l = (color & 255) >> 0;
 
         return new float[]{(float)j / 255.0F, (float)k / 255.0F, (float)l / 255.0F};
+    }
+
+    public static void setBundleBackgroundTintColor(ItemStack bundle, boolean useBgColors)
+    {
+        if (useBgColors)
+        {
+            final DyeColor dye = getBundleColor(bundle);
+
+            if (dye != null)
+            {
+                final float[] colors = getColorComponents(dye.getEntityColor());
+                color(colors[0], colors[1], colors[2], 1f);
+                return;
+            }
+        }
+
+        color(1f, 1f, 1f, 1f);
+    }
+
+    public static DyeColor getBundleColor(ItemStack bundle)
+    {
+        Item item = bundle.getItem();
+
+        if (item == null)
+        {
+            return null;
+        }
+        // TODO 1.21.2+
+        /*
+        if (item.equals(Items.WHITE_BUNDLE))
+        {
+            return DyeColor.WHITE;
+        }
+        else if (item.equals(Items.ORANGE_BUNDLE))
+        {
+            return DyeColor.ORANGE;
+        }
+        else if (item.equals(Items.MAGENTA_BUNDLE))
+        {
+            return DyeColor.MAGENTA;
+        }
+        else if (item.equals(Items.LIGHT_BLUE_BUNDLE))
+        {
+            return DyeColor.LIGHT_BLUE;
+        }
+        else if (item.equals(Items.YELLOW_BUNDLE))
+        {
+            return DyeColor.YELLOW;
+        }
+        else if (item.equals(Items.LIME_BUNDLE))
+        {
+            return DyeColor.LIME;
+        }
+        else if (item.equals(Items.PINK_BUNDLE))
+        {
+            return DyeColor.PINK;
+        }
+        else if (item.equals(Items.GRAY_BUNDLE))
+        {
+            return DyeColor.GRAY;
+        }
+        else if (item.equals(Items.LIGHT_GRAY_BUNDLE))
+        {
+            return DyeColor.LIGHT_GRAY;
+        }
+        else if (item.equals(Items.CYAN_BUNDLE))
+        {
+            return DyeColor.CYAN;
+        }
+        else if (item.equals(Items.BLUE_BUNDLE))
+        {
+            return DyeColor.BLUE;
+        }
+        else if (item.equals(Items.BROWN_BUNDLE))
+        {
+            return DyeColor.BROWN;
+        }
+        else if (item.equals(Items.GREEN_BUNDLE))
+        {
+            return DyeColor.GREEN;
+        }
+        else if (item.equals(Items.RED_BUNDLE))
+        {
+            return DyeColor.RED;
+        }
+        else if (item.equals(Items.BLACK_BUNDLE))
+        {
+            return DyeColor.BLACK;
+        }
+        else if (item.equals(Items.PURPLE_BUNDLE))
+        {
+            return DyeColor.PURPLE;
+        }
+        else
+        {
+            return null;
+        }
+         */
+
+        return DyeColor.BROWN;
     }
 
     public static void renderModelInGui(int x, int y, BakedModel model, BlockState state, float zLevel)

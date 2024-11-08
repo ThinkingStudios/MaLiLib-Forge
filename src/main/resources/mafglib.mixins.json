@@ -6,6 +6,7 @@
   "client": [
     "IMixinAbstractHorseEntity",
     "IMixinPiglinEntity",
+    "IMixinPlayerEntity",
     "MixinClientConfigurationNetworkHandler",
     "MixinClientPlayNetworkHandler",
     "MixinDrawContext",

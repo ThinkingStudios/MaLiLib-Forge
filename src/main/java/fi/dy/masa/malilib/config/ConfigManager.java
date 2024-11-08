@@ -5,6 +5,8 @@ import org.jetbrains.annotations.ApiStatus;
 import java.util.HashMap;
 import java.util.Map;
 
+import fi.dy.masa.malilib.MaLiLib;
+
 public class ConfigManager implements IConfigManager
 {
     private static final ConfigManager INSTANCE = new ConfigManager();
@@ -36,6 +38,7 @@ public class ConfigManager implements IConfigManager
     @ApiStatus.Internal
     public void loadAllConfigs()
     {
+        MaLiLib.printDebug("loadAllConfigs()");
         for (IConfigHandler handler : this.configHandlers.values())
         {
             handler.load();
@@ -45,6 +48,7 @@ public class ConfigManager implements IConfigManager
     @ApiStatus.Internal
     public void saveAllConfigs()
     {
+        MaLiLib.printDebug("saveAllConfigs()");
         for (IConfigHandler handler : this.configHandlers.values())
         {
             handler.save();

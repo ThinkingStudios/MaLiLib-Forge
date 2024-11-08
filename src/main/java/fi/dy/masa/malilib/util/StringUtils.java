@@ -3,13 +3,20 @@ package fi.dy.masa.malilib.util;
 import javax.annotation.Nullable;
 import java.io.File;
 import java.net.SocketAddress;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import org.apache.commons.lang3.time.DurationFormatUtils;
+import org.jetbrains.annotations.NotNull;
+
 import net.minecraft.text.ClickEvent;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import fi.dy.masa.malilib.MaLiLibConfigs;
+
 import org.thinkingstudio.mafglib.util.NeoUtils;
 
 public class StringUtils
@@ -379,6 +386,16 @@ public class StringUtils
         return net.minecraft.client.resource.language.I18n.translate(translationKey, args);
     }
 
+    public static MutableText translateable(String translationKey)
+    {
+        return Text.translatable(translationKey);
+    }
+
+    public static MutableText translateable(String translationKey, Object... args)
+    {
+        return Text.translatable(translationKey, args);
+    }
+
     /**
      * Return if this translationKey has been found
      * @param translationKey (Key th check)
@@ -387,6 +404,16 @@ public class StringUtils
     public static boolean hasTranslation(String translationKey)
     {
         return net.minecraft.client.resource.language.I18n.hasTranslation(translationKey);
+    }
+
+    /**
+     * Return a Read Friendly String from translationPath
+     * @param translationPath Raw translationPath
+     * @return Read Friendly String
+     */
+    public static String prettifyRawTranslationPath(@NotNull String translationPath)
+    {
+        return Arrays.stream(translationPath.split("_")).map(word -> word.substring(0, 1).toUpperCase() + word.substring(1).toLowerCase()).collect(Collectors.joining(" "));
     }
 
     /**
@@ -406,5 +433,15 @@ public class StringUtils
     public static void drawString(int x, int y, int color, String text, net.minecraft.client.gui.DrawContext drawContext)
     {
         drawContext.drawText(net.minecraft.client.MinecraftClient.getInstance().textRenderer, text, x, y, color, false);
+    }
+
+    /**
+     * Get a nicely formatted Duration string (ex: X hours, X minutes, X seconds)
+     * @param durationMs (Duration in Milliseconds (1 second * 1000L or 1 tick * 50L))
+     * @return (The formatted string)
+     */
+    public static String getDurationString(long durationMs)
+    {
+        return DurationFormatUtils.formatDurationWords(durationMs, true, true);
     }
 }

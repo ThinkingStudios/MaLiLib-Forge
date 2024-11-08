@@ -2,15 +2,29 @@
     "malilib.config.name.ignoredKeys": "ignoredKeys",
     "malilib.config.name.openGuiConfigs": "openGuiConfigs",
     "malilib.config.name.realmsCommonConfig": "realmsCommonConfig",
+    "malilib.config.name.enableActionbarMessages": "enableActionbarMessages",
+
     "malilib.config.name.debugMessages": "debugMessages",
     "malilib.config.name.inputCancellationDebugging": "inputCancellationDebugging",
     "malilib.config.name.keybindDebugging": "keybindDebugging",
     "malilib.config.name.keybindDebuggingIngame": "keybindDebuggingIngame",
     "malilib.config.name.mouseScrollDebug": "mouseScrollDebug",
-
     "malilib.config.comment.ignoredKeys": "Any keys set here will be completely ignored",
     "malilib.config.comment.openGuiConfigs": "Open the in-game malilib config GUI",
     "malilib.config.comment.realmsCommonConfig": "Whether or not to use a common config file name for all realms servers.\nIf this is disabled, then the server IP and port are used in the generated config file names.\nHowever, apparently the Realms server addresses change regularly, so the config names would change\nall the time and thus the configs wouldn't save properly.\nSo basically leave this enabled if you only play on one Realms server.\nIf you play on multiple Realms... then the configs will get mixed up regardless.\nUnless you play on the different servers on different Minecraft instances\nto keep the configs separated by the Minecraft instance.",
+    "malilib.config.comment.enableActionbarMessages": "Whether or not to display Actionbar Messages.\nThis setting may be useful for\nRecording or Streaming purposes.\nInspired by the \"Streamer Mode\" mod by Sakura.",
+
+    "malilib.config.prettyName.ignoredKeys": "Ignored Keys",
+    "malilib.config.prettyName.openGuiConfigs": "Open Gui Configs",
+    "malilib.config.prettyName.realmsCommonConfig": "Realms Common Config",
+    "malilib.config.prettyName.enableActionbarMessages": "Actionbar Messages",
+
+    "malilib.config.prettyName.debugMessages": "Debug Messages",
+    "malilib.config.prettyName.inputCancellationDebugging": "Input Cancellation Debugging",
+    "malilib.config.prettyName.keybindDebugging": "Keybind Debugging",
+    "malilib.config.prettyName.keybindDebuggingIngame": "Keybind Debugging In-Game",
+    "malilib.config.prettyName.mouseScrollDebug": "Mouse Scroll Debug",
+
     "malilib.config.comment.debugMessages": "When enabled, debug level events\nare printed to the game console/log",
     "malilib.config.comment.inputCancellationDebugging": "When enabled, then the cancellation reason/source\nfor inputs (keyboard and mouse) is printed out",
     "malilib.config.comment.keybindDebugging": "When enabled, key presses and held keys are\nprinted to the game console (and the action bar, if enabled)",
@@ -30,6 +44,8 @@
     "malilib.error.invalid_directory": "Invalid directory name '%s'",
     "malilib.error.invalid_block_blacklist_entry": "Invalid block in a black- or whitelist: '%s'",
     "malilib.error.invalid_item_blacklist_entry": "Invalid item name in a black- or whitelist: '%s'",
+    "malilib.error.invalid_item_stack_entry.string": "Invalid item stack string: '%s'",
+    "malilib.error.invalid_item_stack_entry.nbt_syntax": "Invalid item stack NBT syntax: '%s'",
 
     "malilib.gui.button.cancel": "Cancel",
     "malilib.gui.button.ok": "OK",
@@ -39,6 +55,11 @@
     "malilib.gui.button.render_layers_gui.axis": "Axis: %s",
     "malilib.gui.button.render_layers_gui.layers": "Layers: %s",
     "malilib.gui.button.render_layers_gui.set_here": "Set Here",
+
+    "malilib.gui.button.hovertext.add": "Add",
+    "malilib.gui.button.hovertext.remove": "Remove",
+    "malilib.gui.button.hovertext.move_up": "Move Up",
+    "malilib.gui.button.hovertext.move_down": "Move Down",
 
     "malilib.gui.button.hover.directory_widget.create_directory": "Create a new directory",
     "malilib.gui.button.hover.directory_widget.root": "To root/base directory",

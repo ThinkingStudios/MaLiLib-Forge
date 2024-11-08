@@ -3,15 +3,17 @@ package fi.dy.masa.malilib.interfaces;
 import java.util.function.Supplier;
 import org.joml.Matrix4f;
 
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.profiler.Profiler;
 
 public interface IRenderer
 {
     /**
      * Called after the vanilla "drawer" overlays have been rendered
      */
-    default void onRenderGameOverlayLastDrawer(DrawContext drawContext) {}
+    default void onRenderGameOverlayLastDrawer(DrawContext drawContext, float partialTicks, Profiler profiler, MinecraftClient mc) {}
 
     /**
      * Called after the vanilla overlays have been rendered
@@ -21,7 +23,7 @@ public interface IRenderer
     /**
      * Called after vanilla world rendering
      */
-    default void onRenderWorldLast(Matrix4f matrix4f, Matrix4f projMatrix) {}
+    default void onRenderWorldLast(Matrix4f posMatrix, Matrix4f projMatrix) {}
 
     /**
      * Called after the tooltip text of an item has been rendered

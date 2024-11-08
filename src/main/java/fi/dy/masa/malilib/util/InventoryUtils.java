@@ -26,11 +26,9 @@ import net.minecraft.component.ComponentType;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.BundleContentsComponent;
 import net.minecraft.component.type.ContainerComponent;
+import net.minecraft.component.type.NbtComponent;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.DoubleInventory;
-import net.minecraft.inventory.Inventories;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.inventory.SimpleInventory;
+import net.minecraft.inventory.*;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -50,6 +48,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import fi.dy.masa.malilib.MaLiLib;
+import fi.dy.masa.malilib.mixin.IMixinPlayerEntity;
 
 public class InventoryUtils
 {
@@ -484,6 +483,66 @@ public class InventoryUtils
             
             return items;
         }
+        // Ender Chest
+        else if (nbt.contains(NbtKeys.ENDER_ITEMS, Constants.NBT.TAG_LIST))
+        {
+            NbtList list = nbt.getList(NbtKeys.ENDER_ITEMS, Constants.NBT.TAG_COMPOUND);
+
+            if (slotCount < 0)
+            {
+                slotCount = list.size();
+            }
+
+            DefaultedList<ItemStack> items = DefaultedList.ofSize(slotCount, ItemStack.EMPTY);
+
+            for (int i = 0; i < list.size(); i++)
+            {
+                Optional<ItemStack> opt = ItemStack.fromNbt(registry, list.getCompound(i));
+
+                if (opt.isPresent())
+                {
+                    items.add(opt.get());
+                }
+            }
+
+            return items;
+        }
+        else if (nbt.contains(NbtKeys.ITEM))
+        {
+            // item (DecoratedPot, ItemEntity)
+            ItemStack entry = ItemStack.fromNbtOrEmpty(registry, nbt.getCompound(NbtKeys.ITEM));
+            DefaultedList<ItemStack> items = DefaultedList.ofSize(1, ItemStack.EMPTY);
+            items.add(0, entry);
+
+            return items;
+        }
+        else if (nbt.contains(NbtKeys.ITEM_2))
+        {
+            // Item (ItemFrame)
+            ItemStack entry = ItemStack.fromNbtOrEmpty(registry, nbt.getCompound(NbtKeys.ITEM_2));
+            DefaultedList<ItemStack> items = DefaultedList.ofSize(1, ItemStack.EMPTY);
+            items.add(0, entry);
+
+            return items;
+        }
+        else if (nbt.contains(NbtKeys.BOOK))
+        {
+            // Book (Lectern)
+            ItemStack entry = ItemStack.fromNbtOrEmpty(registry, nbt.getCompound(NbtKeys.BOOK));
+            DefaultedList<ItemStack> items = DefaultedList.ofSize(1, ItemStack.EMPTY);
+            items.add(0, entry);
+
+            return items;
+        }
+        else if (nbt.contains(NbtKeys.RECORD))
+        {
+            // RecordItem (Jukebox)
+            ItemStack entry = ItemStack.fromNbtOrEmpty(registry, nbt.getCompound(NbtKeys.RECORD));
+            DefaultedList<ItemStack> items = DefaultedList.ofSize(1, ItemStack.EMPTY);
+            items.add(0, entry);
+
+            return items;
+        }
         else if (nbt.contains(NbtKeys.ITEM))
         {
             // item (DecoratedPot, ItemEntity)
@@ -596,6 +655,20 @@ public class InventoryUtils
 
             return inv;
         }
+        else if (nbt.contains(NbtKeys.ENDER_ITEMS))
+        {
+            // Ender Chest
+            if (slotCount < 0)
+            {
+                NbtList list = nbt.getList(NbtKeys.ENDER_ITEMS, Constants.NBT.TAG_COMPOUND);
+                slotCount = list.size();
+            }
+
+            SimpleInventory inv = new SimpleInventory(slotCount);
+            inv.readNbtList(nbt.getList(NbtKeys.ENDER_ITEMS, Constants.NBT.TAG_COMPOUND), registry);
+
+            return inv;
+        }
         else if (nbt.contains(NbtKeys.ITEM))
         {
             // item (DecoratedPot, ItemEntity)
@@ -629,6 +702,99 @@ public class InventoryUtils
             ItemStack entry = ItemStack.fromNbtOrEmpty(registry, nbt.getCompound(NbtKeys.RECORD));
             SimpleInventory inv = new SimpleInventory(1);
             inv.setStack(0, entry);
+
+            return inv;
+        }
+
+        return null;
+    }
+
+    /**
+     * Executes the "Inventory Display Horse Fix" (Saddle Offset) for NBT-based Displays.
+     *
+     * @param nbt
+     * @param slotCount
+     * @param registry
+     * @return
+     */
+    public static Inventory getNbtInventoryHorseFix(@Nonnull NbtCompound nbt, int slotCount, @Nonnull RegistryWrapper.WrapperLookup registry)
+    {
+        ItemStack saddle = ItemStack.EMPTY;
+
+        if (slotCount > 256)
+        {
+            slotCount = 256;
+        }
+
+        // Get Saddle Item for slot 0
+        if (nbt.contains(NbtKeys.SADDLE))
+        {
+            saddle = ItemStack.fromNbtOrEmpty(registry, nbt.getCompound(NbtKeys.SADDLE));
+        }
+        // Shift inv ahead by 1 slot for horses (1.21 only)
+        if (nbt.contains(NbtKeys.ITEMS))
+        {
+            // Standard 'Items' tag for most Block Entities --
+            // -- Furnace, Brewing Stand, Shulker Box, Crafter, Barrel, Chest, Dispenser, Hopper, Bookshelf, Campfire
+            if (slotCount < 0)
+            {
+                NbtList list = nbt.getList(NbtKeys.ITEMS, Constants.NBT.TAG_COMPOUND);
+                slotCount = list.size();
+            }
+
+            SimpleInventory inv = new SimpleInventory(slotCount + 1);
+            DefaultedList<ItemStack> items = DefaultedList.ofSize(slotCount, ItemStack.EMPTY);
+            Inventories.readNbt(nbt, items, registry);
+
+            if (items.isEmpty())
+            {
+                return null;
+            }
+            inv.setStack(0, saddle);
+            for (int i = 0; i < slotCount; i++)
+            {
+                inv.setStack(i + 1, items.get(i));
+            }
+
+            return inv;
+        }
+        // Saddled only fix
+        else if (!saddle.isEmpty())
+        {
+            SimpleInventory inv = new SimpleInventory(1);
+            inv.setStack(0, saddle);
+
+            return inv;
+        }
+        else if (nbt.contains(NbtKeys.ITEM))
+        {
+            // item (DecoratedPot, ItemEntity)
+            ItemStack entry = ItemStack.fromNbtOrEmpty(registry, nbt.getCompound(NbtKeys.ITEM));
+            SimpleInventory inv = new SimpleInventory(1);
+            inv.setStack(0, entry);
+        }
+
+        return null;
+    }
+
+    @Nullable
+    public static EnderChestInventory getPlayerEnderItems(PlayerEntity player)
+    {
+        if (player != null)
+        {
+            return ((IMixinPlayerEntity) player).malilib_getEnderItems();
+        }
+
+        return null;
+    }
+
+    @Nullable
+    public static EnderChestInventory getPlayerEnderItemsFromNbt(@Nonnull NbtCompound nbt, @Nonnull RegistryWrapper.WrapperLookup registry)
+    {
+        if (nbt.contains(NbtKeys.ENDER_ITEMS, Constants.NBT.TAG_COMPOUND))
+        {
+            EnderChestInventory inv = new EnderChestInventory();
+            inv.readNbtList(nbt.getList(NbtKeys.ENDER_ITEMS, Constants.NBT.TAG_COMPOUND), registry);
 
             return inv;
         }
@@ -1072,6 +1238,13 @@ public class InventoryUtils
         return stackOut;
     }
 
+    /**
+     * Get an Item's Registry Entry.
+     *
+     * @param id
+     * @param registry
+     * @return
+     */
     public static RegistryEntry<Item> getItemEntry(Identifier id, @Nonnull DynamicRegistryManager registry)
     {
         try
@@ -1082,5 +1255,37 @@ public class InventoryUtils
         {
             return null;
         }
+    }
+
+    /**
+     * Return whether or not the stack has Block Entity Nbt Data
+     *
+     * @param stack
+     * @return
+     */
+    public static boolean hasStoredBlockEntityData(ItemStack stack)
+    {
+        return stack.contains(DataComponentTypes.BLOCK_ENTITY_DATA);
+    }
+
+    /**
+     * Get the NBT Data out of a Stored Block Entity contained within an Item Stack.
+     *
+     * @param stack
+     * @return
+     */
+    public static NbtCompound getStoredBlockEntityNbt(ItemStack stack)
+    {
+        if (stack.contains(DataComponentTypes.BLOCK_ENTITY_DATA))
+        {
+            NbtComponent component = stack.get(DataComponentTypes.BLOCK_ENTITY_DATA);
+
+            if (component != null)
+            {
+                return component.copyNbt();
+            }
+        }
+
+        return new NbtCompound();
     }
 }

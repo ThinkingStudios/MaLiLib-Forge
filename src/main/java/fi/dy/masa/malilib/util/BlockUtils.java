@@ -14,18 +14,14 @@ import net.minecraft.block.entity.BeehiveBlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.block.entity.CrafterBlockEntity;
 import net.minecraft.block.entity.SignText;
-import net.minecraft.block.enums.Orientation;
 import net.minecraft.component.type.ProfileComponent;
 import net.minecraft.entity.effect.StatusEffect;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.state.property.Properties;
 import net.minecraft.state.property.*;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -112,6 +108,12 @@ public class BlockUtils
         return Collections.emptyList();
     }
 
+    /**
+     * Get a Crafter's "locked slots" from the Block Entity by iterating all 9 slots.
+     *
+     * @param ce
+     * @return
+     */
     public static Set<Integer> getDisabledSlots(CrafterBlockEntity ce)
     {
         Set<Integer> list = new HashSet<>();
@@ -130,6 +132,12 @@ public class BlockUtils
         return list;
     }
 
+    /**
+     * Get the Block Entity Type from the NBT Tag.
+     *
+     * @param nbt
+     * @return
+     */
     public static @Nullable BlockEntityType<?> getBlockEntityTypeFromNbt(@Nonnull NbtCompound nbt)
     {
         if (nbt.contains(NbtKeys.ID, Constants.NBT.TAG_STRING))
@@ -145,6 +153,13 @@ public class BlockUtils
         return null;
     }
 
+    /**
+     * Write the Block Entity ID tag.
+     *
+     * @param type
+     * @param nbtIn
+     * @return
+     */
     public static NbtCompound setBlockEntityTypeToNbt(BlockEntityType<?> type, @Nullable NbtCompound nbtIn)
     {
         NbtCompound nbt = new NbtCompound();
@@ -166,6 +181,12 @@ public class BlockUtils
         return nbt;
     }
 
+    /**
+     * Read the Crafter's "locked slots" from NBT
+     *
+     * @param nbt
+     * @return
+     */
     public static Set<Integer> getDisabledSlotsFromNbt(@Nonnull NbtCompound nbt)
     {
         Set<Integer> list = new HashSet<>();
@@ -183,6 +204,12 @@ public class BlockUtils
         return list;
     }
 
+    /**
+     * Get the Beacon's Effects from NBT.
+     *
+     * @param nbt
+     * @return
+     */
     public static Pair<RegistryEntry<StatusEffect>, RegistryEntry<StatusEffect>> getBeaconEffectsFromNbt(@Nonnull NbtCompound nbt)
     {
         RegistryEntry<StatusEffect> primary = null;
@@ -208,6 +235,11 @@ public class BlockUtils
         return Pair.of(primary, secondary);
     }
 
+    /**
+     * Get the Beehive data from NBT.
+     * @param nbt
+     * @return
+     */
     public static Pair<List<BeehiveBlockEntity.BeeData>, BlockPos> getBeesDataFromNbt(@Nonnull NbtCompound nbt)
     {
         List<BeehiveBlockEntity.BeeData> bees = new ArrayList<>();
@@ -225,6 +257,13 @@ public class BlockUtils
         return Pair.of(bees, flower);
     }
 
+    /**
+     * Get the Skulk Sensor Vibration / Listener data from NBT.
+     *
+     * @param nbt
+     * @param registry
+     * @return
+     */
     public static Pair<Integer, Vibrations.ListenerData> getSkulkSensorVibrationsFromNbt(@Nonnull NbtCompound nbt, @Nonnull DynamicRegistryManager registry)
     {
         AtomicReference<Vibrations.ListenerData> data = new AtomicReference<>(null);
@@ -242,6 +281,11 @@ public class BlockUtils
         return Pair.of(lastFreq, data.get());
     }
 
+    /**
+     * Get the End Gateway's Exit Portal from NBT.
+     * @param nbt
+     * @return
+     */
     public static Pair<Long, BlockPos> getExitPortalFromNbt(@Nonnull NbtCompound nbt)
     {
         long age = -1;
@@ -259,6 +303,13 @@ public class BlockUtils
         return Pair.of(age, pos);
     }
 
+    /**
+     * Get a Sign's Text from NBT.
+     *
+     * @param nbt
+     * @param registry
+     * @return
+     */
     public static Pair<Pair<SignText, SignText>, Boolean> getSignTextFromNbt(@Nonnull NbtCompound nbt, @Nonnull DynamicRegistryManager registry)
     {
         AtomicReference<SignText> front = new AtomicReference<>(null);
@@ -281,6 +332,13 @@ public class BlockUtils
         return Pair.of(Pair.of(front.get(), back.get()), waxed);
     }
 
+    /**
+     * Get a Lectern's Book and Page number.
+     *
+     * @param nbt
+     * @param registry
+     * @return
+     */
     public static Pair<ItemStack, Integer> getBookFromNbt(@Nonnull NbtCompound nbt, @Nonnull DynamicRegistryManager registry)
     {
         ItemStack book = ItemStack.EMPTY;
@@ -298,6 +356,13 @@ public class BlockUtils
         return Pair.of(book, current);
     }
 
+    /**
+     * Get a Skull's Profile Data Component from NBT, and Custom Name.
+     *
+     * @param nbt
+     * @param registry
+     * @return
+     */
     public static Pair<ProfileComponent, Pair<Identifier, Text>> getSkullDataFromNbt(@Nonnull NbtCompound nbt, @Nonnull DynamicRegistryManager registry)
     {
         AtomicReference<ProfileComponent> profile = new AtomicReference<>(null);
@@ -326,13 +391,19 @@ public class BlockUtils
         return Pair.of(profile.get(), Pair.of(note, name));
     }
 
+    /**
+     * Get a Furnaces 'Used Recipes' from NBT.
+     *
+     * @param nbt
+     * @return
+     */
     public static Object2IntOpenHashMap<Identifier> getRecipesUsedFromNbt(@Nonnull NbtCompound nbt)
     {
         Object2IntOpenHashMap<Identifier> list = new Object2IntOpenHashMap<>();
 
-        if (nbt.contains(NbtKeys.RECIPES, Constants.NBT.TAG_COMPOUND))
+        if (nbt.contains(NbtKeys.RECIPES_USED, Constants.NBT.TAG_COMPOUND))
         {
-            NbtCompound compound = nbt.getCompound(NbtKeys.RECIPES);
+            NbtCompound compound = nbt.getCompound(NbtKeys.RECIPES_USED);
 
             for (String key : compound.getKeys())
             {
@@ -343,6 +414,13 @@ public class BlockUtils
         return list;
     }
 
+    /**
+     * Get a Block's Regitry Entry.
+     *
+     * @param id
+     * @param registry
+     * @return
+     */
     public static RegistryEntry<Block> getBlockEntry(Identifier id, @Nonnull DynamicRegistryManager registry)
     {
         try
