@@ -17,7 +17,7 @@ public class MaLiLibConfigs implements IConfigHandler
 {
     private static final String CONFIG_FILE_NAME = MaLiLibReference.MOD_ID + ".json";
 
-    private static final String GENERIC_KEY = MaLiLibReference.MOD_ID+".config";
+    private static final String GENERIC_KEY = MaLiLibReference.ID+".config";
     public static class Generic
     {
         public static final ConfigHotkey      IGNORED_KEYS              = new ConfigHotkey("ignoredKeys", "").apply(GENERIC_KEY);
@@ -33,7 +33,7 @@ public class MaLiLibConfigs implements IConfigHandler
         );
     }
 
-    private static final String DEBUG_KEY = MaLiLibReference.MOD_ID+".config";
+    private static final String DEBUG_KEY = MaLiLibReference.ID+".config";
     public static class Debug
     {
         public static final ConfigBoolean DEBUG_MESSAGES            = new ConfigBoolean("debugMessages",false).apply(DEBUG_KEY);
@@ -52,7 +52,7 @@ public class MaLiLibConfigs implements IConfigHandler
     }
 
     /*
-    private static final String TEST_KEY = MaLiLibReference.MOD_ID+".config.test";
+    private static final String TEST_KEY = MaLiLibReference.ID+".config.test";
     public static class Test
     {
         public static final ConfigBoolean           TEST_CONFIG_BOOLEAN             = new ConfigBoolean("testBoolean", false, "Test Boolean").apply(TEST_KEY);
