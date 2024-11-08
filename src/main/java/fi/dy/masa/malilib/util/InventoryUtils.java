@@ -26,6 +26,7 @@ import net.minecraft.component.ComponentType;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.BundleContentsComponent;
 import net.minecraft.component.type.ContainerComponent;
+import net.minecraft.component.type.NbtComponent;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.*;
 import net.minecraft.item.BlockItem;
@@ -1254,5 +1255,37 @@ public class InventoryUtils
         {
             return null;
         }
+    }
+
+    /**
+     * Return whether or not the stack has Block Entity Nbt Data
+     *
+     * @param stack
+     * @return
+     */
+    public static boolean hasStoredBlockEntityData(ItemStack stack)
+    {
+        return stack.contains(DataComponentTypes.BLOCK_ENTITY_DATA);
+    }
+
+    /**
+     * Get the NBT Data out of a Stored Block Entity contained within an Item Stack.
+     *
+     * @param stack
+     * @return
+     */
+    public static NbtCompound getStoredBlockEntityNbt(ItemStack stack)
+    {
+        if (stack.contains(DataComponentTypes.BLOCK_ENTITY_DATA))
+        {
+            NbtComponent component = stack.get(DataComponentTypes.BLOCK_ENTITY_DATA);
+
+            if (component != null)
+            {
+                return component.copyNbt();
+            }
+        }
+
+        return new NbtCompound();
     }
 }

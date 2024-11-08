@@ -6,6 +6,7 @@
   "client": [
     "IMixinAbstractHorseEntity",
     "IMixinDrawContext",
+    "IMixinHandledScreen",
     "IMixinPiglinEntity",
     "IMixinPlayerEntity",
     "MixinAbstractHorseEntity",
@@ -15,6 +16,7 @@
     "MixinHandledScreen",
     "MixinInGameHud",
     "MixinIntegratedServer",
+    "MixinInventoryScreen",
     "MixinKeyboard",
     "MixinMinecraftClient",
     "MixinMinecraftServer",

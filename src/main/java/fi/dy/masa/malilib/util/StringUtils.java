@@ -2,10 +2,12 @@ package fi.dy.masa.malilib.util;
 
 import java.io.File;
 import java.net.SocketAddress;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 
 import org.apache.commons.lang3.time.DurationFormatUtils;
@@ -17,6 +19,7 @@ import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 
 import fi.dy.masa.malilib.MaLiLibConfigs;
+import org.jetbrains.annotations.NotNull;
 import org.thinkingstudio.mafglib.util.NeoUtils;
 
 public class StringUtils
@@ -405,6 +408,16 @@ public class StringUtils
     public static boolean hasTranslation(String translationKey)
     {
         return net.minecraft.client.resource.language.I18n.hasTranslation(translationKey);
+    }
+
+    /**
+     * Return a Read Friendly String from translationPath
+     * @param translationPath Raw translationPath
+     * @return Read Friendly String
+     */
+    public static String prettifyRawTranslationPath(@NotNull String translationPath)
+    {
+        return Arrays.stream(translationPath.split("_")).map(word -> word.substring(0, 1).toUpperCase() + word.substring(1).toLowerCase()).collect(Collectors.joining(" "));
     }
 
     /**

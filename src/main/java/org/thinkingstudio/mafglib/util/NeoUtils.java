@@ -20,13 +20,14 @@ public class NeoUtils {
         registerConfigScreen(modContainer, configScreenProvider::provide);
     }
 
+    @Deprecated
     public void registerConfigScreen(ModContainer modContainer, Function<Screen, Screen> screenFunction) {
         modContainer.registerExtensionPoint(IConfigScreenFactory.class, (container, screen) -> screenFunction.apply(screen));
     }
 
     public ArtifactVersion getModArtifactVersion(String modId) {
-        for(ModInfo modInfo: FMLLoader.getLoadingModList().getMods()) {
-            if(modInfo.getModId().equals(modId)) {
+        for (ModInfo modInfo: FMLLoader.getLoadingModList().getMods()) {
+            if (modInfo.getModId().equals(modId)) {
                 return modInfo.getVersion();
             }
         }

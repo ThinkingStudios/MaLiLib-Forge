@@ -8,14 +8,12 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import fi.dy.masa.malilib.MaLiLib;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.*;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gl.ShaderProgramKeys;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.*;
-import net.minecraft.client.render.model.BakedModel;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -31,10 +29,7 @@ import net.minecraft.entity.vehicle.HopperMinecartEntity;
 import net.minecraft.inventory.DoubleInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.SimpleInventory;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ModelTransformationMode;
+import net.minecraft.item.*;
 import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
@@ -48,7 +43,6 @@ import net.minecraft.world.World;
 
 import fi.dy.masa.malilib.gui.GuiBase;
 import fi.dy.masa.malilib.mixin.IMixinAbstractHorseEntity;
-import fi.dy.masa.malilib.mixin.IMixinDrawContext;
 import fi.dy.masa.malilib.mixin.IMixinPiglinEntity;
 import fi.dy.masa.malilib.util.*;
 
@@ -359,6 +353,18 @@ public class InventoryOverlay
             {
                 return InventoryRenderType.CRAFTER;
             }
+            else if (block instanceof DecoratedPotBlock || block instanceof JukeboxBlock || block instanceof LecternBlock)
+            {
+                return InventoryRenderType.SINGLE_ITEM;
+            }
+            else if (block instanceof ChiseledBookshelfBlock)
+            {
+                return InventoryRenderType.BOOKSHELF;
+            }
+        }
+        else if (item instanceof BundleItem)
+        {
+            return InventoryRenderType.BUNDLE;
         }
 
         return InventoryRenderType.GENERIC;
@@ -413,6 +419,16 @@ public class InventoryOverlay
             else if (blockType.equals(BlockEntityType.CRAFTER))
             {
                 return InventoryRenderType.CRAFTER;
+            }
+            else if (blockType.equals(BlockEntityType.DECORATED_POT) ||
+                    blockType.equals(BlockEntityType.JUKEBOX) ||
+                    blockType.equals(BlockEntityType.LECTERN))
+            {
+                return InventoryRenderType.SINGLE_ITEM;
+            }
+            else if (blockType.equals(BlockEntityType.CHISELED_BOOKSHELF))
+            {
+                return InventoryRenderType.BOOKSHELF;
             }
         }
 
@@ -534,18 +550,11 @@ public class InventoryOverlay
             INV_PROPS_TEMP.slotsPerRow = 9;
             INV_PROPS_TEMP.slotOffsetX = 0;
             INV_PROPS_TEMP.slotOffsetY = 0;
-            INV_PROPS_TEMP.width = 127;
+            //INV_PROPS_TEMP.width = 127;
+            INV_PROPS_TEMP.width = 109;
             INV_PROPS_TEMP.height = 72;
         }
-        else if (type == InventoryRenderType.CRAFTER)
-        {
-            INV_PROPS_TEMP.slotsPerRow = 3;
-            INV_PROPS_TEMP.slotOffsetX = 8;
-            INV_PROPS_TEMP.slotOffsetY = 8;
-            INV_PROPS_TEMP.width = 68;
-            INV_PROPS_TEMP.height = 68;
-        }
-        else if (type == InventoryRenderType.DISPENSER)
+        else if (type == InventoryRenderType.CRAFTER || type == InventoryRenderType.DISPENSER)
         {
             INV_PROPS_TEMP.slotsPerRow = 3;
             INV_PROPS_TEMP.slotOffsetX = 8;
@@ -576,6 +585,33 @@ public class InventoryOverlay
             INV_PROPS_TEMP.slotOffsetY = 8;
             INV_PROPS_TEMP.width = 50;
             INV_PROPS_TEMP.height = 86;
+        }
+        else if (type == InventoryRenderType.SINGLE_ITEM)
+        {
+            INV_PROPS_TEMP.slotsPerRow = 1;
+            INV_PROPS_TEMP.slotOffsetX = 8;
+            INV_PROPS_TEMP.slotOffsetY = 8;
+            INV_PROPS_TEMP.width = 32;
+            INV_PROPS_TEMP.height = 32;
+        }
+        else if (type == InventoryRenderType.BOOKSHELF)
+        {
+            INV_PROPS_TEMP.slotsPerRow = 3;
+            INV_PROPS_TEMP.slotOffsetX = 8;
+            INV_PROPS_TEMP.slotOffsetY = 8;
+            INV_PROPS_TEMP.width = 68;
+            INV_PROPS_TEMP.height = 50;
+            INV_PROPS_TEMP.totalSlots = 6;
+        }
+        else if (type == InventoryRenderType.BUNDLE)
+        {
+            INV_PROPS_TEMP.slotsPerRow = 9;
+            INV_PROPS_TEMP.slotOffsetX = 8;
+            INV_PROPS_TEMP.slotOffsetY = 8;
+            int rows = (int) (Math.ceil((double) totalSlots / (double) INV_PROPS_TEMP.slotsPerRow));
+            INV_PROPS_TEMP.width = Math.min(INV_PROPS_TEMP.slotsPerRow, totalSlots) * 18 + 14;
+            INV_PROPS_TEMP.height = rows * 18 + 14;
+            INV_PROPS_TEMP.totalSlots = rows * INV_PROPS_TEMP.slotsPerRow;
         }
         else
         {
@@ -697,7 +733,7 @@ public class InventoryOverlay
 
         if (hoveredStack != null)
         {
-            var stack = hoveredStack;
+            var stack = hoveredStack.copy();
             hoveredStack = null;
             // Some mixin / side effects can happen here
             drawContext.drawItemTooltip(mc.textRenderer, stack, (int) mouseX, (int) mouseY);
@@ -738,7 +774,7 @@ public class InventoryOverlay
 
         if (hoveredStack != null)
         {
-            stack = hoveredStack;
+            stack = hoveredStack.copy();
             hoveredStack = null;
             // Some mixin / side effects can happen here, so reset hoveredStack
             drawContext.drawItemTooltip(mc.textRenderer, stack, (int) mouseX, (int) mouseY);
@@ -824,7 +860,7 @@ public class InventoryOverlay
 
         if (mouseX >= x && mouseX < x + 16 * scale && mouseY >= y && mouseY < y + 16 * scale)
         {
-            hoveredStack = stack;
+            hoveredStack = stack.copy();
         }
     }
 
@@ -903,6 +939,9 @@ public class InventoryOverlay
         FIXED_27,
         FIXED_54,
         VILLAGER,
+        BOOKSHELF,
+        SINGLE_ITEM,
+        BUNDLE,
         GENERIC;
     }
 
