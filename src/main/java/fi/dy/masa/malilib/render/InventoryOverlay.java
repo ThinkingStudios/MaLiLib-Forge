@@ -8,12 +8,14 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import fi.dy.masa.malilib.MaLiLib;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.*;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gl.ShaderProgramKeys;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.*;
+import net.minecraft.client.render.model.BakedModel;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -23,6 +25,7 @@ import net.minecraft.entity.mob.PiglinEntity;
 import net.minecraft.entity.passive.AbstractHorseEntity;
 import net.minecraft.entity.passive.VillagerEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.vehicle.AbstractChestBoatEntity;
 import net.minecraft.entity.vehicle.ChestMinecartEntity;
 import net.minecraft.entity.vehicle.HopperMinecartEntity;
@@ -43,6 +46,7 @@ import net.minecraft.world.World;
 
 import fi.dy.masa.malilib.gui.GuiBase;
 import fi.dy.masa.malilib.mixin.IMixinAbstractHorseEntity;
+import fi.dy.masa.malilib.mixin.IMixinDrawContext;
 import fi.dy.masa.malilib.mixin.IMixinPiglinEntity;
 import fi.dy.masa.malilib.util.*;
 
@@ -307,6 +311,10 @@ public class InventoryOverlay
         {
             return InventoryRenderType.HOPPER;
         }
+        else if (inv instanceof PlayerInventory)
+        {
+            return InventoryRenderType.PLAYER;
+        }
         else if (inv instanceof IEntityOwnedInventory inventory)
         {
             if (inventory.malilib$getEntityOwner() instanceof AbstractHorseEntity)
@@ -360,6 +368,10 @@ public class InventoryOverlay
             else if (block instanceof ChiseledBookshelfBlock)
             {
                 return InventoryRenderType.BOOKSHELF;
+            }
+            else if (block instanceof EnderChestBlock)
+            {
+                return InventoryRenderType.ENDER_CHEST;
             }
         }
         else if (item instanceof BundleItem)
@@ -430,6 +442,10 @@ public class InventoryOverlay
             {
                 return InventoryRenderType.BOOKSHELF;
             }
+            else if (blockType.equals(BlockEntityType.ENDER_CHEST))
+            {
+                return InventoryRenderType.ENDER_CHEST;
+            }
         }
 
         EntityType<?> entityType = EntityUtils.getEntityTypeFromNbt(nbt);
@@ -472,6 +488,10 @@ public class InventoryOverlay
                      entityType.equals(EntityType.ZOMBIE_VILLAGER))
             {
                 return InventoryRenderType.VILLAGER;
+            }
+            else if (entityType.equals(EntityType.PLAYER))
+            {
+                return InventoryRenderType.PLAYER;
             }
         }
 
@@ -615,7 +635,7 @@ public class InventoryOverlay
         }
         else
         {
-            if (type == InventoryRenderType.FIXED_27)
+            if (type == InventoryRenderType.FIXED_27 || type == InventoryRenderType.PLAYER || type == InventoryRenderType.ENDER_CHEST)
             {
                 totalSlots = 27;
             }
@@ -939,6 +959,8 @@ public class InventoryOverlay
         FIXED_27,
         FIXED_54,
         VILLAGER,
+        PLAYER,
+        ENDER_CHEST,
         BOOKSHELF,
         SINGLE_ITEM,
         BUNDLE,

@@ -4,6 +4,7 @@ import com.llamalad7.mixinextras.sugar.Local;
 import org.joml.Matrix4f;
 
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gl.PostEffectProcessor;
 import net.minecraft.client.render.*;
 import net.minecraft.client.util.ObjectAllocator;
 import net.minecraft.util.profiler.Profiler;
