@@ -9,13 +9,8 @@ version = "${libs.versions.version.get()}-mc${libs.versions.minecraft.version.ge
 group = libs.versions.maven.group.get()
 
 repositories {
+    maven { url "https://jitpack.io" }
     maven { url "https://maven.neoforged.net/releases/" }
-    maven {
-        url "https://maven2.bai.lol"
-        content {
-            includeGroup "lol.bai"
-        }
-    }
 }
 
 dependencies {
@@ -25,7 +20,7 @@ dependencies {
         mappings libs.yarn.mappings.patch
     }
     neoForge libs.neoforge
-    modImplementation libs.badpackets
+    modImplementation(include("com.github.TexBlock:FoxifiedNetworking:master-SNAPSHOT"))
 
     implementation libs.jsr305
 }

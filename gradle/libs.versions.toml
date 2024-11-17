@@ -7,7 +7,7 @@ mappings_patch="1.21+build.4"
 neoforge="21.3.2-beta"
 
 # Mod properties
-version="0.1.26"
+version="0.1.27"
 maven-group="org.thinkingstudio.mafglib"
 archives-name="MaFgLib"
 
@@ -16,7 +16,7 @@ id-modrinth="SKI34J7B"
 id-curseforge="910766"
 
 # Mod dependencies
-badpackets="neo-0.8.1"
+networking="0.1.0+mc1.21.3"
 
 # Libraries
 jsr305="3.0.2"
@@ -31,7 +31,6 @@ yarn-mappings = { group = "net.fabricmc", name = "yarn", version.ref = "yarn_map
 yarn-mappings-patch = { group = "dev.architectury", name = "yarn-mappings-patch-neoforge", version.ref = "mappings_patch"}
 
 neoforge = { group = "net.neoforged", name = "neoforge", version.ref = "neoforge" }
-badpackets = { group = "lol.bai", name = "badpackets", version.ref = "badpackets" }
 
 jsr305 = { group = "com.google.code.findbugs", name = "jsr305", version.ref = "jsr305"}
 
