@@ -3,8 +3,11 @@ package fi.dy.masa.malilib.network;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Objects;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
+import lol.bai.badpackets.api.PacketReceiver;
+import lol.bai.badpackets.api.PacketSender;
+import lol.bai.badpackets.api.play.ClientPlayContext;
+import lol.bai.badpackets.api.play.PlayPackets;
+import lol.bai.badpackets.impl.registry.ChannelRegistry;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.nbt.NbtCompound;
@@ -21,7 +24,7 @@ import fi.dy.masa.malilib.MaLiLib;
  * Interface for ClientPlayHandler, for downstream mods.
  * @param <T> (Payload)
  */
-public interface IPluginClientPlayHandler<T extends CustomPayload> extends ClientPlayNetworking.PlayPayloadHandler<T>
+public interface IPluginClientPlayHandler<T extends CustomPayload> extends PacketReceiver<ClientPlayContext, T>
 {
     int FROM_SERVER = 1;
     int TO_SERVER = 2;
@@ -72,12 +75,12 @@ public interface IPluginClientPlayHandler<T extends CustomPayload> extends Clien
             {
                 switch (direction)
                 {
-                    case TO_SERVER, FROM_CLIENT -> PayloadTypeRegistry.playC2S().register(id, codec);
-                    case FROM_SERVER, TO_CLIENT -> PayloadTypeRegistry.playS2C().register(id, codec);
+                    case TO_SERVER, FROM_CLIENT -> PlayPackets.registerServerChannel(id, codec);
+                    case FROM_SERVER, TO_CLIENT -> PlayPackets.registerClientChannel(id, codec);
                     default ->
                     {
-                        PayloadTypeRegistry.playC2S().register(id, codec);
-                        PayloadTypeRegistry.playS2C().register(id, codec);
+                        PlayPackets.registerServerChannel(id, codec);
+                        PlayPackets.registerClientChannel(id, codec);
                     }
                 }
             }
@@ -103,13 +106,14 @@ public interface IPluginClientPlayHandler<T extends CustomPayload> extends Clien
      * @param receiver (Your Packet Receiver // if null, uses this::receivePlayPayload)
      * @return (True / False)
      */
-    default boolean registerPlayReceiver(@Nonnull CustomPayload.Id<T> id, @Nullable ClientPlayNetworking.PlayPayloadHandler<T> receiver)
+    default boolean registerPlayReceiver(@Nonnull CustomPayload.Id<T> id, @Nullable PacketReceiver<ClientPlayContext, T> receiver)
     {
         if (this.isPlayRegistered(this.getPayloadChannel()))
         {
             try
             {
-                return ClientPlayNetworking.registerGlobalReceiver(id, Objects.requireNonNullElse(receiver, this::receivePlayPayload));
+                PlayPackets.registerClientReceiver(id, Objects.requireNonNullElse(receiver, this::receivePlayPayload));
+                return true;
             }
             catch (IllegalArgumentException e)
             {
@@ -125,21 +129,19 @@ public interface IPluginClientPlayHandler<T extends CustomPayload> extends Clien
     /**
      * Unregisters your Packet Receiver function.
      * You can use the HANDLER itself (Singleton method), or any other class that you choose.
-     * See the fabric-network-api-v1 Java Docs under ClientPlayNetworking.unregisterGlobalReceiver()
-     * for more information on how to do this.
      */
     default void unregisterPlayReceiver()
     {
-        ClientPlayNetworking.unregisterGlobalReceiver(this.getPayloadChannel());
+        ChannelRegistry.PLAY_C2S.getChannels().remove(this.getPayloadChannel());
     }
 
     /**
      * Receive Payload by pointing static receive() method to this to convert Payload to its data decode() function.
      * -
+     * @param ctx (BadPackets Context)
      * @param payload (Payload to decode)
-     * @param ctx (Fabric Context)
      */
-    void receivePlayPayload(T payload, ClientPlayNetworking.Context ctx);
+    void receivePlayPayload(ClientPlayContext ctx, T payload);
 
     /**
      * Receive Payload via the legacy "onCustomPayload" from a Network Handler Mixin interface.
@@ -183,7 +185,7 @@ public interface IPluginClientPlayHandler<T extends CustomPayload> extends Clien
     void encodeWithSplitter(PacketByteBuf buf, ClientPlayNetworkHandler handler);
 
     /**
-     * Sends the Payload to the server using the Fabric-API interface.
+     * Sends the Payload to the server using the BadPackets interface.
      * -
      * @param payload (The Payload to send)
      * @return (true/false --> for error control)
@@ -192,15 +194,15 @@ public interface IPluginClientPlayHandler<T extends CustomPayload> extends Clien
     {
         if (payload.getId().id().equals(this.getPayloadChannel()) && this.isPlayRegistered(this.getPayloadChannel()))
         {
-            if (ClientPlayNetworking.canSend(payload.getId()))
+            if (PacketSender.c2s().canSend(payload.getId()))
             {
-                ClientPlayNetworking.send(payload);
+                PacketSender.c2s().send(payload);
                 return true;
             }
         }
         else
         {
-            MaLiLib.logger.warn("sendPlayPayload: [Fabric-API] error sending payload for channel: {}, check if channel is registered", payload.getId().id().toString());
+            MaLiLib.logger.warn("sendPlayPayload: [BadPackets] error sending payload for channel: {}, check if channel is registered", payload.getId().id().toString());
         }
 
         return false;
