@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.List;
 import javax.annotation.Nullable;
 import com.google.common.collect.ImmutableList;
+import fi.dy.masa.malilib.gui.widgets.WidgetDropDownList;
 import net.minecraft.client.gui.screen.Screen;
 import fi.dy.masa.malilib.config.ConfigManager;
 import fi.dy.masa.malilib.config.IConfigBase;
@@ -20,9 +21,15 @@ import fi.dy.masa.malilib.gui.widgets.WidgetListConfigOptions;
 import fi.dy.masa.malilib.util.GuiUtils;
 import fi.dy.masa.malilib.util.KeyCodes;
 import fi.dy.masa.malilib.util.StringUtils;
+import org.thinkingstudio.mafglib.loader.FoxifiedLoader;
+import org.thinkingstudio.mafglib.loader.entrypoints.EntrypointContainer;
+import org.thinkingstudio.mafglib.loader.entrypoints.EntrypointHandler;
+import org.thinkingstudio.mafglib.loader.gui.ModConfigScreenInitializer;
+import org.thinkingstudio.mafglib.special.MaFgLibSpecial;
 
 public abstract class GuiConfigsBase extends GuiListBase<ConfigOptionWrapper, WidgetConfigOption, WidgetListConfigOptions> implements IKeybindConfigGui
 {
+    protected WidgetDropDownList<EntrypointContainer<ModConfigScreenInitializer>> modSwitchWidget;
     protected final List<Runnable> hotkeyChangeListeners = new ArrayList<>();
     protected final ButtonPressDirtyListenerSimple dirtyListener = new ButtonPressDirtyListenerSimple();
     protected final String modId;
@@ -37,6 +44,56 @@ public abstract class GuiConfigsBase extends GuiListBase<ConfigOptionWrapper, Wi
 
         this.modId = modId;
         this.title = StringUtils.translate(titleKey, args);
+    }
+
+    @Override
+    public void initGui() {
+        super.initGui();
+
+        EntrypointHandler.loadAll();
+
+        var modContainer = FoxifiedLoader.getModContainers();
+
+        if (MaFgLibSpecial.getConfig().fastSwitchConfigGui.isTrue()) {
+            List<EntrypointContainer<ModConfigScreenInitializer>> entrypointContainers = FoxifiedLoader.getEntrypointContainers("mafglib_modmenu", ModConfigScreenInitializer.class)
+                    // This will stack overflow if called in <init>()
+                    .stream().filter(mod -> {
+                            try {
+                                return mod.entrypoint().getModConfigScreenFactory().createScreen(modContainer, null) instanceof GuiConfigsBase;
+                            }
+                            catch (Exception e)
+                            {
+                                return false;
+                            }
+                        }
+                    )
+                    .toList();
+            EntrypointContainer<ModConfigScreenInitializer> thisContainer = entrypointContainers.stream().filter(mod -> {
+                GuiConfigsBase gui = (GuiConfigsBase) mod.entrypoint().getModConfigScreenFactory().createScreen(modContainer, null);
+                if (gui == null) return false;
+                return gui.getClass() == this.getClass();
+            }).findFirst().orElse(null);
+            modSwitchWidget = new WidgetDropDownList<>(GuiUtils.getScaledWindowWidth() - 155, 13, 130, 18, 200, 10, entrypointContainers) {
+                {
+                    selectedEntry = thisContainer;
+                }
+
+                @Override
+                protected void setSelectedEntry(int index) {
+                    super.setSelectedEntry(index);
+                    if (selectedEntry != null) {
+                        client.setScreen(selectedEntry.entrypoint().getModConfigScreenFactory().createScreen(modContainer, null));
+                    }
+                }
+
+                @Override
+                protected String getDisplayString(EntrypointContainer<ModConfigScreenInitializer> entry) {
+                    if (entry == null) return "";
+                    return entry.mod().getModInfos().getFirst().getDisplayName();
+                }
+            };
+            addWidget(modSwitchWidget);
+        }
     }
 
     @Override

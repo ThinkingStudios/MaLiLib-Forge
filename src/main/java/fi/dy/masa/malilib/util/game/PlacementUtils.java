@@ -1,6 +1,6 @@
 package fi.dy.masa.malilib.util.game;
 
-import org.apache.http.annotation.Experimental;
+import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
@@ -9,7 +9,7 @@ import net.minecraft.world.World;
 /**
  * Post-ReWrite code
  */
-@Experimental
+@ApiStatus.Experimental
 public class PlacementUtils
 {
     /**

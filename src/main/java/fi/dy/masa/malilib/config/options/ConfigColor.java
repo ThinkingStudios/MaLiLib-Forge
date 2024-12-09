@@ -89,7 +89,7 @@ public class ConfigColor extends ConfigInteger
         {
             return StringUtils.getColor(newValue, 0) != this.getDefaultIntegerValue();
         }
-        catch (Exception e)
+        catch (Exception ignored)
         {
         }
 
@@ -108,12 +108,12 @@ public class ConfigColor extends ConfigInteger
             }
             else
             {
-                MaLiLib.logger.warn("Failed to set config value for '{}' from the JSON element '{}'", this.getName(), element);
+                MaLiLib.LOGGER.warn("Failed to set config value for '{}' from the JSON element '{}'", this.getName(), element);
             }
         }
         catch (Exception e)
         {
-            MaLiLib.logger.warn("Failed to set config value for '{}' from the JSON element '{}'", this.getName(), element, e);
+            MaLiLib.LOGGER.warn("Failed to set config value for '{}' from the JSON element '{}'", this.getName(), element, e);
         }
     }
 

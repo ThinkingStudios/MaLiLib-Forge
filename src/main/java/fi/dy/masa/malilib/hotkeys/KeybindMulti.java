@@ -190,7 +190,7 @@ public class KeybindMulti implements IKeybind
         {
             String msg = String.format("Cancel requested by callback '%s'", this.callback.getClass().getName());
             InfoUtils.showInGameMessage(Message.MessageType.INFO, msg);
-            MaLiLib.logger.info(msg);
+            MaLiLib.LOGGER.info(msg);
         }
 
         return cancel;
@@ -504,7 +504,7 @@ public class KeybindMulti implements IKeybind
 
         if (action != GLFW.GLFW_REPEAT)
         {
-            MaLiLib.logger.info(msgConsole);
+            MaLiLib.LOGGER.info(msgConsole);
         }
 
         if (MaLiLibConfigs.Debug.KEYBIND_DEBUG_ACTIONBAR.getBooleanValue())

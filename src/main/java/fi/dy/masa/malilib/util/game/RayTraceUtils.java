@@ -3,11 +3,8 @@ package fi.dy.masa.malilib.util.game;
 import java.util.List;
 import java.util.Optional;
 import javax.annotation.Nullable;
-
-import org.apache.http.annotation.Experimental;
 import org.jetbrains.annotations.ApiStatus;
 
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
@@ -19,7 +16,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.World;
 
@@ -30,7 +26,7 @@ import fi.dy.masa.malilib.util.MathUtils;
 /**
  * Post-ReWrite code
  */
-@Experimental
+@ApiStatus.Experimental
 public class RayTraceUtils
 {
     public static final BlockState BLOCK_STATE_AIR = Blocks.AIR.getDefaultState();
@@ -41,7 +37,7 @@ public class RayTraceUtils
      * @param entity the entity from whose view point the ray trace is performed
      * @param fluidHandling determines if the ray trace should hit fluid blocks
      * @param includeEntities determines if the ray trace should include entities, or only blocks
-     * @param range the maximum distance to ray trace from the entity's eye position
+     * @param maxRange the maximum distance to ray trace from the entity's eye position
      * @return the trace result, with type = MISS if the trace didn't hit anything
      */
     public static HitResult getRayTraceFromEntity(World world, Entity entity,
@@ -49,7 +45,7 @@ public class RayTraceUtils
                                                   boolean includeEntities, double maxRange)
     {
         //Vec3d eyesPos = EntityWrap.getEntityEyePos(entity);
-        //Vec3d rangedLook = EntityWrap.getScaledLookVector(entity, range);
+        //Vec3d rangedLook = EntityWrap.getScaledLookVector(entity, maxRange);
         //Vec3d lookEndPos = eyesPos.add(rangedLook);
         Vec3d eyesPos = entity.getEyePos();
         Vec3d rangedLook = MathUtils.scale(MathUtils.getRotationVector(entity.getYaw(), entity.getPitch()), maxRange);
@@ -72,7 +68,7 @@ public class RayTraceUtils
             {
                 bb = entityTmp.getBoundingBox();
                 //HitResult traceTmp = bb.calculateIntercept(eyesPos, lookEndPos);
-                Optional<Vec3d> opt = bb.raycast(eyesPos, lookEndPos);
+                Optional<net.minecraft.util.math.Vec3d> opt = bb.raycast(eyesPos, lookEndPos);
 
                 if (opt.isPresent())
                 {
@@ -187,9 +183,9 @@ public class RayTraceUtils
             BlockState state = world.getBlockState(data.mutablePos);
 
             if (data.isValidBlock(state) &&
-                    ((ignoreNonCollidable == false && state.getBlock().getDefaultState() != BLOCK_STATE_AIR) ||
-                            //|| state.getCollisionBoundingBox(world, data.mutablePos) != Block.NULL_AABB))
-                    (state.getCollisionShape(world, data.mutablePos) != VoxelShapes.empty())))
+                ((ignoreNonCollidable == false && state.getBlock().getDefaultState() != BLOCK_STATE_AIR) ||
+                        //|| state.getCollisionBoundingBox(world, data.mutablePos) != Block.NULL_AABB))
+                (state.getCollisionShape(world, data.mutablePos) != VoxelShapes.empty())))
             {
                 //if (state.getBlock().canCollideCheck(state, false) || data.fluidMode.handled(state))
                 if (state.getProperties().contains(Properties.WATERLOGGED) || data.fluidMode.handled(state))
@@ -329,7 +325,7 @@ public class RayTraceUtils
             data.currentZ = nextZ;
         }
 
-        int x = MathUtils.floor(data.currentX) - (data.facing == Direction.EAST  ? 1 : 0);
+        int x = MathUtils.floor(data.currentX) - (data.facing == Direction.EAST ? 1 : 0);
         int y = MathUtils.floor(data.currentY) - (data.facing == Direction.UP    ? 1 : 0);
         int z = MathUtils.floor(data.currentZ) - (data.facing == Direction.SOUTH ? 1 : 0);
         data.setBlockPos(x, y, z);

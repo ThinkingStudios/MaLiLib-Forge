@@ -48,33 +48,36 @@ public class WidgetConfigOption extends WidgetConfigOptionBase<ConfigOptionWrapp
         {
             IConfigBase config = wrapper.getConfig();
 
-            if (config instanceof BooleanHotkeyGuiWrapper booleanHotkey)
+            switch (config)
             {
-                this.initialBoolean = booleanHotkey.getBooleanValue();
-                this.initialStringValue = booleanHotkey.getKeybind().getStringValue();
-                this.initialKeybindSettings = booleanHotkey.getKeybind().getSettings();
-            }
-            else if (config instanceof ConfigBooleanHotkeyed booleanHotkey)
-            {
-                this.initialBoolean = booleanHotkey.getBooleanValue();
-                this.initialStringValue = booleanHotkey.getKeybind().getStringValue();
-                this.initialKeybindSettings = booleanHotkey.getKeybind().getSettings();
-            }
-            else if (config instanceof IStringRepresentable configStr)
-            {
-                this.initialStringValue = configStr.getStringValue();
-                this.lastAppliedValue = configStr.getStringValue();
-                this.initialKeybindSettings = config.getType() == ConfigType.HOTKEY ? ((IHotkey) config).getKeybind().getSettings() : null;
-            }
-            else
-            {
-                this.initialStringValue = null;
-                this.lastAppliedValue = null;
-                this.initialKeybindSettings = null;
-
-                if (config instanceof IConfigStringList)
+                case BooleanHotkeyGuiWrapper booleanHotkey ->
                 {
-                    this.initialStringList = ImmutableList.copyOf(((IConfigStringList) config).getStrings());
+                    this.initialBoolean = booleanHotkey.getBooleanValue();
+                    this.initialStringValue = booleanHotkey.getKeybind().getStringValue();
+                    this.initialKeybindSettings = booleanHotkey.getKeybind().getSettings();
+                }
+                case ConfigBooleanHotkeyed booleanHotkey ->
+                {
+                    this.initialBoolean = booleanHotkey.getBooleanValue();
+                    this.initialStringValue = booleanHotkey.getKeybind().getStringValue();
+                    this.initialKeybindSettings = booleanHotkey.getKeybind().getSettings();
+                }
+                case IStringRepresentable configStr ->
+                {
+                    this.initialStringValue = configStr.getStringValue();
+                    this.lastAppliedValue = configStr.getStringValue();
+                    this.initialKeybindSettings = config.getType() == ConfigType.HOTKEY ? ((IHotkey) config).getKeybind().getSettings() : null;
+                }
+                case null, default ->
+                {
+                    this.initialStringValue = null;
+                    this.lastAppliedValue = null;
+                    this.initialKeybindSettings = null;
+
+                    if (config instanceof IConfigStringList)
+                    {
+                        this.initialStringList = ImmutableList.copyOf(((IConfigStringList) config).getStrings());
+                    }
                 }
             }
 
@@ -97,7 +100,40 @@ public class WidgetConfigOption extends WidgetConfigOptionBase<ConfigOptionWrapp
         y += 1;
         int configHeight = 20;
 
-        this.addLabel(x, y + 7, labelWidth, 8, 0xFFFFFFFF, config.getConfigGuiDisplayName());
+        String configName = config.getConfigGuiDisplayName();
+
+        // DEBUG ONLY
+        /*
+        if (config.getConfigGuiDisplayName().contains(".config"))
+        {
+            configName = StringUtils.getTranslatedOrFallback(config.getConfigGuiDisplayName(), config.getConfigGuiDisplayName());
+
+            if (configName != null)
+            {
+                int calc = super.getWidth() - configName.length();
+
+                MaLiLib.logger.error("addConfigOption(): configName [{}] (length: {}) // super.width [{}] // calc [{}] // old labelWidth [{}]", configName, configName.length(), super.getWidth(), calc, labelWidth);
+
+                if (labelWidth > super.getWidth() && configName.length() <= calc)
+                {
+                    labelWidth = Math.max(calc, this.getStringWidth(configName));
+                }
+
+                MaLiLib.logger.error("addConfigOption(): configName [{}] (length: {}) // new labelWidth [{}]", configName, configName.length(), labelWidth);
+            }
+            else
+            {
+                configName = config.getConfigGuiDisplayName();
+            }
+        }
+        else
+        {
+            configName = config.getConfigGuiDisplayName();
+        }
+        MaLiLib.logger.error("addConfigOption(): configName [{}] (width: {}), labelWidth [{}]", configName, configName.length(), labelWidth);
+         */
+
+        this.addLabel(x, y + 7, labelWidth, 8, 0xFFFFFFFF, configName);
 
         String comment;
         IConfigInfoProvider infoProvider = this.host.getHoverInfoProvider();
@@ -333,21 +369,15 @@ public class WidgetConfigOption extends WidgetConfigOptionBase<ConfigOptionWrapp
         ButtonGeneric resetButton = this.createResetButton(resetX, y, config);
         ISliderCallback callback;
 
-        if (config instanceof IConfigDouble)
+        switch (config)
         {
-            callback = new SliderCallbackDouble((IConfigDouble) config, resetButton);
-        }
-        else if (config instanceof IConfigFloat)
-        {
-            callback = new SliderCallbackFloat((IConfigFloat) config, resetButton);
-        }
-        else if (config instanceof IConfigInteger)
-        {
-            callback = new SliderCallbackInteger((IConfigInteger) config, resetButton);
-        }
-        else
-        {
-            return;
+            case IConfigDouble iConfigDouble -> callback = new SliderCallbackDouble(iConfigDouble, resetButton);
+            case IConfigFloat iConfigFloat -> callback = new SliderCallbackFloat(iConfigFloat, resetButton);
+            case IConfigInteger iConfigInteger -> callback = new SliderCallbackInteger(iConfigInteger, resetButton);
+            default ->
+            {
+                return;
+            }
         }
 
         WidgetSlider slider = new WidgetSlider(x, y, configWidth, configHeight, callback);

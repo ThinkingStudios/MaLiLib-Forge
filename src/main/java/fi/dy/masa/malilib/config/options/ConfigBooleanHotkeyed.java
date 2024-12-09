@@ -120,7 +120,7 @@ public class ConfigBooleanHotkeyed extends ConfigBoolean implements IHotkeyToggl
         }
         catch (Exception e)
         {
-            MaLiLib.logger.warn("Failed to set config value for '{}' from the JSON element '{}'", this.getName(), element, e);
+            MaLiLib.LOGGER.warn("Failed to set config value for '{}' from the JSON element '{}'", this.getName(), element, e);
         }
     }
 

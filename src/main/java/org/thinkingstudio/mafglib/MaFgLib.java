@@ -13,15 +13,16 @@ import net.neoforged.fml.loading.FMLLoader;
 import net.neoforged.neoforge.client.event.RenderGuiLayerEvent;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.neoforge.common.NeoForge;
+import org.thinkingstudio.mafglib.loader.FoxifiedLoader;
 
 @Mod(value = MaLiLibReference.MOD_ID, dist = Dist.CLIENT)
 public class MaFgLib {
     public MaFgLib(ModContainer modContainer) {
         if (FMLLoader.getDist().isClient()) {
-            modContainer.registerExtensionPoint(IConfigScreenFactory.class, new ModMenuImpl().getModConfigScreenFactory());
+            FoxifiedLoader.registerExtensionPoint(modContainer, IConfigScreenFactory.class, new ModMenuImpl().getModConfigScreenFactory());
             MaLiLib.onInitialize();
 
-            NeoForge.EVENT_BUS.addListener(EventPriority.HIGHEST, RenderGuiLayerEvent.Post.class, event -> {
+            FoxifiedLoader.registerEvent(NeoForge.EVENT_BUS, RenderGuiLayerEvent.Post.class, event -> {
                 ((RenderEventHandler) RenderEventHandler.getInstance()).onRenderGameOverlayPost(
                         event.getGuiGraphics(), MinecraftClient.getInstance(), event.getPartialTick().getTickDelta(false)
                 );

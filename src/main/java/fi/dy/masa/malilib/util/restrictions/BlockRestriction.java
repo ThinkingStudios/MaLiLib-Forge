@@ -35,7 +35,7 @@ public class BlockRestriction extends UsageRestriction<Block>
             }
             else
             {
-                MaLiLib.logger.warn(StringUtils.translate("malilib.error.invalid_block_blacklist_entry", name));
+                MaLiLib.LOGGER.warn(StringUtils.translate("malilib.error.invalid_block_blacklist_entry", name));
             }
         }
     }

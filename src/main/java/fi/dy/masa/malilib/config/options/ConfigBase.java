@@ -3,6 +3,8 @@ package fi.dy.masa.malilib.config.options;
 import javax.annotation.Nullable;
 
 import fi.dy.masa.malilib.MaLiLib;
+import fi.dy.masa.malilib.MaLiLibConfigs;
+import fi.dy.masa.malilib.MaLiLibReference;
 import fi.dy.masa.malilib.config.ConfigType;
 import fi.dy.masa.malilib.config.IConfigBase;
 import fi.dy.masa.malilib.config.IConfigNotifiable;
@@ -24,6 +26,9 @@ public abstract class ConfigBase<T extends IConfigBase> implements IConfigBase, 
     public static final String COMMENT_KEY = "comment";
     public static final String PRETTY_NAME_KEY = "prettyName";
     public static final String TRANSLATED_NAME_KEY = "name";
+
+    // Boolean override debug toggle, because it's not smart to use the Config to debug the Config.
+    private static final boolean CONFIG_TYPE_DEBUG = MaLiLibReference.DEBUG_MODE;
 
     public ConfigBase(ConfigType type, String name)
     {
@@ -50,54 +55,77 @@ public abstract class ConfigBase<T extends IConfigBase> implements IConfigBase, 
         this.comment = comment;
         this.prettyName = prettyName;
         this.translatedName = translatedName;
+
+        if (CONFIG_TYPE_DEBUG)
+        {
+            MaLiLib.LOGGER.info("NEW CONFIG: [{}]", this.toString());
+        }
     }
 
-    @Override
     public ConfigType getType()
     {
         return this.type;
     }
 
-    @Override
     public String getName()
     {
         return this.name;
     }
 
-    @Override
     public String getPrettyName()
     {
+        String result;
+
         if (this.prettyName.isEmpty())
         {
-            return StringUtils.splitCamelCase(this.getName());
+            result = StringUtils.splitCamelCase(this.getName());
         }
-        if (this.translationPrefix.isEmpty())
+        else if (this.prettyName.contains(PRETTY_NAME_KEY + ".") || this.translationPrefix.isEmpty())
         {
-            return this.prettyName;
+            result = StringUtils.getTranslatedOrFallback(this.prettyName, StringUtils.splitCamelCase(this.getName()));
+        }
+        else
+        {
+            result = StringUtils.getTranslatedOrFallback(this.prettyName, this.prettyName);
         }
 
-        return StringUtils.getTranslatedOrFallback(this.prettyName, this.prettyName);
+        this.printConfigElementDebug(this.type, "prettyName", this.prettyName, result);
+        return result;
     }
 
-    @Override
     @Nullable
     public String getComment()
     {
+        String result;
+
         if (this.comment.isEmpty())
         {
-            return StringUtils.splitCamelCase(this.getName())+" Comment?";
+            result = StringUtils.splitCamelCase(this.getName())+" Comment?";
         }
-        if (this.translationPrefix.isEmpty())
+        else if (this.translationPrefix.isEmpty())
         {
-            return StringUtils.getTranslatedOrFallback("config.comment." + this.getName().toLowerCase(), this.comment);
+            if (this.comment.contains(COMMENT_KEY + "."))
+            {
+                result = StringUtils.getTranslatedOrFallback(this.comment, StringUtils.splitCamelCase(this.getName())+" Comment?");
+            }
+            else
+            {
+                result = StringUtils.getTranslatedOrFallback("config.comment." + this.getName().toLowerCase(), this.comment);
+            }
+        }
+        else
+        {
+            result = StringUtils.getTranslatedOrFallback(this.comment, this.comment);
         }
 
-        return StringUtils.getTranslatedOrFallback(this.comment, this.comment);
+        this.printConfigElementDebug(this.type, "comment", this.comment, result);
+        return result;
     }
 
     @SuppressWarnings("unchecked")
     public T translatedName(String translatedName)
     {
+        this.printConfigElementDebug(this.type, "translatedName", this.translatedName, translatedName);
         this.translatedName = translatedName;
         return (T) this;
     }
@@ -123,22 +151,45 @@ public abstract class ConfigBase<T extends IConfigBase> implements IConfigBase, 
         else
         {
             this.translationPrefix = "";
-            MaLiLib.logger.error("ConfigBase: Failed to apply Translations Prefix for config named [{}].", this.getName());
+            MaLiLib.LOGGER.error("ConfigBase: Failed to apply Translations Prefix for config named [{}].", this.getName());
         }
 
+        this.printConfigElementDebug(this.type, "apply", "", this.translationPrefix);
         return (T) this;
     }
 
-    @Override
     @Nullable
     public String getTranslatedName()
     {
+        String result;
+
         if (this.translatedName.isEmpty())
         {
-            return this.getPrettyName();
+            result = this.getName();
+        }
+        else if (this.translationPrefix.isEmpty())
+        {
+            if (this.translatedName.contains(TRANSLATED_NAME_KEY + "."))
+            {
+                result = StringUtils.getTranslatedOrFallback(this.translatedName, this.getName());
+            }
+            else
+            {
+                result = this.translatedName;
+            }
+        }
+        else
+        {
+            result = StringUtils.getTranslatedOrFallback(this.translatedName, this.translatedName);
         }
 
-        return this.translatedName;
+        this.printConfigElementDebug(this.type, "translatedName", this.translatedName, result);
+        return result;
+    }
+
+    public void setPrettyName(String prettyName)
+    {
+        this.prettyName = prettyName;
     }
 
     public void setTranslatedName(String translatedName)
@@ -151,19 +202,25 @@ public abstract class ConfigBase<T extends IConfigBase> implements IConfigBase, 
         this.comment = comment;
     }
 
-    @Override
     public void setValueChangeCallback(IValueChangeCallback<T> callback)
     {
         this.callback = callback;
     }
 
     @SuppressWarnings("unchecked")
-    @Override
     public void onValueChanged()
     {
         if (this.callback != null)
         {
             this.callback.onValueChanged((T) this);
+        }
+    }
+
+    protected void printConfigElementDebug(ConfigType type, String element, String oldStr, String newStr)
+    {
+        if (CONFIG_TYPE_DEBUG || (MaLiLibConfigs.Debug.CONFIG_ELEMENT_DEBUG != null && MaLiLibConfigs.Debug.CONFIG_ELEMENT_DEBUG.getBooleanValue()))
+        {
+            MaLiLib.LOGGER.info("CONFIG: type [{}], element [{}], oldStr [{}], newStr [{}]", type.name(), element, oldStr, newStr);
         }
     }
 

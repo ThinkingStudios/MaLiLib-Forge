@@ -13,10 +13,7 @@ import org.apache.http.annotation.Experimental;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.FluidBlock;
-import net.minecraft.block.entity.BeehiveBlockEntity;
-import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.block.entity.CrafterBlockEntity;
-import net.minecraft.block.entity.SignText;
+import net.minecraft.block.entity.*;
 import net.minecraft.block.enums.Orientation;
 import net.minecraft.component.type.ProfileComponent;
 import net.minecraft.entity.effect.StatusEffect;
@@ -619,5 +616,19 @@ public class BlockUtils
         {
             return null;
         }
+    }
+
+    /**
+     * Write a Block Entity's Data to an ItemStack (Removed from Vanilla, why?)
+     *
+     * @param stack
+     * @param be
+     * @param registry
+     */
+    public static void setStackNbt(@Nonnull ItemStack stack, @Nonnull BlockEntity be, @Nonnull DynamicRegistryManager registry)
+    {
+        NbtCompound nbt = be.createComponentlessNbt(registry);
+        BlockItem.setBlockEntityData(stack, be.getType(), nbt);
+        stack.applyComponentsFrom(be.createComponentMap());
     }
 }
