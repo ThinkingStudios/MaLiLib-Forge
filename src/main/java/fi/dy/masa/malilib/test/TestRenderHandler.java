@@ -134,7 +134,7 @@ public class TestRenderHandler implements IRenderer
     @Override
     public Supplier<String> getProfilerSectionSupplier()
     {
-        return () -> MaLiLibReference.ID + "_test_render";
+        return () -> MaLiLibReference.MOD_ID + "_test_render";
     }
 
     private void renderTargetingOverlay(Matrix4f posMatrix, MinecraftClient mc)
