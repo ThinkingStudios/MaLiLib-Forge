@@ -25,7 +25,7 @@ public enum TestEnumConfig implements IHotkeyTogglable, IConfigNotifiable<IConfi
     TEST_ENUM_SINGLE_PLAYER ("testEnumSinglePlayer",false,true, ""),
     TEST_WALLS_HOTKEY       ("testWallsHotkey",     false,"");
 
-    private final static String TEST_ENUM_KEY = MaLiLibReference.MOD_ID + ".config.test_enum";
+    private final static String TEST_ENUM_KEY = MaLiLibReference.ID + ".config.test_enum";
 
     private final String name;
     private String comment;
@@ -190,7 +190,7 @@ public enum TestEnumConfig implements IHotkeyTogglable, IConfigNotifiable<IConfi
 
         if (comment != null && this.singlePlayer)
         {
-            return comment + "\n" + StringUtils.translate(MaLiLibReference.MOD_ID + ".label.config_comment.single_player_only");
+            return comment + "\n" + StringUtils.translate(MaLiLibReference.ID + ".label.config_comment.single_player_only");
         }
 
         return comment;
