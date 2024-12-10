@@ -148,7 +148,7 @@ public class FileUtils
             }
             catch (Exception e)
             {
-                MaLiLib.logger.warn("Failed to read NBT data from file '{}'", file.getAbsolutePath());
+                MaLiLib.LOGGER.warn("Failed to read NBT data from file '{}'", file.getAbsolutePath());
             }
         }
 

@@ -86,14 +86,14 @@ public interface IPluginClientPlayHandler<T extends CustomPayload> extends Packe
             }
             catch (IllegalArgumentException e)
             {
-                MaLiLib.logger.error("registerPlayPayload: channel ID [{}] is is already registered", this.getPayloadChannel());
+                MaLiLib.LOGGER.error("registerPlayPayload: channel ID [{}] is is already registered", this.getPayloadChannel());
             }
 
             this.setPlayRegistered(this.getPayloadChannel());
             return;
         }
 
-        MaLiLib.logger.error("registerPlayPayload: channel ID [{}] is invalid, or it is already registered", this.getPayloadChannel());
+        MaLiLib.LOGGER.error("registerPlayPayload: channel ID [{}] is invalid, or it is already registered", this.getPayloadChannel());
     }
 
     /**
@@ -117,12 +117,12 @@ public interface IPluginClientPlayHandler<T extends CustomPayload> extends Packe
             }
             catch (IllegalArgumentException e)
             {
-                MaLiLib.logger.error("registerPlayReceiver: Channel ID [{}] payload has not been registered", this.getPayloadChannel());
+                MaLiLib.LOGGER.error("registerPlayReceiver: Channel ID [{}] payload has not been registered", this.getPayloadChannel());
                 return false;
             }
         }
 
-        MaLiLib.logger.error("registerPlayReceiver: Channel ID [{}] is invalid, or not registered", this.getPayloadChannel());
+        MaLiLib.LOGGER.error("registerPlayReceiver: Channel ID [{}] is invalid, or not registered", this.getPayloadChannel());
         return false;
     }
 
@@ -185,7 +185,7 @@ public interface IPluginClientPlayHandler<T extends CustomPayload> extends Packe
     void encodeWithSplitter(PacketByteBuf buf, ClientPlayNetworkHandler handler);
 
     /**
-     * Sends the Payload to the server using the BadPackets interface.
+     * Sends the Payload to the server using the Fabric-API interface.
      * -
      * @param payload (The Payload to send)
      * @return (true/false --> for error control)
@@ -194,17 +194,15 @@ public interface IPluginClientPlayHandler<T extends CustomPayload> extends Packe
     {
         if (payload.getId().id().equals(this.getPayloadChannel()) && this.isPlayRegistered(this.getPayloadChannel()))
         {
-            var c2s = PacketSender.c2s();
-
-            if (c2s.canSend(payload.getId()))
+            if (PacketSender.c2s().canSend(payload.getId()))
             {
-                c2s.send(payload);
+                PacketSender.c2s().send(payload);
                 return true;
             }
         }
         else
         {
-            MaLiLib.logger.warn("sendPlayPayload: [BadPackets] error sending payload for channel: {}, check if channel is registered", payload.getId().id().toString());
+            MaLiLib.LOGGER.warn("sendPlayPayload: [BadPackets] error sending payload for channel: {}, check if channel is registered", payload.getId().id().toString());
         }
 
         return false;
@@ -230,7 +228,7 @@ public interface IPluginClientPlayHandler<T extends CustomPayload> extends Packe
         }
         else
         {
-            MaLiLib.logger.warn("sendPlayPayload: [NetworkHandler] error sending payload for channel: {}, check if channel is registered", payload.getId().id().toString());
+            MaLiLib.LOGGER.warn("sendPlayPayload: [NetworkHandler] error sending payload for channel: {}, check if channel is registered", payload.getId().id().toString());
         }
 
         return false;

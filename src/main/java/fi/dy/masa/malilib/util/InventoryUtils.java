@@ -2,7 +2,6 @@ package fi.dy.masa.malilib.util;
 
 import java.util.Iterator;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -1205,7 +1204,7 @@ public class InventoryUtils
                 }
                 else
                 {
-                    MaLiLib.logger.warn(StringUtils.translate("malilib.error.invalid_item_stack_entry.string", itemName));
+                    MaLiLib.LOGGER.warn(StringUtils.translate("malilib.error.invalid_item_stack_entry.string", itemName));
                 }
             }
         }
@@ -1232,7 +1231,7 @@ public class InventoryUtils
         }
         catch (CommandSyntaxException e)
         {
-            MaLiLib.logger.warn(StringUtils.translate("malilib.error.invalid_item_stack_entry.nbt_syntax", stringIn));
+            MaLiLib.LOGGER.warn(StringUtils.translate("malilib.error.invalid_item_stack_entry.nbt_syntax", stringIn));
             return null;
         }
 

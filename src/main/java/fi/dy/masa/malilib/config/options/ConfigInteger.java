@@ -6,6 +6,7 @@ import net.minecraft.util.math.MathHelper;
 import fi.dy.masa.malilib.MaLiLib;
 import fi.dy.masa.malilib.config.ConfigType;
 import fi.dy.masa.malilib.config.IConfigInteger;
+import fi.dy.masa.malilib.util.StringUtils;
 
 public class ConfigInteger extends ConfigBase<ConfigInteger> implements IConfigInteger
 {
@@ -15,34 +16,64 @@ public class ConfigInteger extends ConfigBase<ConfigInteger> implements IConfigI
     protected int value;
     private boolean useSlider;
 
+    public ConfigInteger(String name, int defaultValue)
+    {
+        this(name, defaultValue, Integer.MIN_VALUE, Integer.MAX_VALUE, name+" Comment?", StringUtils.splitCamelCase(name), name);
+    }
+
     public ConfigInteger(String name, int defaultValue, String comment)
     {
-        this(name, defaultValue, Integer.MIN_VALUE, Integer.MAX_VALUE, comment, name);
+        this(name, defaultValue, Integer.MIN_VALUE, Integer.MAX_VALUE, comment, StringUtils.splitCamelCase(name), name);
     }
 
     public ConfigInteger(String name, int defaultValue, String comment, String prettyName)
     {
-        this(name, defaultValue, Integer.MIN_VALUE, Integer.MAX_VALUE, comment, prettyName);
+        this(name, defaultValue, Integer.MIN_VALUE, Integer.MAX_VALUE, comment, prettyName, name);
+    }
+
+    public ConfigInteger(String name, int defaultValue, String comment, String prettyName, String translatedName)
+    {
+        this(name, defaultValue, Integer.MIN_VALUE, Integer.MAX_VALUE, comment, prettyName, translatedName);
+    }
+
+    public ConfigInteger(String name, int defaultValue, int minValue, int maxValue)
+    {
+        this(name, defaultValue, minValue, maxValue, false, name+" Comment?", StringUtils.splitCamelCase(name), name);
     }
 
     public ConfigInteger(String name, int defaultValue, int minValue, int maxValue, String comment)
     {
-        this(name, defaultValue, minValue, maxValue, false, comment, name);
+        this(name, defaultValue, minValue, maxValue, false, comment, StringUtils.splitCamelCase(name), name);
     }
 
     public ConfigInteger(String name, int defaultValue, int minValue, int maxValue, String comment, String prettyName)
     {
-        this(name, defaultValue, minValue, maxValue, false, comment, prettyName);
+        this(name, defaultValue, minValue, maxValue, false, comment, prettyName, name);
+    }
+
+    public ConfigInteger(String name, int defaultValue, int minValue, int maxValue, String comment, String prettyName, String translatedName)
+    {
+        this(name, defaultValue, minValue, maxValue, false, comment, prettyName, translatedName);
+    }
+
+    public ConfigInteger(String name, int defaultValue, int minValue, int maxValue, boolean useSlider)
+    {
+        this(name, defaultValue, minValue, maxValue, useSlider, name+" Comment?", StringUtils.splitCamelCase(name), name);
     }
 
     public ConfigInteger(String name, int defaultValue, int minValue, int maxValue, boolean useSlider, String comment)
     {
-        this(name, defaultValue, minValue, maxValue, useSlider, comment, name);
+        this(name, defaultValue, minValue, maxValue, useSlider, comment, StringUtils.splitCamelCase(name), name);
     }
 
     public ConfigInteger(String name, int defaultValue, int minValue, int maxValue, boolean useSlider, String comment, String prettyName)
     {
-        super(ConfigType.INTEGER, name, comment, prettyName);
+        this(name, defaultValue, minValue, maxValue, useSlider, comment, prettyName, name);
+    }
+
+    public ConfigInteger(String name, int defaultValue, int minValue, int maxValue, boolean useSlider, String comment, String prettyName, String translatedName)
+    {
+        super(ConfigType.INTEGER, name, comment, prettyName, translatedName);
 
         this.minValue = minValue;
         this.maxValue = maxValue;
@@ -151,7 +182,7 @@ public class ConfigInteger extends ConfigBase<ConfigInteger> implements IConfigI
         }
         catch (Exception e)
         {
-            MaLiLib.logger.warn("Failed to set config value for {} from the string '{}'", this.getName(), value, e);
+            MaLiLib.LOGGER.warn("Failed to set config value for {} from the string '{}'", this.getName(), value, e);
         }
     }
 
@@ -166,12 +197,12 @@ public class ConfigInteger extends ConfigBase<ConfigInteger> implements IConfigI
             }
             else
             {
-                MaLiLib.logger.warn("Failed to set config value for '{}' from the JSON element '{}'", this.getName(), element);
+                MaLiLib.LOGGER.warn("Failed to set config value for '{}' from the JSON element '{}'", this.getName(), element);
             }
         }
         catch (Exception e)
         {
-            MaLiLib.logger.warn("Failed to set config value for '{}' from the JSON element '{}'", this.getName(), element, e);
+            MaLiLib.LOGGER.warn("Failed to set config value for '{}' from the JSON element '{}'", this.getName(), element, e);
         }
     }
 

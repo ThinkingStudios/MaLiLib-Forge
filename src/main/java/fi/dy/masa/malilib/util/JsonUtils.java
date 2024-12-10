@@ -1,23 +1,16 @@
 package fi.dy.masa.malilib.util;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.UUID;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.google.gson.*;
+
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+
 import fi.dy.masa.malilib.MaLiLib;
 
 public class JsonUtils
@@ -406,7 +399,7 @@ public class JsonUtils
             }
             catch (Exception e)
             {
-                MaLiLib.logger.error("Failed to parse the JSON file '{}'", fileName, e);
+                MaLiLib.LOGGER.error("Failed to parse the JSON file '{}'", fileName, e);
             }
         }
 
@@ -429,14 +422,14 @@ public class JsonUtils
 
             if (file.exists() && file.isFile() && file.delete() == false)
             {
-                MaLiLib.logger.warn("Failed to delete file '{}'", file.getAbsolutePath());
+                MaLiLib.LOGGER.warn("Failed to delete file '{}'", file.getAbsolutePath());
             }
 
             return fileTmp.renameTo(file);
         }
         catch (Exception e)
         {
-            MaLiLib.logger.warn("Failed to write JSON data to file '{}'", fileTmp.getAbsolutePath(), e);
+            MaLiLib.LOGGER.warn("Failed to write JSON data to file '{}'", fileTmp.getAbsolutePath(), e);
         }
 
         return false;

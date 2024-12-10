@@ -38,9 +38,8 @@ public class ConfigLockedList extends ConfigBase<ConfigLockedList> implements IC
 
     public ConfigLockedList(String name, IConfigLockedListType handler, String comment, String prettyName, String translatedName)
     {
-        super(ConfigType.LOCKED_LIST, name, comment, prettyName);
+        super(ConfigType.LOCKED_LIST, name, comment, prettyName, translatedName);
 
-        this.setTranslatedName(translatedName);
         this.handler = handler;
         this.defaultList = handler.getDefaultEntries();
         this.values.addAll(this.defaultList);
@@ -167,12 +166,12 @@ public class ConfigLockedList extends ConfigBase<ConfigLockedList> implements IC
             }
             else
             {
-                MaLiLib.logger.warn("Failed to set config value for '{}' from the JSON element '{}'", this.getName(), element);
+                MaLiLib.LOGGER.warn("Failed to set config value for '{}' from the JSON element '{}'", this.getName(), element);
             }
         }
         catch (Exception e)
         {
-            MaLiLib.logger.warn("Failed to set config value for '{}' from the JSON element '{}'", this.getName(), element, e);
+            MaLiLib.LOGGER.warn("Failed to set config value for '{}' from the JSON element '{}'", this.getName(), element, e);
         }
     }
 

@@ -199,7 +199,9 @@ public class EntityUtils
         {
             health = nbt.getFloat(NbtKeys.HEALTH);
         }
+
         maxHealth = getAttributeValueFromNbt(nbt, EntityAttributes.GENERIC_MAX_HEALTH);
+
         if (maxHealth < 0)
         {
             maxHealth = 20;
@@ -833,6 +835,45 @@ public class EntityUtils
         }
 
         return null;
+    }
+
+    /**
+     * Get a Rabbit's Variant type from NBT.
+     *
+     * @param nbt ()
+     * @return ()
+     */
+    public static @Nullable RabbitEntity.RabbitType getRabbitTypeFromNbt(@Nonnull NbtCompound nbt)
+    {
+        if (nbt.contains(NbtKeys.RABBIT_TYPE, Constants.NBT.TAG_INT))
+        {
+            return RabbitEntity.RabbitType.byId(nbt.getInt(NbtKeys.RABBIT_TYPE));
+        }
+
+        return null;
+    }
+
+    /**
+     * Get a Llama's Variant type from NBT.
+     *
+     * @param nbt ()
+     * @return ()
+     */
+    public static Pair<LlamaEntity.Variant, Integer> getLlamaTypeFromNbt(@Nonnull NbtCompound nbt)
+    {
+        LlamaEntity.Variant variant = null;
+        int strength = -1;
+
+        if (nbt.contains(NbtKeys.VARIANT_2, Constants.NBT.TAG_INT))
+        {
+            variant = LlamaEntity.Variant.byId(nbt.getInt(NbtKeys.VARIANT_2));
+        }
+        if (nbt.contains(NbtKeys.STRENGTH, Constants.NBT.TAG_INT))
+        {
+            strength = nbt.getInt(NbtKeys.STRENGTH);
+        }
+
+        return Pair.of(variant, strength);
     }
 
     /**

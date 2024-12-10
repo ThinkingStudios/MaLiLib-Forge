@@ -7,6 +7,8 @@ import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.loading.FMLLoader;
 import net.neoforged.fml.loading.moddiscovery.ModInfo;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
+import net.neoforged.neoforgespi.language.IModInfo;
+import net.neoforged.neoforgespi.locating.IModFile;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 
@@ -26,13 +28,23 @@ public class NeoUtils {
     }
 
     public ArtifactVersion getModArtifactVersion(String modId) {
-        for(ModInfo modInfo: FMLLoader.getLoadingModList().getMods()) {
+        for (ModInfo modInfo: FMLLoader.getLoadingModList().getMods()) {
             if(modInfo.getModId().equals(modId)) {
                 return modInfo.getVersion();
             }
         }
 
         return new DefaultArtifactVersion("?");
+    }
+
+    public static IModInfo getModInfo(IModFile modFile) {
+        for (IModInfo modInfo: modFile.getModInfos()) {
+            if (modInfo.getOwningFile().getFile().equals(modFile)) {
+                return modInfo;
+            }
+        }
+
+        return modFile.getModInfos().getFirst();
     }
 
     public static NeoUtils getInstance() {

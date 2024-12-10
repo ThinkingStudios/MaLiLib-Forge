@@ -278,6 +278,7 @@ public class WidgetDropDownList<T> extends WidgetBase
         String str = this.getDisplayString(this.getSelectedEntry());
         int txtX = this.x + 4;
         int txtY = this.y + this.height / 2 - this.fontHeight / 2;
+        matrixStackIn.translate(0, 0, 100);
         this.drawString(txtX, txtY, 0xFFE0E0E0, str, drawContext);
         txtY += this.height + 1;
         int scrollWidth = 10;

@@ -1,28 +1,88 @@
 package fi.dy.masa.malilib.util;
 
-import javax.annotation.Nullable;
 import java.io.File;
 import java.net.SocketAddress;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import javax.annotation.Nullable;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.jetbrains.annotations.NotNull;
 
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.network.ClientPlayNetworkHandler;
+import net.minecraft.client.network.ServerInfo;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.network.ClientConnection;
+import net.minecraft.server.integrated.IntegratedServer;
 import net.minecraft.text.ClickEvent;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
-import fi.dy.masa.malilib.MaLiLibConfigs;
+import net.minecraft.util.Identifier;
+import net.minecraft.world.World;
 
+import fi.dy.masa.malilib.MaLiLib;
+import fi.dy.masa.malilib.MaLiLibConfigs;
+import fi.dy.masa.malilib.gui.LeftRight;
 import org.thinkingstudio.mafglib.util.NeoUtils;
 
 public class StringUtils
 {
-    public static String getModVersionString(String modId) {
+    @Nullable
+    public static Identifier identifier(String fullPath)
+    {
+        try
+        {
+            return Identifier.of(fullPath);
+        }
+        catch (Exception e)
+        {
+            MaLiLib.LOGGER.error("Exception while trying to create a ResourceLocation: {}", e.getMessage());
+            return null;
+        }
+    }
+
+    @Nullable
+    public static Identifier identifier(String nameSpace, String path)
+    {
+        try
+        {
+            return Identifier.of(nameSpace, path);
+        }
+        catch (Exception e)
+        {
+            MaLiLib.LOGGER.error("Exception while trying to create a ResourceLocation: {}", e.getMessage());
+            return null;
+        }
+    }
+
+    public static String getModVersionString(String modId)
+    {
         return NeoUtils.getInstance().getModArtifactVersion(modId).toString();
+    }
+
+    /**
+     * Removes the string <b>extension</b> from the end of <b>str</b>,
+     * if <b>str</b> ends in <b>extension</b>
+     * @param str
+     * @param extension
+     * @return
+     */
+    public static String stripExtensionIfMatches(String str, String extension)
+    {
+        if (str.endsWith(extension) && str.length() > extension.length())
+        {
+            return str.substring(0, str.length() - extension.length());
+        }
+
+        return str;
     }
 
     /**
@@ -72,13 +132,85 @@ public class StringUtils
         return str;
     }
 
-    public static void sendOpenFileChatMessage(net.minecraft.entity.Entity sender, String messageKey, File file)
+    /**
+     * Returns true if all the characters from needle are found in haystack,
+     * and they are found in the same order. There can be an arbitrary number of characters between
+     * each found character in the haystack, as long as all of them are found,
+     * and such that for example the third character of needle is found after the second character's
+     * first valid match in haystack.
+     */
+    public static boolean containsOrderedCharacters(String needle, String haystack)
     {
-        net.minecraft.text.Text name = Text.literal(file.getName())
+        int needleLength = needle.length();
+        int startIndex = 0;
+
+        for (int i = 0; i < needleLength; ++i)
+        {
+            startIndex = haystack.indexOf(needle.charAt(i), startIndex);
+
+            if (startIndex == -1)
+            {
+                return false;
+            }
+
+            ++startIndex;
+        }
+
+        return true;
+    }
+
+    public static void sendOpenFileChatMessage(PlayerEntity sender, String messageKey, File file)
+    {
+        Text name = Text.literal(file.getName())
             .formatted(net.minecraft.util.Formatting.UNDERLINE)
             .styled((style) -> style.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_FILE, file.getAbsolutePath())));
 
         sender.sendMessage(Text.translatable(messageKey, name));
+    }
+
+    public static int getMaxStringRenderWidth(String... strings)
+    {
+        return getMaxStringRenderWidth(Arrays.asList(strings));
+    }
+
+    public static int getMaxStringRenderWidth(List<String> lines)
+    {
+        return getMaxStringRenderWidth(lines, (l) -> l);
+    }
+
+    public static int getMaxStringRenderWidth(Function<String, String> translator, String... strings)
+    {
+        return getMaxStringRenderWidth(Arrays.asList(strings), translator);
+    }
+
+    public static int getMaxStringRenderWidth(List<String> lines, Function<String, String> translator)
+    {
+        int width = 0;
+
+        for (String line : lines)
+        {
+            width = Math.max(width, getStringWidth(translator.apply(line)));
+        }
+
+        return width;
+    }
+
+    public static <T> int getMaxStringRenderWidthOfObjects(List<T> list, Function<T, String> translator)
+    {
+        int width = 0;
+
+        for (T item : list)
+        {
+            width = Math.max(width, getStringWidth(translator.apply(item)));
+        }
+
+        return width;
+    }
+
+    public static void addTranslatedLines(List<String> linesOut, String translationKey)
+    {
+        String[] parts = translate(translationKey).split("\\\\n");
+        Collections.addAll(linesOut, parts);
     }
 
     /**
@@ -90,6 +222,7 @@ public class StringUtils
     public static void splitTextToLines(List<String> linesOut, String textIn, int maxLineLength)
     {
         String[] lines = textIn.split("\\\\n|\\n");
+        @Nullable String activeColor = null;
 
         for (String line : lines)
         {
@@ -119,6 +252,15 @@ public class StringUtils
                         for (int i = 0; i < chars; ++i)
                         {
                             String c = str.substring(i, i + 1);
+
+                            if (c.equals("§") && i < (chars - 1))
+                            {
+                                activeColor = str.substring(i, i + 2);
+                                sb.append(activeColor);
+                                ++i;
+                                continue;
+                            }
+
                             lineWidth += getStringWidth(c);
 
                             if (lineWidth > maxLineLength)
@@ -126,6 +268,11 @@ public class StringUtils
                                 linesOut.add(sb.toString());
                                 sb = new StringBuilder(256);
                                 lineWidth = 0;
+
+                                if (activeColor != null)
+                                {
+                                    sb.append(activeColor);
+                                }
                             }
 
                             sb.append(c);
@@ -203,7 +350,83 @@ public class StringUtils
         return sb.toString();
     }
 
-    public static String getClampedDisplayStringRenderlen(List<String> list, final int maxWidth, String prefix, String suffix)
+    public static String getDisplayStringForList(List<String> list, final int maxWidth,
+                                                 String quote, String prefix, String suffix)
+    {
+        StringBuilder sb = new StringBuilder(128);
+        sb.append(prefix);
+
+        String entrySep = ", ";
+        String dots = " ...";
+        final int listSize = list.size();
+        final int widthQuotes = getStringWidth(quote) * 2;
+        final int widthSep = getStringWidth(entrySep);
+        final int widthDots = getStringWidth(dots);
+        final int widthNextMin = widthSep + widthDots;
+        int width = getStringWidth(prefix) + getStringWidth(suffix);
+
+        if (listSize > 0)
+        {
+            for (int listIndex = 0; listIndex < listSize && width < maxWidth; ++listIndex)
+            {
+                if (listIndex > 0)
+                {
+                    sb.append(entrySep);
+                    width += widthSep;
+                }
+
+                String str = list.get(listIndex);
+                final int len = getStringWidth(str) + widthQuotes;
+                int widthNext = listIndex < listSize - 1 ? widthNextMin : 0;
+
+                if ((width + len + widthNext) <= maxWidth)
+                {
+                    sb.append(quote).append(str).append(quote);
+                    width += len;
+                }
+                else
+                {
+                    if ((width + getStringWidth(str.substring(0, 1)) + widthDots) <= maxWidth)
+                    {
+                        sb.append(quote);
+                        width += widthQuotes;
+
+                        for (int i = 0; i < str.length(); ++i)
+                        {
+                            String c = str.substring(i, i + 1);
+                            final int charWidth = getStringWidth(c);
+
+                            if ((width + charWidth + widthDots) <= maxWidth)
+                            {
+                                sb.append(c);
+                                width += charWidth;
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
+
+                        sb.append(quote);
+                    }
+
+                    sb.append(dots);
+                    break;
+                }
+            }
+        }
+        else
+        {
+            sb.append("<empty>");
+        }
+
+        sb.append(suffix);
+
+        return sb.toString();
+    }
+
+    public static String getClampedDisplayStringRenderlen(List<String> list, final int maxWidth,
+                                                          String prefix, String suffix)
     {
         StringBuilder sb = new StringBuilder(128);
         sb.append(prefix);
@@ -267,14 +490,86 @@ public class StringUtils
         return sb.toString();
     }
 
+    /**
+     * Shrinks the given string until it can fit into the provided maximum width,
+     * and adds the provided clamping indicator to indicate that the string is longer than what is shown.
+     * @param text
+     * @param maxWidth
+     * @param side the side from which to shrink the string
+     * @param indicator the appended shrinkage indicator, for example "..."
+     * @return
+     */
+    public static String clampTextToRenderLength(String text, final int maxWidth, LeftRight side, String indicator)
+    {
+        // The entire string fits, just return it as-is
+        if (getStringWidth(text) <= maxWidth)
+        {
+            return text;
+        }
+
+        StringBuilder sb = new StringBuilder(128);
+
+        final int indicatorWidth = getStringWidth(indicator);
+        final int stringLen = text.length();
+        int usedWidth = indicatorWidth;
+        int index = 0;
+        int lastIndex = stringLen - 1;
+        int indexIncrement = 1;
+
+        // Shrink from the left, so append/build from the right
+        if (side == LeftRight.LEFT)
+        {
+            index = stringLen - 1;
+            lastIndex = 0;
+            indexIncrement = -1;
+        }
+
+        while (usedWidth < maxWidth)
+        {
+            String chr = text.substring(index, index + 1);
+            int charWidth = getStringWidth(chr);
+
+            if (usedWidth + charWidth > maxWidth)
+            {
+                break;
+            }
+
+            sb.append(chr);
+            usedWidth += charWidth;
+
+            if (index == lastIndex)
+            {
+                break;
+            }
+
+            index += indexIncrement;
+        }
+
+        if (side == LeftRight.LEFT)
+        {
+            return indicator + sb.reverse();
+        }
+
+        sb.append(indicator);
+
+        return sb.toString();
+    }
+
+    @Nullable
+    public static String getWorldOrServerNameOrDefault(String defaultStr)
+    {
+        String name = getWorldOrServerName();
+        return name != null ? name : defaultStr;
+    }
+
     @Nullable
     public static String getWorldOrServerName()
     {
-        net.minecraft.client.MinecraftClient mc = net.minecraft.client.MinecraftClient.getInstance();
+        MinecraftClient mc = MinecraftClient.getInstance();
 
         if (mc.isIntegratedServerRunning())
         {
-            net.minecraft.server.integrated.IntegratedServer server = mc.getServer();
+            IntegratedServer server = mc.getServer();
 
             if (server != null)
             {
@@ -294,8 +589,8 @@ public class StringUtils
                 }
                 else
                 {
-                    net.minecraft.client.network.ClientPlayNetworkHandler handler = mc.getNetworkHandler();
-                    net.minecraft.network.ClientConnection connection = handler != null ? handler.getConnection() : null;
+                    ClientPlayNetworkHandler handler = mc.getNetworkHandler();
+                    ClientConnection connection = handler != null ? handler.getConnection() : null;
 
                     if (connection != null)
                     {
@@ -304,7 +599,7 @@ public class StringUtils
                 }
             }
 
-            net.minecraft.client.network.ServerInfo server = mc.getCurrentServerEntry();
+            ServerInfo server = mc.getCurrentServerEntry();
 
             if (server != null)
             {
@@ -336,16 +631,22 @@ public class StringUtils
             {
                 return prefix + name + suffix;
             }
-
-            net.minecraft.world.World world = net.minecraft.client.MinecraftClient.getInstance().world;
-
-            if (world != null)
+            else
             {
-                return prefix + name + "_dim_" + WorldUtils.getDimensionId(world) + suffix;
+                World world = MinecraftClient.getInstance().world;
+
+                if (world != null)
+                {
+                    return prefix + name + "_dim_" + WorldUtils.getDimensionId(world) + suffix;
+                }
             }
         }
+        else
+        {
+            name = prefix + defaultName + suffix;
+        }
 
-        return prefix + defaultName + suffix;
+        return FileNameUtils.generateSimpleSafeFileName(name) + suffix;
     }
 
     public static String stringifyAddress(SocketAddress address)
@@ -358,6 +659,44 @@ public class StringUtils
         }
 
         return str.replace(':', '_');
+    }
+
+    public static String getPrettyFileSizeText(long fileSize, int decimalPlaces)
+    {
+        String[] units = {"B", "KiB", "MiB", "GiB", "TiB"};
+        String unitStr = "";
+        double size = fileSize;
+
+        for (String unit : units)
+        {
+            unitStr = unit;
+
+            if (size < 1024.0)
+            {
+                break;
+            }
+
+            size /= 1024.0;
+        }
+
+        String fmt = "%." + decimalPlaces + "f %s";
+        return String.format(fmt, size, unitStr);
+    }
+
+    public static List<String> translateAndLineSplit(String translationKey, Object... args)
+    {
+        String translated = translate(translationKey, args);
+        return Arrays.asList(translated.split("\\n"));
+    }
+
+    public static void translateAndLineSplit(Consumer<String> lineConsumer, String translationKey, Object... args)
+    {
+        String translated = translate(translationKey, args);
+
+        for (String line : translated.split("\\n"))
+        {
+            lineConsumer.accept(line);
+        }
     }
 
     @Nullable
@@ -383,7 +722,32 @@ public class StringUtils
      */
     public static String translate(String translationKey, Object... args)
     {
-        return net.minecraft.client.resource.language.I18n.translate(translationKey, args);
+        try
+        {
+            if (MaLiLibConfigs.Debug.PRINT_TRANSLATION_KEYS.getBooleanValue() &&
+                hasTranslation(translationKey))
+            {
+                MaLiLib.LOGGER.info("Translation key: {}", translationKey);
+            }
+
+            /*
+            if (MaLiLibConfigs.Generic.TRANSLATION_OVERRIDES.getBooleanValue())
+            {
+                String translation = Registry.TRANSLATION_OVERRIDE_MANAGER.getOverriddenTranslation(translationKey, args);
+
+                if (translation != null)
+                {
+                    return translation;
+                }
+            }
+             */
+
+            return net.minecraft.client.resource.language.I18n.translate(translationKey, args);
+        }
+        catch (Exception e)
+        {
+            return translationKey;
+        }
     }
 
     public static MutableText translateable(String translationKey)
@@ -430,9 +794,10 @@ public class StringUtils
         return net.minecraft.client.MinecraftClient.getInstance().textRenderer.getWidth(text);
     }
 
-    public static void drawString(int x, int y, int color, String text, net.minecraft.client.gui.DrawContext drawContext)
+    public static void drawString(int x, int y, int color, String text, DrawContext drawContext)
     {
         drawContext.drawText(net.minecraft.client.MinecraftClient.getInstance().textRenderer, text, x, y, color, false);
+        //RenderUtils.forceDraw(drawContext);
     }
 
     /**

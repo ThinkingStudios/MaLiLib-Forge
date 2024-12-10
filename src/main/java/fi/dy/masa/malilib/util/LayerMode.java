@@ -1,5 +1,7 @@
 package fi.dy.masa.malilib.util;
 
+import com.google.common.collect.ImmutableList;
+
 import fi.dy.masa.malilib.config.IConfigOptionListEntry;
 
 public enum LayerMode implements IConfigOptionListEntry
@@ -10,10 +12,12 @@ public enum LayerMode implements IConfigOptionListEntry
     ALL_BELOW       ("all_below",       "malilib.gui.label.layer_mode.all_below"),
     ALL_ABOVE       ("all_above",       "malilib.gui.label.layer_mode.all_above");
 
+    public static final ImmutableList<LayerMode> VALUES = ImmutableList.copyOf(values());
+
     private final String configString;
     private final String translationKey;
 
-    private LayerMode(String configString, String translationKey)
+    LayerMode(String configString, String translationKey)
     {
         this.configString = configString;
         this.translationKey = translationKey;

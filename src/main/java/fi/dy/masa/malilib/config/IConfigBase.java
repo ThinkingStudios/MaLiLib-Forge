@@ -3,7 +3,6 @@ package fi.dy.masa.malilib.config;
 import java.util.Locale;
 import javax.annotation.Nullable;
 import com.google.gson.JsonElement;
-import fi.dy.masa.malilib.util.StringUtils;
 
 public interface IConfigBase
 {
@@ -70,17 +69,22 @@ public interface IConfigBase
      */
     default String getConfigGuiDisplayName()
     {
-        return StringUtils.getTranslatedOrFallback(this.getTranslatedName(), this.getName());
+        return this.getTranslatedName();
     }
 
     /**
      * Get translated name
      * @return (Defaults to Name)
      */
-    default String getTranslatedName()
-    {
-        return this.getName();
-    }
+    String getTranslatedName();
+
+    /**
+     * Set the below values, if required to do so.
+     * @param prettyName
+     */
+    void setPrettyName(String prettyName);
+    void setTranslatedName(String translatedName);
+    void setComment(String comment);
 
     /**
      * Set the value of this config option from a JSON element (is possible)

@@ -33,7 +33,7 @@ public class ItemRestriction extends UsageRestriction<Item>
             }
             else
             {
-                MaLiLib.logger.warn(StringUtils.translate("malilib.error.invalid_item_blacklist_entry", name));
+                MaLiLib.LOGGER.warn(StringUtils.translate("malilib.error.invalid_item_blacklist_entry", name));
             }
         }
     }
