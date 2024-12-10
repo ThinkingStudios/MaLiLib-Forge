@@ -4,6 +4,8 @@ import java.nio.file.Path;
 import java.util.function.Supplier;
 import javax.annotation.Nullable;
 
+import org.jetbrains.annotations.ApiStatus;
+
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.ClientPlayerInteractionManager;
@@ -25,6 +27,10 @@ import net.minecraft.util.profiler.Profilers;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 
+/**
+ * Post-ReWrite code
+ */
+@ApiStatus.Experimental
 public class GameWrap
 {
     public static MinecraftClient getClient()

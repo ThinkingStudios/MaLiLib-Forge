@@ -76,7 +76,7 @@ public class RenderEventHandler implements IRenderDispatcher
     {
         Profiler profiler = Profilers.get();
 
-        profiler.push("malilib_rendergameoverlaydrawer");
+        profiler.push(MaLiLibReference.MOD_ID+"_overlay_last_drawer");
 
         if (this.overlayRenderers.isEmpty() == false)
         {
@@ -96,7 +96,7 @@ public class RenderEventHandler implements IRenderDispatcher
     {
         Profiler profiler = Profilers.get();
 
-        profiler.push("malilib_rendergameoverlaypost");
+        profiler.push(MaLiLibReference.MOD_ID+"_game_overlay");
 
         if (this.overlayRenderers.isEmpty() == false)
         {
@@ -109,36 +109,42 @@ public class RenderEventHandler implements IRenderDispatcher
             }
         }
 
-        profiler.push("malilib_ingamemessages");
+        profiler.swap(MaLiLibReference.MOD_ID+"_game_messages");
         InfoUtils.renderInGameMessages(drawContext);
-        profiler.pop();
-
         profiler.pop();
     }
 
     @ApiStatus.Internal
     public void onRenderTooltipLast(DrawContext drawContext, ItemStack stack, int x, int y)
     {
+        Profiler profiler = Profilers.get();
+
+        profiler.push(MaLiLibReference.MOD_ID+"_tooltip");
+
         if (this.tooltipLastRenderers.isEmpty() == false)
         {
             for (IRenderer renderer : this.tooltipLastRenderers)
             {
+                profiler.swap(renderer.getProfilerSectionSupplier());
                 renderer.onRenderTooltipLast(drawContext ,stack, x, y);
             }
         }
+
+        profiler.pop();
     }
 
     @ApiStatus.Internal
     public void runRenderWorldPreWeather(Matrix4f posMatrix, Matrix4f projMatrix, MinecraftClient mc,
-                                         FrameGraphBuilder frameGraphBuilder, DefaultFramebufferSet fbSet, Frustum frustum, Camera camera, Profiler profiler)
+                                         FrameGraphBuilder frameGraphBuilder, DefaultFramebufferSet fbSet,
+                                         Frustum frustum, Camera camera, Profiler profiler)
     {
+        profiler.push(MaLiLibReference.MOD_ID+"_pre_weather");
+
         if (this.worldPreWeatherRenderers.isEmpty() == false)
         {
             Handle<Framebuffer> handleMain;
             //Handle<Framebuffer> handleTranslucent;
-            RenderPass renderPass = frameGraphBuilder.createPass(MaLiLibReference.MOD_ID);
-
-            profiler.push(MaLiLibReference.MOD_ID+"_render_pre_weather");
+            RenderPass renderPass = frameGraphBuilder.createPass(MaLiLibReference.MOD_ID+"_pre_weather");
 
             /*
             if (fbSet.translucentFramebuffer != null)
@@ -201,15 +207,16 @@ public class RenderEventHandler implements IRenderDispatcher
 
     @ApiStatus.Internal
     public void runRenderWorldLast(Matrix4f posMatrix, Matrix4f projMatrix, MinecraftClient mc,
-                                   FrameGraphBuilder frameGraphBuilder, DefaultFramebufferSet fbSet, Frustum frustum, Camera camera, Profiler profiler)
+                                   FrameGraphBuilder frameGraphBuilder, DefaultFramebufferSet fbSet,
+                                   Frustum frustum, Camera camera, Profiler profiler)
     {
+        profiler.push(MaLiLibReference.MOD_ID+"_world_last");
+
         if (this.worldLastRenderers.isEmpty() == false)
         {
             Handle<Framebuffer> handleMain;
             //Handle<Framebuffer> handleTranslucent;
-            RenderPass renderPass = frameGraphBuilder.createPass(MaLiLibReference.MOD_ID);
-
-            profiler.push(MaLiLibReference.MOD_ID+"_render_post");
+            RenderPass renderPass = frameGraphBuilder.createPass(MaLiLibReference.MOD_ID+"_world_last");
 
             // Don't write to translucent Frame Buffer, bad things will happen,
             //  at Best, the Player will be able to see through objects ...

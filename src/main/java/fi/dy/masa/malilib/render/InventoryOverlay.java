@@ -8,14 +8,12 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import fi.dy.masa.malilib.MaLiLib;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.*;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gl.ShaderProgramKeys;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.*;
-import net.minecraft.client.render.model.BakedModel;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -38,7 +36,6 @@ import net.minecraft.item.*;
 import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
-import net.minecraft.screen.PlayerScreenHandler;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.DefaultedList;
@@ -48,9 +45,11 @@ import net.minecraft.world.World;
 
 import fi.dy.masa.malilib.gui.GuiBase;
 import fi.dy.masa.malilib.mixin.IMixinAbstractHorseEntity;
-import fi.dy.masa.malilib.mixin.IMixinDrawContext;
 import fi.dy.masa.malilib.mixin.IMixinPiglinEntity;
 import fi.dy.masa.malilib.util.*;
+import fi.dy.masa.malilib.util.nbt.NbtBlockUtils;
+import fi.dy.masa.malilib.util.nbt.NbtEntityUtils;
+import fi.dy.masa.malilib.util.nbt.NbtKeys;
 
 public class InventoryOverlay
 {
@@ -63,50 +62,54 @@ public class InventoryOverlay
     public static final Identifier TEXTURE_PLAYER_INV       = Identifier.ofVanilla("textures/gui/container/inventory.png");
     public static final Identifier TEXTURE_SINGLE_CHEST     = Identifier.ofVanilla("textures/gui/container/shulker_box.png");
 
-    public static final Identifier TEXTURE_EMPTY_SHIELD     = Identifier.ofVanilla("item/empty_armor_slot_shield");
+    // 1.21.3-
+    //public static final Identifier TEXTURE_EMPTY_SHIELD     = Identifier.ofVanilla("item/empty_armor_slot_shield");
+    // 1.21.4+
+    public static final Identifier TEXTURE_EMPTY_SHIELD     = Identifier.ofVanilla("container/slot/shield");
     public static final Identifier TEXTURE_LOCKED_SLOT      = Identifier.ofVanilla("container/crafter/disabled_slot");
 
     // Additional Empty Slot Textures
-    public static final Identifier TEXTURE_EMPTY_HORSE_ARMOR = Identifier.ofVanilla("container/horse/armor_slot");
-    public static final Identifier TEXTURE_EMPTY_LLAMA_ARMOR = Identifier.ofVanilla("container/horse/llama_armor_slot");
-    public static final Identifier TEXTURE_EMPTY_SADDLE      = Identifier.ofVanilla("container/horse/saddle_slot");
+    public static final Identifier TEXTURE_EMPTY_HORSE_ARMOR = Identifier.ofVanilla("container/slot/horse_armor");
+    public static final Identifier TEXTURE_EMPTY_LLAMA_ARMOR = Identifier.ofVanilla("container/slot/llama_armor");
+    public static final Identifier TEXTURE_EMPTY_SADDLE      = Identifier.ofVanilla("container/slot/saddle");
     // Brewer Slots (1.21.4+)
     public static final Identifier TEXTURE_EMPTY_BREWER_FUEL = Identifier.ofVanilla("container/slot/brewing_fuel");
     public static final Identifier TEXTURE_EMPTY_POTION      = Identifier.ofVanilla("container/slot/potion");
-    // Other Misc Empty Slots (1.21.3-)
-    public static final Identifier TEXTURE_EMPTY_SLOT_AMETHYST   = Identifier.ofVanilla("item/empty_slot_amethyst_shard");
-    public static final Identifier TEXTURE_EMPTY_SLOT_AXE        = Identifier.ofVanilla("item/empty_slot_axe");
-    public static final Identifier TEXTURE_EMPTY_SLOT_DIAMOND    = Identifier.ofVanilla("item/empty_slot_diamond");
-    public static final Identifier TEXTURE_EMPTY_SLOT_EMERALD    = Identifier.ofVanilla("item/empty_slot_emerald");
-    public static final Identifier TEXTURE_EMPTY_SLOT_HOE        = Identifier.ofVanilla("item/empty_slot_hoe");
-    public static final Identifier TEXTURE_EMPTY_SLOT_INGOT      = Identifier.ofVanilla("item/empty_slot_ingot");
-    public static final Identifier TEXTURE_EMPTY_SLOT_LAPIS      = Identifier.ofVanilla("item/empty_slot_lapis_lazuli");
-    public static final Identifier TEXTURE_EMPTY_SLOT_PICKAXE    = Identifier.ofVanilla("item/empty_slot_pickaxe");
-    public static final Identifier TEXTURE_EMPTY_SLOT_QUARTZ     = Identifier.ofVanilla("item/empty_slot_quartz");
-    public static final Identifier TEXTURE_EMPTY_SLOT_REDSTONE   = Identifier.ofVanilla("item/empty_slot_redstone_dust");
-    public static final Identifier TEXTURE_EMPTY_SLOT_SHOVEL     = Identifier.ofVanilla("item/empty_slot_shovel");
-    public static final Identifier TEXTURE_EMPTY_SLOT_ARMOR_TRIM = Identifier.ofVanilla("item/empty_slot_smithing_template_armor_trim");
-    public static final Identifier TEXTURE_EMPTY_SLOT_UPGRADE    = Identifier.ofVanilla("item/empty_slot_smithing_template_netherite_upgrade");
-    public static final Identifier TEXTURE_EMPTY_SLOT_SWORD      = Identifier.ofVanilla("item/empty_slot_sword");
-
+    // Other Misc Empty Slots (1.21.4+)
+    public static final Identifier TEXTURE_EMPTY_SLOT_AMETHYST   = Identifier.ofVanilla("container/slot/amethyst_shard");
+    public static final Identifier TEXTURE_EMPTY_SLOT_AXE        = Identifier.ofVanilla("container/slot/axe");
+    public static final Identifier TEXTURE_EMPTY_SLOT_BANNER     = Identifier.ofVanilla("container/slot/banner");
+    public static final Identifier TEXTURE_EMPTY_SLOT_PATTERN    = Identifier.ofVanilla("container/slot/banner_pattern");
+    public static final Identifier TEXTURE_EMPTY_SLOT_DIAMOND    = Identifier.ofVanilla("container/slot/diamond");
+    public static final Identifier TEXTURE_EMPTY_SLOT_DYE        = Identifier.ofVanilla("container/slot/dye");
+    public static final Identifier TEXTURE_EMPTY_SLOT_EMERALD    = Identifier.ofVanilla("container/slot/emerald");
+    public static final Identifier TEXTURE_EMPTY_SLOT_HOE        = Identifier.ofVanilla("container/slot/hoe");
+    public static final Identifier TEXTURE_EMPTY_SLOT_INGOT      = Identifier.ofVanilla("container/slot/ingot");
+    public static final Identifier TEXTURE_EMPTY_SLOT_LAPIS      = Identifier.ofVanilla("container/slot/lapis_lazuli");
+    public static final Identifier TEXTURE_EMPTY_SLOT_PICKAXE    = Identifier.ofVanilla("container/slot/pickaxe");
+    public static final Identifier TEXTURE_EMPTY_SLOT_QUARTZ     = Identifier.ofVanilla("container/slot/quartz");
+    public static final Identifier TEXTURE_EMPTY_SLOT_REDSTONE   = Identifier.ofVanilla("container/slot/redstone_dust");
+    public static final Identifier TEXTURE_EMPTY_SLOT_SHOVEL     = Identifier.ofVanilla("container/slot/shovel");
+    public static final Identifier TEXTURE_EMPTY_SLOT_ARMOR_TRIM = Identifier.ofVanilla("container/slot/smithing_template_armor_trim");
+    public static final Identifier TEXTURE_EMPTY_SLOT_UPGRADE    = Identifier.ofVanilla("container/slot/smithing_template_netherite_upgrade");
+    public static final Identifier TEXTURE_EMPTY_SLOT_SWORD      = Identifier.ofVanilla("container/slot/sword");
 
     private static final EquipmentSlot[] VALID_EQUIPMENT_SLOTS = new EquipmentSlot[] { EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET };
     public static final InventoryProperties INV_PROPS_TEMP = new InventoryProperties();
 
     private static final Identifier[] EMPTY_SLOT_TEXTURES = new Identifier[]
     {
-        // 1.21.3-
+            /* 1.21.3-
         Identifier.ofVanilla("item/empty_armor_slot_boots"),
         Identifier.ofVanilla("item/empty_armor_slot_leggings"),
         Identifier.ofVanilla("item/empty_armor_slot_chestplate"),
         Identifier.ofVanilla("item/empty_armor_slot_helmet")
+             */
         // 1.21.4+
-/*
         Identifier.ofVanilla("container/slot/boots"),
         Identifier.ofVanilla("container/slot/leggings"),
         Identifier.ofVanilla("container/slot/chestplate"),
         Identifier.ofVanilla("container/slot/helmet")
- */
     };
 
     private static ItemStack hoveredStack = null;
@@ -372,11 +375,12 @@ public class InventoryOverlay
         }
         catch (Exception ignored) { }
 
-        RenderUtils.bindTexture(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE);
+        //RenderUtils.bindTexture(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE);
 
         if (entity.getEquippedStack(EquipmentSlot.OFFHAND).isEmpty())
         {
-            RenderUtils.renderSprite(x + 28 + 1, y + 3 * 18 + 7 + 1, 16, 16, PlayerScreenHandler.BLOCK_ATLAS_TEXTURE, TEXTURE_EMPTY_SHIELD, drawContext);
+            //RenderUtils.renderSprite(x + 28 + 1, y + 3 * 18 + 7 + 1, 16, 16, SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE, TEXTURE_EMPTY_SHIELD, drawContext);
+            renderBackgroundSlotAt(x + 28 + 1, y + 3 * 18 + 7 + 1, TEXTURE_EMPTY_SHIELD, drawContext);
         }
 
         for (int i = 0, xOff = 7, yOff = 7; i < 4; ++i, yOff += 18)
@@ -386,7 +390,8 @@ public class InventoryOverlay
             if (entity.getEquippedStack(eqSlot).isEmpty())
             {
                 Identifier texture = EMPTY_SLOT_TEXTURES[eqSlot.getEntitySlotId()];
-                RenderUtils.renderSprite(x + xOff + 1, y + yOff + 1, 16, 16, PlayerScreenHandler.BLOCK_ATLAS_TEXTURE, texture, drawContext);
+                //RenderUtils.renderSprite(x + xOff + 1, y + yOff + 1, 16, 16, SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE, texture, drawContext);
+                renderBackgroundSlotAt(x + xOff + 1, y + yOff + 1, texture, drawContext);
             }
         }
     }
@@ -520,7 +525,7 @@ public class InventoryOverlay
      */
     public static InventoryRenderType getInventoryType(@Nonnull NbtCompound nbt)
     {
-        BlockEntityType<?> blockType = BlockUtils.getBlockEntityTypeFromNbt(nbt);
+        BlockEntityType<?> blockType = NbtBlockUtils.getBlockEntityTypeFromNbt(nbt);
 
         if (blockType != null)
         {
@@ -580,7 +585,7 @@ public class InventoryOverlay
             }
         }
 
-        EntityType<?> entityType = EntityUtils.getEntityTypeFromNbt(nbt);
+        EntityType<?> entityType = NbtEntityUtils.getEntityTypeFromNbt(nbt);
 
         if (entityType != null)
         {
@@ -603,16 +608,16 @@ public class InventoryOverlay
                 return InventoryRenderType.HOPPER;
             }
             else if (entityType.equals(EntityType.HORSE) ||
-                     entityType.equals(EntityType.DONKEY) ||
-                     entityType.equals(EntityType.MULE) ||
-                     entityType.equals(EntityType.CAMEL) ||
-                     entityType.equals(EntityType.SKELETON_HORSE) ||
-                     entityType.equals(EntityType.ZOMBIE_HORSE))
+                entityType.equals(EntityType.DONKEY) ||
+                entityType.equals(EntityType.MULE) ||
+                entityType.equals(EntityType.CAMEL) ||
+                entityType.equals(EntityType.SKELETON_HORSE) ||
+                entityType.equals(EntityType.ZOMBIE_HORSE))
             {
                 return InventoryRenderType.HORSE;
             }
             else if (entityType.equals(EntityType.LLAMA) ||
-                     entityType.equals(EntityType.TRADER_LLAMA))
+                entityType.equals(EntityType.TRADER_LLAMA))
             {
                 return InventoryRenderType.LLAMA;
             }

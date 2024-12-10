@@ -48,6 +48,7 @@ import net.minecraft.world.World;
 
 import fi.dy.masa.malilib.MaLiLib;
 import fi.dy.masa.malilib.mixin.IMixinPlayerEntity;
+import fi.dy.masa.malilib.util.nbt.NbtKeys;
 
 public class InventoryUtils
 {
@@ -296,7 +297,7 @@ public class InventoryUtils
 
         if (isCreative)
         {
-            player.getInventory().addPickBlock(stackReference);
+            player.getInventory().swapStackWithHotbar(stackReference);
             mc.interactionManager.clickCreativeStack(player.getMainHandStack(), 36 + player.getInventory().selectedSlot); // sendSlotPacket
             return true;
         }

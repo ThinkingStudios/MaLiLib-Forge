@@ -9,6 +9,12 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
 
+import fi.dy.masa.malilib.util.nbt.NbtKeys;
+
+/**
+ * Will be moved to util/nbt/NbtUtils sooner or later
+ */
+@Deprecated
 public class NBTUtils
 {
     public static NbtCompound createBlockPosTag(Vec3i pos)

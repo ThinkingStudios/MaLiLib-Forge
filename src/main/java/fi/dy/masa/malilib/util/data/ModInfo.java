@@ -1,22 +1,33 @@
 package fi.dy.masa.malilib.util.data;
 
-import org.jetbrains.annotations.ApiStatus;
+import java.util.function.Supplier;
+import javax.annotation.Nullable;
+
+import fi.dy.masa.malilib.gui.GuiBase;
 
 /**
  * Post-ReWrite code
  */
-@ApiStatus.Experimental
 public class ModInfo
 {
     public static final ModInfo NO_MOD = new ModInfo("-", "-");
 
     protected final String modId;
     protected final String modName;
+    protected final @Nullable Supplier<GuiBase> configScreenSupplier;
 
     public ModInfo(String modId, String modName)
     {
         this.modId = modId;
         this.modName = modName;
+        this.configScreenSupplier = null;
+    }
+
+    public ModInfo(String modId, String modName, @Nullable Supplier<GuiBase> configScreenSupplier)
+    {
+        this.modId = modId;
+        this.modName = modName;
+        this.configScreenSupplier = configScreenSupplier;
     }
 
     /**
@@ -33,6 +44,14 @@ public class ModInfo
     public String getModName()
     {
         return this.modName;
+    }
+
+    /**
+     * @return the supplier for the config screen for this mod, or null if there is none
+     */
+    @Nullable
+    public Supplier<GuiBase> getConfigScreenSupplier() {
+        return configScreenSupplier;
     }
 
     @Override

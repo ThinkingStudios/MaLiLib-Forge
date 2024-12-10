@@ -27,11 +27,10 @@ public abstract class MixinWorldRenderer
 
     @Inject(method = "render",
             at = @At(value = "INVOKE",
-                     target = "Lnet/minecraft/client/render/WorldRenderer;addParticlesPass(Lnet/minecraft/client/render/FrameGraphBuilder;Lnet/minecraft/client/render/Camera;Lnet/minecraft/client/render/LightmapTextureManager;FLnet/minecraft/client/render/Fog;Lnet/minecraft/client/render/Frustum;Lorg/joml/Matrix4f;Lorg/joml/Matrix4f;)V",
+                     target = "Lnet/minecraft/client/render/WorldRenderer;renderLateDebug(Lnet/minecraft/client/render/FrameGraphBuilder;Lnet/minecraft/util/math/Vec3d;Lnet/minecraft/client/render/Fog;)V",
                      shift = At.Shift.BEFORE))
-    private void malilib_onRenderWorldPreWeather(ObjectAllocator allocator, RenderTickCounter tickCounter, boolean bl,
-                                                 Camera camera, GameRenderer gameRenderer, LightmapTextureManager lightmapTextureManager,
-                                                 Matrix4f positionMatrix, Matrix4f projectionMatrix, CallbackInfo ci,
+    private void malilib_onRenderWorldPreWeather(ObjectAllocator allocator, RenderTickCounter tickCounter, boolean renderBlockOutline,
+                                                 Camera camera, GameRenderer gameRenderer, Matrix4f positionMatrix, Matrix4f projectionMatrix, CallbackInfo ci,
                                                  @Local Profiler profiler,
                                                  @Local Frustum frustum,
                                                  @Local FrameGraphBuilder frameGraphBuilder)
@@ -54,9 +53,8 @@ public abstract class MixinWorldRenderer
             at = @At(value = "INVOKE",
                     target = "Lnet/minecraft/client/render/WorldRenderer;renderLateDebug(Lnet/minecraft/client/render/FrameGraphBuilder;Lnet/minecraft/util/math/Vec3d;Lnet/minecraft/client/render/Fog;)V",
                     shift = At.Shift.BEFORE))
-    private void malilib_onRenderWorldLast(ObjectAllocator objectAllocator, RenderTickCounter tickCounter, boolean bl,
-                                           Camera camera, GameRenderer gameRenderer, LightmapTextureManager lightmapTextureManager,
-                                           Matrix4f positionMatrix, Matrix4f projectionMatrix, CallbackInfo ci,
+    private void malilib_onRenderWorldLast(ObjectAllocator allocator, RenderTickCounter tickCounter, boolean renderBlockOutline,
+                                           Camera camera, GameRenderer gameRenderer, Matrix4f positionMatrix, Matrix4f projectionMatrix, CallbackInfo ci,
                                            @Local FrameGraphBuilder frameGraphBuilder,
                                            @Local Frustum frustum,
                                            @Local Profiler profiler)

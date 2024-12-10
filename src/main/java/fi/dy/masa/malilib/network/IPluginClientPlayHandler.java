@@ -202,7 +202,7 @@ public interface IPluginClientPlayHandler<T extends CustomPayload> extends Packe
         }
         else
         {
-            MaLiLib.LOGGER.warn("sendPlayPayload: [Fabric-API] error sending payload for channel: {}, check if channel is registered", payload.getId().id().toString());
+            MaLiLib.LOGGER.warn("sendPlayPayload: [BadPackets] error sending payload for channel: {}, check if channel is registered", payload.getId().id().toString());
         }
 
         return false;
