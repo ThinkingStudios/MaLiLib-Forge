@@ -1,5 +1,6 @@
 package org.thinkingstudio.mafglib.loader.entrypoints;
 
+import fi.dy.masa.malilib.MaLiLibReference;
 import net.neoforged.fml.ModList;
 import net.neoforged.neoforgespi.language.IConfigurable;
 import org.thinkingstudio.mafglib.loader.entrypoints.exceptions.EntrypointLoadingException;
@@ -19,11 +20,11 @@ public class EntrypointHandler {
             ModList.get().forEachModFile(mf -> {
                 IConfigurable config = mf.getModFileInfo().getConfig();
                 List<? extends IConfigurable> mods = config.getConfigList("mods");
-                IConfigurable modEntry = mods.get(0);
+                IConfigurable modEntry = mods.getFirst();
                 Object modName = modEntry.getConfigElement("displayName").orElse("<unnamed>");
                 Object modId = modEntry.getConfigElement("modId").orElse("<unnamed>");
 
-                config.<Map<String, List<Object>>>getConfigElement("entrypoints")
+                config.<Map<String, List<Object>>>getConfigElement("entrypoints", MaLiLibReference.MOD_ID)
                         .orElse(new HashMap<>())
                         .forEach((k, v) -> map.put(k, v.stream().map(Object::toString)
                                 .map(s -> {

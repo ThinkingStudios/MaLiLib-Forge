@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.List;
 import javax.annotation.Nullable;
 import com.google.common.collect.ImmutableList;
+import fi.dy.masa.malilib.MaLiLibReference;
 import fi.dy.masa.malilib.gui.widgets.WidgetDropDownList;
 import net.minecraft.client.gui.screen.Screen;
 import fi.dy.masa.malilib.config.ConfigManager;
@@ -26,6 +27,7 @@ import org.thinkingstudio.mafglib.loader.entrypoints.EntrypointContainer;
 import org.thinkingstudio.mafglib.loader.entrypoints.EntrypointHandler;
 import org.thinkingstudio.mafglib.loader.gui.ModConfigScreenInitializer;
 import org.thinkingstudio.mafglib.special.MaFgLibSpecial;
+import org.thinkingstudio.mafglib.util.NeoUtils;
 
 public abstract class GuiConfigsBase extends GuiListBase<ConfigOptionWrapper, WidgetConfigOption, WidgetListConfigOptions> implements IKeybindConfigGui
 {
@@ -55,11 +57,11 @@ public abstract class GuiConfigsBase extends GuiListBase<ConfigOptionWrapper, Wi
         var modContainer = FoxifiedLoader.getModContainers();
 
         if (MaFgLibSpecial.getConfig().fastSwitchConfigGui.isTrue()) {
-            List<EntrypointContainer<ModConfigScreenInitializer>> entrypointContainers = FoxifiedLoader.getEntrypointContainers("mafglib_modmenu", ModConfigScreenInitializer.class)
+            List<EntrypointContainer<ModConfigScreenInitializer>> entrypointContainers = FoxifiedLoader.getEntrypointContainers(MaLiLibReference.MODMENU_ID, ModConfigScreenInitializer.class)
                     // This will stack overflow if called in <init>()
                     .stream().filter(mod -> {
                             try {
-                                return mod.entrypoint().getModConfigScreenFactory().createScreen(modContainer, null) instanceof GuiConfigsBase;
+                                return mod.getEntrypoint().getModConfigScreenFactory().createScreen(modContainer, null) instanceof GuiConfigsBase;
                             }
                             catch (Exception e)
                             {
@@ -69,7 +71,7 @@ public abstract class GuiConfigsBase extends GuiListBase<ConfigOptionWrapper, Wi
                     )
                     .toList();
             EntrypointContainer<ModConfigScreenInitializer> thisContainer = entrypointContainers.stream().filter(mod -> {
-                GuiConfigsBase gui = (GuiConfigsBase) mod.entrypoint().getModConfigScreenFactory().createScreen(modContainer, null);
+                GuiConfigsBase gui = (GuiConfigsBase) mod.getEntrypoint().getModConfigScreenFactory().createScreen(modContainer, null);
                 if (gui == null) return false;
                 return gui.getClass() == this.getClass();
             }).findFirst().orElse(null);
@@ -89,7 +91,7 @@ public abstract class GuiConfigsBase extends GuiListBase<ConfigOptionWrapper, Wi
                 @Override
                 protected String getDisplayString(EntrypointContainer<ModConfigScreenInitializer> entry) {
                     if (entry == null) return "";
-                    return entry.mod().getModInfos().getFirst().getDisplayName();
+                    return NeoUtils.getModInfo(entry.getModFile()).getDisplayName();
                 }
             };
             addWidget(modSwitchWidget);

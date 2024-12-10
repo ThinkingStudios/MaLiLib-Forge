@@ -49,5 +49,5 @@ versionRange = "[0.8.1,)"
 ordering = "NONE"
 side = "BOTH"
 
-[entrypoints]
-mafglib_modmenu = [ "fi.dy.masa.malilib.compat.modmenu.ModMenuImpl" ]
+[entrypoints.mafglib]
+modmenu = [ "fi.dy.masa.malilib.compat.modmenu.ModMenuImpl" ]
