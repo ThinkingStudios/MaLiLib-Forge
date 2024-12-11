@@ -19,7 +19,6 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.World;
 
-import fi.dy.masa.malilib.util.BlockUtils;
 import fi.dy.masa.malilib.util.LayerRange;
 import fi.dy.masa.malilib.util.MathUtils;
 
@@ -432,9 +431,9 @@ public class RayTraceUtils
 
     public enum RayTraceFluidHandling
     {
-        NONE((blockState) -> BlockUtils.PRW_isFluidBlock(blockState) == false),
-        SOURCE_ONLY(BlockUtils::PRW_isFluidSourceBlock),
-        ANY(BlockUtils::PRW_isFluidBlock);
+        NONE((blockState) -> BlockUtils.isFluidBlock(blockState) == false),
+        SOURCE_ONLY(BlockUtils::isFluidSourceBlock),
+        ANY(BlockUtils::isFluidBlock);
 
         private final BlockStatePredicate predicate;
 

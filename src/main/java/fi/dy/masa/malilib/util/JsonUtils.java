@@ -13,6 +13,9 @@ import net.minecraft.util.math.Vec3d;
 
 import fi.dy.masa.malilib.MaLiLib;
 
+/**
+ * Being moved to util/data/json sooner or later
+ */
 public class JsonUtils
 {
     public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();

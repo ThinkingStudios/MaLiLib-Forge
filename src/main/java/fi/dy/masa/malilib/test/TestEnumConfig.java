@@ -25,7 +25,7 @@ public enum TestEnumConfig implements IHotkeyTogglable, IConfigNotifiable<IConfi
     TEST_ENUM_SINGLE_PLAYER ("testEnumSinglePlayer",false,true, ""),
     TEST_WALLS_HOTKEY       ("testWallsHotkey",     false,"");
 
-    private final static String TEST_ENUM_KEY = MaLiLibReference.MOD_ID + ".config.test_enum";
+    private final static String TEST_ENUM_KEY = MaLiLibReference.ID + ".config.test_enum";
 
     private final String name;
     private String comment;

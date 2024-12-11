@@ -1,13 +1,13 @@
 package fi.dy.masa.malilib.render;
 
+import java.util.*;
+import java.util.function.Function;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
-
-import fi.dy.masa.malilib.config.HudAlignment;
-import fi.dy.masa.malilib.gui.GuiBase;
-import fi.dy.masa.malilib.mixin.IMixinDrawContext;
-import fi.dy.masa.malilib.util.*;
-import fi.dy.masa.malilib.util.PositionUtils.HitPart;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.ShulkerBoxBlock;
@@ -44,10 +44,12 @@ import net.minecraft.util.math.random.LocalRandom;
 import org.joml.Matrix4f;
 import org.joml.Matrix4fStack;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.*;
-import java.util.function.Function;
+import fi.dy.masa.malilib.config.HudAlignment;
+import fi.dy.masa.malilib.gui.GuiBase;
+import fi.dy.masa.malilib.mixin.IMixinDrawContext;
+import fi.dy.masa.malilib.util.*;
+import fi.dy.masa.malilib.util.PositionUtils.HitPart;
+import fi.dy.masa.malilib.util.nbt.NbtBlockUtils;
 
 public class RenderUtils
 {
@@ -1376,7 +1378,7 @@ public class RenderUtils
              */
             if (type == InventoryOverlay.InventoryRenderType.CRAFTER && !nbt.isEmpty())
             {
-                lockedSlots = BlockUtils.getDisabledSlotsFromNbt(nbt);
+                lockedSlots = NbtBlockUtils.getDisabledSlotsFromNbt(nbt);
                 InventoryOverlay.renderInventoryStacks(type, inv, x + props.slotOffsetX, y + props.slotOffsetY, props.slotsPerRow, 0, -1, lockedSlots, mc(), drawContext);
             }
             else

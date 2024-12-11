@@ -9,6 +9,8 @@ import org.jetbrains.annotations.ApiStatus;
 import net.minecraft.util.Identifier;
 
 /**
+ * Wraps the Mojmap "ResourceLocation" with Identifier
+ * -
  * Post-ReWrite code
  */
 @ApiStatus.Experimental

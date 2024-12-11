@@ -27,7 +27,7 @@ public abstract class MixinWorldRenderer
 
     @Inject(method = "render",
             at = @At(value = "INVOKE",
-                     target = "Lnet/minecraft/client/render/WorldRenderer;addParticlesPass(Lnet/minecraft/client/render/FrameGraphBuilder;Lnet/minecraft/client/render/Camera;Lnet/minecraft/client/render/LightmapTextureManager;FLnet/minecraft/client/render/Fog;Lnet/minecraft/client/render/Frustum;Lorg/joml/Matrix4f;Lorg/joml/Matrix4f;)V",
+                     target = "Lnet/minecraft/client/render/WorldRenderer;addWeatherPass(Lnet/minecraft/client/render/FrameGraphBuilder;Lnet/minecraft/client/render/LightmapTextureManager;Lnet/minecraft/util/math/Vec3d;FLnet/minecraft/client/render/Fog;Lorg/joml/Matrix4f;Lorg/joml/Matrix4f;Lnet/minecraft/client/render/Camera;)V",
                      shift = At.Shift.BEFORE))
     private void malilib_onRenderWorldPreWeather(ObjectAllocator allocator, RenderTickCounter tickCounter, boolean bl,
                                                  Camera camera, GameRenderer gameRenderer, LightmapTextureManager lightmapTextureManager,
