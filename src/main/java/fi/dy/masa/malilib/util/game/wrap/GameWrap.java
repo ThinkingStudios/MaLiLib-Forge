@@ -3,6 +3,7 @@ package fi.dy.masa.malilib.util.game.wrap;
 import java.nio.file.Path;
 import java.util.function.Supplier;
 import javax.annotation.Nullable;
+import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
@@ -13,7 +14,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.registry.DynamicRegistryManager;
-import net.minecraft.resource.featuretoggle.FeatureSet;
 import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.world.ServerWorld;
@@ -24,6 +24,10 @@ import net.minecraft.util.hit.HitResult;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 
+/**
+ * Post-ReWrite code
+ */
+@ApiStatus.Experimental
 public class GameWrap
 {
     public static MinecraftClient getClient()
@@ -272,31 +276,26 @@ public class GameWrap
 
     public static void profilerPush(String name)
     {
-        //Profilers.get().push(name);
         getClient().getProfiler().push(name);
     }
 
     public static void profilerPush(Supplier<String> nameSupplier)
     {
-        //Profilers.get().push(nameSupplier);
         getClient().getProfiler().push(nameSupplier);
     }
 
     public static void profilerSwap(String name)
     {
-        //Profilers.get().swap(name);
         getClient().getProfiler().swap(name);
     }
 
     public static void profilerSwap(Supplier<String> nameSupplier)
     {
-        //Profilers.get().swap(nameSupplier);
         getClient().getProfiler().swap(nameSupplier);
     }
 
     public static void profilerPop()
     {
-        //Profilers.get().pop();
         getClient().getProfiler().pop();
     }
 

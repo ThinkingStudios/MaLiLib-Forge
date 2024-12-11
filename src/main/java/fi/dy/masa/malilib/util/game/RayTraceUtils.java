@@ -19,7 +19,6 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.World;
 
-import fi.dy.masa.malilib.util.BlockUtils;
 import fi.dy.masa.malilib.util.LayerRange;
 import fi.dy.masa.malilib.util.MathUtils;
 
@@ -68,7 +67,7 @@ public class RayTraceUtils
             {
                 bb = entityTmp.getBoundingBox();
                 //HitResult traceTmp = bb.calculateIntercept(eyesPos, lookEndPos);
-                Optional<net.minecraft.util.math.Vec3d> opt = bb.raycast(eyesPos, lookEndPos);
+                Optional<Vec3d> opt = bb.raycast(eyesPos, lookEndPos);
 
                 if (opt.isPresent())
                 {
@@ -191,7 +190,7 @@ public class RayTraceUtils
                 if (state.getProperties().contains(Properties.WATERLOGGED) || data.fluidMode.handled(state))
                 {
                     //HitResult traceTmp = state.collisionRayTrace(world, data.mutablePos.toImmutable(),
-                    //data.start, data.end);
+                                                                      //data.start, data.end);
 
                     HitResult traceTmp = state.getRaycastShape(world, data.mutablePos.toImmutable()).raycast(data.start, data.end, data.mutablePos.toImmutable());
 
@@ -400,9 +399,9 @@ public class RayTraceUtils
             BlockState state = world.getBlockState(this.mutablePos);
 
             if (state == BLOCK_STATE_AIR ||
-                    this.isValidBlock(state) == false ||
-                    // (ignoreNonCollidable == false && state.getCollisionBoundingBox(world, this.mutablePos) == Block.NULL_AABB))
-                    (ignoreNonCollidable == false && state.getCollisionShape(world, this.mutablePos) == VoxelShapes.empty()))
+                this.isValidBlock(state) == false ||
+                // (ignoreNonCollidable == false && state.getCollisionBoundingBox(world, this.mutablePos) == Block.NULL_AABB))
+                (ignoreNonCollidable == false && state.getCollisionShape(world, this.mutablePos) == VoxelShapes.empty()))
             {
                 return false;
             }
@@ -411,7 +410,7 @@ public class RayTraceUtils
             if (state.getProperties().contains(Properties.WATERLOGGED) || this.fluidMode.handled(state))
             {
                 //HitResult traceTmp = state.collisionRayTrace(world, this.mutablePos,
-                //this.start, this.end);
+                                                             //this.start, this.end);
 
                 // ? state.getFluidState().getShape(world, this.mutablePos);
                 HitResult traceTmp = state.getRaycastShape(world, this.mutablePos).raycast(this.start, this.end, this.mutablePos);
@@ -432,9 +431,9 @@ public class RayTraceUtils
 
     public enum RayTraceFluidHandling
     {
-        NONE((blockState) -> BlockUtils.PRW_isFluidBlock(blockState) == false),
-        SOURCE_ONLY(BlockUtils::PRW_isFluidSourceBlock),
-        ANY(BlockUtils::PRW_isFluidBlock);
+        NONE((blockState) -> BlockUtils.isFluidBlock(blockState) == false),
+        SOURCE_ONLY(BlockUtils::isFluidSourceBlock),
+        ANY(BlockUtils::isFluidBlock);
 
         private final BlockStatePredicate predicate;
 

@@ -16,14 +16,6 @@ MaLiLib unofficial (Neo)Forge port.
 Library mod for the (Neo)Forge port of masa's mods.
 '''
 
-[[mods]]
-modId = "mafglib_special"
-version = "0.1.0"
-displayName = "MaFgLib Special Config"
-description = '''
-MaFgLib Special Config
-'''
-
 [[mixins]]
 config = "mafglib.mixins.json"
 
@@ -47,6 +39,3 @@ type = "required"
 versionRange = "*"
 ordering = "NONE"
 side = "BOTH"
-
-[entrypoints.mafglib]
-modmenu = [ "fi.dy.masa.malilib.compat.modmenu.ModMenuImpl" ]

@@ -16,6 +16,8 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
 
 import fi.dy.masa.malilib.MaLiLib;
+import fi.dy.masa.malilib.config.value.FileWriteType;
+import fi.dy.masa.malilib.util.FileUtils;
 import fi.dy.masa.malilib.util.data.BooleanConsumer;
 import fi.dy.masa.malilib.util.data.FloatConsumer;
 import fi.dy.masa.malilib.util.position.BlockMirror;
@@ -847,8 +849,6 @@ public class JsonUtils
         return false;
     }
 
-    // TODO
-    /*
     public static boolean writeJsonToFile(JsonElement root, Path file)
     {
         return writeJsonToFile(root, file, GSON);
@@ -857,8 +857,8 @@ public class JsonUtils
     public static boolean writeJsonToFile(final JsonElement root, final Path file, final Gson gson)
     {
         return FileUtils.writeDataToFile(file, w -> writeJsonToWriter(root, file, w, gson),
-                                          //MaLiLibConfigs.Generic.CONFIG_WRITE_METHOD.getValue());
-                                          FileWriteType.NORMAL_WRITE);
+                                         //MaLiLibConfigs.Generic.CONFIG_WRITE_METHOD.getValue());
+                                         FileWriteType.NORMAL_WRITE);
     }
 
     public static void writeJsonToWriter(JsonElement root, Path file, BufferedWriter writer, Gson gson)
@@ -876,7 +876,6 @@ public class JsonUtils
             MaLiLib.LOGGER.warn("Failed to write JSON data to file '{}'", file.toAbsolutePath(), e);
         }
     }
-    */
 
     public static void loadFromFile(Path dir, String fileName, Consumer<JsonElement> dataConsumer)
     {

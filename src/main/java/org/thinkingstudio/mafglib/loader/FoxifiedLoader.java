@@ -9,8 +9,6 @@ import net.neoforged.fml.ModLoadingContext;
 import net.neoforged.fml.loading.FMLLoader;
 import net.neoforged.fml.loading.FMLPaths;
 import net.neoforged.fml.loading.moddiscovery.ModInfo;
-import org.thinkingstudio.mafglib.loader.entrypoints.EntrypointContainer;
-import org.thinkingstudio.mafglib.loader.entrypoints.EntrypointHandler;
 
 import java.nio.file.Path;
 import java.util.List;
@@ -35,10 +33,6 @@ public final class FoxifiedLoader {
 
     public static Path getConfigDir() {
         return FMLPaths.CONFIGDIR.get();
-    }
-
-    public static <T> List<EntrypointContainer<T>> getEntrypointContainers(String key, Class<T> type) {
-        return EntrypointHandler.getEntrypointContainers(key, type);
     }
 
     public static String getModVersion(String modId) {

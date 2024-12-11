@@ -11,6 +11,7 @@ import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.registry.DynamicRegistryManager;
 import fi.dy.masa.malilib.network.MaLiLibBuf;
 
+@Deprecated(forRemoval = true)
 public class PayloadUtils
 {
     @Nullable

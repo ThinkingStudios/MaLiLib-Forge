@@ -2,6 +2,9 @@ package fi.dy.masa.malilib.util;
 
 import java.util.Objects;
 
+/**
+ * New Version will be located under util/data
+ */
 public class Color4f
 {
     public static final Color4f ZERO = new Color4f(0F, 0F, 0F, 0F);

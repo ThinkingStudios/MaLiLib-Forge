@@ -36,6 +36,7 @@ import fi.dy.masa.malilib.interfaces.IRenderer;
 import fi.dy.masa.malilib.render.InventoryOverlay;
 import fi.dy.masa.malilib.render.RenderUtils;
 import fi.dy.masa.malilib.util.*;
+import fi.dy.masa.malilib.util.nbt.NbtBlockUtils;
 
 public class TestRenderHandler implements IRenderer
 {
@@ -44,7 +45,7 @@ public class TestRenderHandler implements IRenderer
     {
         if (MaLiLibConfigs.Test.TEST_CONFIG_BOOLEAN.getBooleanValue() && GuiBase.isAltDown())
         {
-            profiler.push(this.getProfilerSectionSupplier() + "_render_overlay");
+            profiler.push(this.getProfilerSectionSupplier() + "_inventory_overlay");
             //renderInventoryOverlay(mc, drawContext);
             InventoryOverlay.Context context = RayTraceUtils.getTargetInventory(mc);
 
@@ -67,7 +68,7 @@ public class TestRenderHandler implements IRenderer
 
         if (mc.player != null)
         {
-            profiler.push(this.getProfilerSectionSupplier() + "_render_targeting_overlay");
+            profiler.push(MaLiLibReference.MOD_ID + "_targeting_overlay");
             this.renderTargetingOverlay(posMatrix, mc);
             profiler.pop();
 
@@ -85,16 +86,14 @@ public class TestRenderHandler implements IRenderer
         {
             MinecraftClient mc = MinecraftClient.getInstance();
 
-            profiler.push(this.getProfilerSectionSupplier() + "_test_walls");
+            profiler.push(MaLiLibReference.MOD_ID + "_test_walls");
             if (TestEnumConfig.TEST_WALLS_HOTKEY.getBooleanValue())
             {
                 if (TestWalls.needsUpdate(camera.getBlockPos()))
                 {
-                    profiler.swap(this.getProfilerSectionSupplier() + "_test_walls_update");
                     TestWalls.update(camera, mc);
                 }
 
-                profiler.swap(this.getProfilerSectionSupplier() + "_test_walls_draw");
                 TestWalls.draw(camera.getPos(), posMatrix, projMatrix, mc, profiler);
             }
             profiler.pop();
@@ -429,7 +428,7 @@ public class TestRenderHandler implements IRenderer
                 }
                 else if (context.nbt() != null)
                 {
-                    lockedSlots = BlockUtils.getDisabledSlotsFromNbt(context.nbt());
+                    lockedSlots = NbtBlockUtils.getDisabledSlotsFromNbt(context.nbt());
                 }
             }
 
