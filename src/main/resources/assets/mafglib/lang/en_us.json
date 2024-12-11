@@ -1,8 +1,3 @@
 {
-  "fml.menu.mods.info.description.mafglib": "MaLiLib unofficial (Neo)Forge port.\nLibrary mod for the (Neo)Forge port of masa's mods.",
-  "mafglib_special.configuration.section.mafglib.special.client.toml.title": "MaFgLib Special Config",
-  "mafglib_special.configuration.section.mafglib.special.client.toml": "MaFgLib Special Config",
-  "mafglib_special.configuration.title": "MaFgLib Special Config",
-  "mafglib_special.configuration.fastSwitchConfigGui": "Fast switch config gui",
-  "mafglib_special.configuration.fastSwitchConfigGui.tooltip": "Render drop down list widget, player can switch other masa's mod config gui quickly."
+  "fml.menu.mods.info.description.mafglib": "MaLiLib unofficial (Neo)Forge port.\nLibrary mod for the (Neo)Forge port of masa's mods."
 }
