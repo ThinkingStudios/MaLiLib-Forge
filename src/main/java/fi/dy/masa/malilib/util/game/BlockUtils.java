@@ -250,7 +250,7 @@ public class BlockUtils
                     if (prop instanceof BooleanProperty)
                     {
                         key = val.equals(Boolean.TRUE) ? "malilib.label.block_state_properties.boolean.true" :
-                              "malilib.label.block_state_properties.boolean.false";
+                                                         "malilib.label.block_state_properties.boolean.false";
                     }
                     else if (prop instanceof EnumProperty<?> enumProperty)
                     {
@@ -276,7 +276,7 @@ public class BlockUtils
                         key = "malilib.label.block_state_properties.generic";
                     }
 
-                    lines.add(StringUtils.translate(key, prop.getName(), separator, val.toString()));
+                    lines.add(StringUtils.translate(key, prop.getName(), separator, val.toString().toLowerCase()));
                 }
             }
             catch (Exception ignore) {}

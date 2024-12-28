@@ -59,7 +59,7 @@ public class TestRenderHandler implements IRenderer
 
             if (context != null)
             {
-                renderInventoryOverlay(context, drawContext);
+                renderInventoryOverlay(context, drawContext, mc);
             }
 
             profiler.pop();
@@ -131,7 +131,7 @@ public class TestRenderHandler implements IRenderer
             if (MaLiLibConfigs.Test.TEST_CONFIG_BOOLEAN.getBooleanValue() && GuiBase.isShiftDown())
             {
                 profiler.push(MaLiLibReference.MOD_ID + "_bundle_preview");
-                RenderUtils.renderBundlePreview(stack, x, y, true, drawContext);
+                RenderUtils.renderBundlePreview(stack, x, y, MaLiLibConfigs.Test.TEST_BUNDLE_PREVIEW_WIDTH.getIntegerValue(), true, drawContext);
                 profiler.pop();
             }
         }
@@ -362,9 +362,9 @@ public class TestRenderHandler implements IRenderer
             InventoryOverlay.renderEquipmentStacks(entityLivingBase, x, y, mc, drawContext);
         }
         */
-    public static void renderInventoryOverlay(InventoryOverlay.Context context, DrawContext drawContext)
+    public static void renderInventoryOverlay(InventoryOverlay.Context context, DrawContext drawContext, MinecraftClient mc)
     {
-        MinecraftClient mc = MinecraftClient.getInstance();
+        //MinecraftClient mc = MinecraftClient.getInstance();
         LivingEntity entityLivingBase = null;
         BlockEntity be = null;
         Inventory inv = null;

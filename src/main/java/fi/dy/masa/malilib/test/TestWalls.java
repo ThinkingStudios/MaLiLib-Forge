@@ -62,6 +62,7 @@ public class TestWalls implements AutoCloseable
     public static void update(Camera camera, MinecraftClient mc)
     {
         Color4f color = MaLiLibConfigs.Test.TEST_CONFIG_COLOR.getColor();
+
         if (mc.world == null || mc.player == null)
         {
             return;

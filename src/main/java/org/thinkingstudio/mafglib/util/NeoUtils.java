@@ -14,6 +14,7 @@ import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 
 import java.util.function.Function;
 
+@Deprecated
 public class NeoUtils {
     private static NeoUtils INSTANCE;
 
@@ -27,6 +28,7 @@ public class NeoUtils {
         modContainer.registerExtensionPoint(IConfigScreenFactory.class, (container, screen) -> screenFunction.apply(screen));
     }
 
+    @Deprecated
     public ArtifactVersion getModArtifactVersion(String modId) {
         for (ModInfo modInfo: FMLLoader.getLoadingModList().getMods()) {
             if (modInfo.getModId().equals(modId)) {
@@ -37,16 +39,6 @@ public class NeoUtils {
         return new DefaultArtifactVersion("?");
     }
 
-    public static IModInfo getModInfo(IModFile modFile) {
-        for (IModInfo modInfo: modFile.getModInfos()) {
-            if (modInfo.getOwningFile().getFile().equals(modFile)) {
-                return modInfo;
-            }
-        }
-
-        return modFile.getModInfos().getFirst();
-    }
-
     public static NeoUtils getInstance() {
         if (INSTANCE == null) {
             INSTANCE = new NeoUtils();
@@ -54,6 +46,7 @@ public class NeoUtils {
         return INSTANCE;
     }
 
+    @Deprecated
     @OnlyIn(Dist.CLIENT)
     @FunctionalInterface
     public interface ConfigScreenProvider {

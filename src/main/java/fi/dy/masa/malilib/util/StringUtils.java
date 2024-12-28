@@ -31,6 +31,7 @@ import net.minecraft.world.World;
 import fi.dy.masa.malilib.MaLiLib;
 import fi.dy.masa.malilib.MaLiLibConfigs;
 import fi.dy.masa.malilib.gui.LeftRight;
+import org.thinkingstudio.mafglib.loader.FoxifiedLoader;
 import org.thinkingstudio.mafglib.util.NeoUtils;
 
 /**
@@ -68,7 +69,7 @@ public class StringUtils
 
     public static String getModVersionString(String modId)
     {
-        return NeoUtils.getInstance().getModArtifactVersion(modId).toString();
+        return FoxifiedLoader.getModVersion(modId);
     }
 
     /**

@@ -114,7 +114,7 @@ public class ButtonGeneric extends ButtonBase
                 this.bindTexture(this.icon.getTexture());
                 //RenderUtils.drawTexturedRect(x, y, u, this.icon.getV(), this.icon.getWidth(), this.icon.getHeight());
                 RenderUtils.drawTexturedRect(this.icon.getTexture(), x, y, u, this.icon.getV(), this.icon.getWidth(), this.icon.getHeight(), drawContext);
-                RenderUtils.forceDraw(drawContext);
+                //RenderUtils.forceDraw(drawContext);
             }
 
             if (StringUtils.isBlank(this.displayString) == false)
