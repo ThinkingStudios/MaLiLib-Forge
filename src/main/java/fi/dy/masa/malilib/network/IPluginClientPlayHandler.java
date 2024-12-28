@@ -60,7 +60,7 @@ public interface IPluginClientPlayHandler<T extends CustomPayload> extends Packe
 
     /**
      * Register your Payload with BadPackets.
-     * See the BadPackets Java Docs under PlayPackets -> registerServerChannel() and PlayPackets -> registerClientChannel()
+     * See the BadPackets Java Docs under PlayPackets -> registerServerChannel() and registerClientChannel()
      * for more information on how to do this.
      * -
      * @param id (Your Payload Id<T>)

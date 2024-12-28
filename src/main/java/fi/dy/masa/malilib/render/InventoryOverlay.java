@@ -13,6 +13,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.*;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentSlot;
@@ -45,12 +46,15 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 
+import fi.dy.masa.malilib.MaLiLibReference;
 import fi.dy.masa.malilib.gui.GuiBase;
 import fi.dy.masa.malilib.mixin.IMixinAbstractHorseEntity;
 import fi.dy.masa.malilib.mixin.IMixinPiglinEntity;
 import fi.dy.masa.malilib.util.Constants;
 import fi.dy.masa.malilib.util.IEntityOwnedInventory;
 import fi.dy.masa.malilib.util.InventoryUtils;
+import fi.dy.masa.malilib.util.*;
+import fi.dy.masa.malilib.util.game.wrap.GameWrap;
 import fi.dy.masa.malilib.util.nbt.NbtBlockUtils;
 import fi.dy.masa.malilib.util.nbt.NbtEntityUtils;
 import fi.dy.masa.malilib.util.nbt.NbtKeys;
@@ -76,7 +80,7 @@ public class InventoryOverlay
     // Brewer Slots (1.21.4+)
     public static final Identifier TEXTURE_EMPTY_BREWER_FUEL = Identifier.ofVanilla("container/slot/brewing_fuel");
     public static final Identifier TEXTURE_EMPTY_POTION      = Identifier.ofVanilla("container/slot/potion");
-    // Other Misc Empty Slots
+    // Other Misc Empty Slots (1.21.3-)
     public static final Identifier TEXTURE_EMPTY_SLOT_AMETHYST   = Identifier.ofVanilla("item/empty_slot_amethyst_shard");
     public static final Identifier TEXTURE_EMPTY_SLOT_AXE        = Identifier.ofVanilla("item/empty_slot_axe");
     public static final Identifier TEXTURE_EMPTY_SLOT_DIAMOND    = Identifier.ofVanilla("item/empty_slot_diamond");
@@ -598,16 +602,16 @@ public class InventoryOverlay
                 return InventoryRenderType.HOPPER;
             }
             else if (entityType.equals(EntityType.HORSE) ||
-                    entityType.equals(EntityType.DONKEY) ||
-                    entityType.equals(EntityType.MULE) ||
-                    entityType.equals(EntityType.CAMEL) ||
-                    entityType.equals(EntityType.SKELETON_HORSE) ||
-                    entityType.equals(EntityType.ZOMBIE_HORSE))
+                     entityType.equals(EntityType.DONKEY) ||
+                     entityType.equals(EntityType.MULE) ||
+                     entityType.equals(EntityType.CAMEL) ||
+                     entityType.equals(EntityType.SKELETON_HORSE) ||
+                     entityType.equals(EntityType.ZOMBIE_HORSE))
             {
                 return InventoryRenderType.HORSE;
             }
             else if (entityType.equals(EntityType.LLAMA) ||
-                    entityType.equals(EntityType.TRADER_LLAMA))
+                     entityType.equals(EntityType.TRADER_LLAMA))
             {
                 return InventoryRenderType.LLAMA;
             }
@@ -698,6 +702,22 @@ public class InventoryOverlay
      */
     public static InventoryProperties getInventoryPropsTemp(InventoryRenderType type, int totalSlots)
     {
+        // Default slotsPerARow is only used for Bundles
+        return getInventoryPropsTemp(type, totalSlots, 9);
+    }
+
+    /**
+     * Returns the instance of the shared/temporary properties instance,
+     * with the values set for the type of inventory provided.
+     * Don't hold on to the instance, as the values will mutate when this
+     * method is called again!
+     * @param type ()
+     * @param totalSlots ()
+     * @param slotsPerARow ()
+     * @return
+     */
+    public static InventoryProperties getInventoryPropsTemp(InventoryRenderType type, int totalSlots, int slotsPerARow)
+    {
         INV_PROPS_TEMP.totalSlots = totalSlots;
 
         if (type == InventoryRenderType.FURNACE)
@@ -768,7 +788,7 @@ public class InventoryOverlay
         }
         else if (type == InventoryRenderType.BUNDLE)
         {
-            INV_PROPS_TEMP.slotsPerRow = 9;
+            INV_PROPS_TEMP.slotsPerRow = slotsPerARow != 9 ? MathUtils.clamp(slotsPerARow, 6, 9) : 9;
             INV_PROPS_TEMP.slotOffsetX = 8;
             INV_PROPS_TEMP.slotOffsetY = 8;
             int rows = (int) (Math.ceil((double) totalSlots / (double) INV_PROPS_TEMP.slotsPerRow));
@@ -873,7 +893,7 @@ public class InventoryOverlay
             {
                 for (int column = 0; column < slotsPerRow && slot < slots && i < maxSlots; ++column, ++slot, ++i)
                 {
-                    ItemStack stack = inv.getStack(slot);
+                    ItemStack stack = inv.getStack(slot).copy();
 
                     if (disabledSlots.contains(slot))
                     {
@@ -899,7 +919,8 @@ public class InventoryOverlay
             var stack = hoveredStack.copy();
             hoveredStack = null;
             // Some mixin / side effects can happen here
-            drawContext.drawItemTooltip(mc.textRenderer, stack, (int) mouseX, (int) mouseY);
+            //drawContext.drawItemTooltip(mc.textRenderer, stack, (int) mouseX, (int) mouseY);
+            renderStackToolTipStyled((int) mouseX, (int) mouseY, stack, mc, drawContext);
         }
     }
 
@@ -917,7 +938,7 @@ public class InventoryOverlay
 
             if (stack.isEmpty() == false)
             {
-                renderStackAt(stack, x + xOff + 1, y + yOff + 1, 1, mc, drawContext, mouseX, mouseY);
+                renderStackAt(stack.copy(), x + xOff + 1, y + yOff + 1, 1, mc, drawContext, mouseX, mouseY);
             }
         }
 
@@ -925,14 +946,14 @@ public class InventoryOverlay
 
         if (stack.isEmpty() == false)
         {
-            renderStackAt(stack, x + 28, y + 2 * 18 + 7 + 1, 1, mc, drawContext, mouseX, mouseY);
+            renderStackAt(stack.copy(), x + 28, y + 2 * 18 + 7 + 1, 1, mc, drawContext, mouseX, mouseY);
         }
 
         stack = entity.getEquippedStack(EquipmentSlot.OFFHAND);
 
         if (stack.isEmpty() == false)
         {
-            renderStackAt(stack, x + 28, y + 3 * 18 + 7 + 1, 1, mc, drawContext, mouseX, mouseY);
+            renderStackAt(stack.copy(), x + 28, y + 3 * 18 + 7 + 1, 1, mc, drawContext, mouseX, mouseY);
         }
 
         if (hoveredStack != null)
@@ -940,7 +961,8 @@ public class InventoryOverlay
             stack = hoveredStack.copy();
             hoveredStack = null;
             // Some mixin / side effects can happen here, so reset hoveredStack
-            drawContext.drawItemTooltip(mc.textRenderer, stack, (int) mouseX, (int) mouseY);
+            //drawContext.drawItemTooltip(mc.textRenderer, stack, (int) mouseX, (int) mouseY);
+            renderStackToolTipStyled((int) mouseX, (int) mouseY, stack, mc, drawContext);
         }
     }
 
@@ -977,7 +999,7 @@ public class InventoryOverlay
         {
             for (int column = 0; column < slotsPerRow && slot < slots && i < maxSlots; ++column, ++slot, ++i)
             {
-                ItemStack stack = items.get(slot);
+                ItemStack stack = items.get(slot).copy();
 
                 if (disabledSlots.contains(slot))
                 {
@@ -1087,11 +1109,23 @@ public class InventoryOverlay
         }
     }
 
+    /**
+     * This is a more "basic" hover tooltip
+     * @param x
+     * @param y
+     * @param stack
+     * @param mc
+     * @param drawContext
+     */
     public static void renderStackToolTip(int x, int y, ItemStack stack, MinecraftClient mc, DrawContext drawContext)
     {
-        List<Text> list = stack.getTooltip(Item.TooltipContext.DEFAULT, mc.player, mc.options.advancedItemTooltips ? TooltipType.ADVANCED : TooltipType.BASIC);
+        List<Text> list = stack.getTooltip(Item.TooltipContext.create(mc.world), mc.player, mc.options.advancedItemTooltips ? TooltipType.ADVANCED : TooltipType.BASIC);
         List<String> lines = new ArrayList<>();
 
+        if (MaLiLibReference.DEBUG_MODE)
+        {
+            dumpStack(stack, list);
+        }
         for (int i = 0; i < list.size(); ++i)
         {
             if (i == 0)
@@ -1105,6 +1139,57 @@ public class InventoryOverlay
         }
 
         RenderUtils.drawHoverText(x, y, lines, drawContext);
+    }
+
+    /**
+     * This is a more Advanced version, with full Color Style, etc; just like Vanilla's display.
+     * This should even be able to display the Bundle pop up interface.
+     * @param x
+     * @param y
+     * @param stack
+     * @param mc
+     * @param drawContext
+     */
+    public static void renderStackToolTipStyled(int x, int y, ItemStack stack, MinecraftClient mc, DrawContext drawContext)
+    {
+        if (stack.isEmpty() == false && mc.world != null && mc.player != null)
+        {
+            // Not sure why getBestWorld() is required here,
+            // it's also required when connected to a server;
+            // or else not be able to see Enchantment tooltips. (>.>)
+            List<Text> toolTips = stack.getTooltip(Item.TooltipContext.create(WorldUtils.getBestWorld(mc)), mc.player, mc.options.advancedItemTooltips ? TooltipType.ADVANCED : TooltipType.BASIC);
+            if (MaLiLibReference.DEBUG_MODE)
+            {
+                dumpStack(stack, toolTips);
+            }
+            drawContext.drawTooltip(mc.textRenderer,
+                                    toolTips,
+                                    stack.getTooltipData(), // Bundle/Optional Data
+                                    x, y);
+                                    //stack.get(DataComponentTypes.TOOLTIP_STYLE));
+        }
+    }
+
+    private static void dumpStack(ItemStack stack, @Nullable List<Text> list)
+    {
+        if (stack.isEmpty())
+        {
+            System.out.printf("dumpStack(): [%s]\n", ItemStack.EMPTY.toString());
+            return;
+        }
+
+        System.out.printf("dumpStack(): [%s]\n", stack.encode(WorldUtils.getBestWorld(GameWrap.getClient()).getRegistryManager()).toString());
+
+        if (list != null && !list.isEmpty())
+        {
+            int i = 0;
+
+            for (Text entry : list)
+            {
+                System.out.printf("ToolTip[%d]: %s\n", i, entry.getString());
+                i++;
+            }
+        }
     }
 
     public static class InventoryProperties
