@@ -25,6 +25,9 @@
     "MixinSimpleInventory",
     "MixinWorldRenderer"
   ],
+  "mixins": [
+    "test.MixinBundleItem"
+  ],
   "injectors": {
     "defaultRequire": 1
   }

@@ -11,6 +11,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.ShulkerBoxBlock;
+import net.minecraft.block.entity.ShulkerBoxBlockEntity;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gl.ShaderProgramKeys;
@@ -24,6 +25,7 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.component.ComponentMap;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.MapIdComponent;
+import net.minecraft.component.type.NbtComponent;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
@@ -50,6 +52,8 @@ import fi.dy.masa.malilib.mixin.IMixinDrawContext;
 import fi.dy.masa.malilib.util.*;
 import fi.dy.masa.malilib.util.PositionUtils.HitPart;
 import fi.dy.masa.malilib.util.nbt.NbtBlockUtils;
+
+import static fi.dy.masa.malilib.render.InventoryOverlay.INV_PROPS_TEMP;
 
 public class RenderUtils
 {
@@ -354,7 +358,7 @@ public class RenderUtils
 
         if (textLines.isEmpty() == false && GuiUtils.getCurrentScreen() != null)
         {
-            //RenderSystem.enableDepthTest();
+            RenderSystem.enableDepthTest();
             TextRenderer font = mc.textRenderer;
             int maxLineLength = 0;
             int maxWidth = GuiUtils.getCurrentScreen().width;
@@ -388,6 +392,8 @@ public class RenderUtils
             {
                 textStartX = Math.max(2, maxWidth - maxLineLength - 8);
             }
+
+            //drawTexturedRect(GuiBase.BG_TEXTURE, x, y, 0, 0, maxLineLength, maxWidth, drawContext);
 
             drawContext.getMatrices().push();
             drawContext.getMatrices().translate(0, 0, 300);
@@ -1395,12 +1401,19 @@ public class RenderUtils
 
     public static void renderBundlePreview(ItemStack stack, int baseX, int baseY, boolean useBgColors, DrawContext drawContext)
     {
+        // Default is 9 to make the default display the same as Shulker Boxes
+        renderBundlePreview(stack, baseX, baseY, 9, useBgColors, drawContext);
+    }
+
+    public static void renderBundlePreview(ItemStack stack, int baseX, int baseY, int slotsPerRow, boolean useBgColors, DrawContext drawContext)
+    {
         DefaultedList<ItemStack> items;
 
         if (stack.getComponents().contains(DataComponentTypes.BUNDLE_CONTENTS))
         {
             int count = InventoryUtils.bundleCountItems(stack);
             items = InventoryUtils.getBundleItems(stack, count);
+            slotsPerRow = slotsPerRow != 9 ? MathUtils.clamp(slotsPerRow, 6, 9) : 9;
 
             if (items.isEmpty())
             {
@@ -1409,7 +1422,7 @@ public class RenderUtils
 
             Inventory inv = InventoryUtils.getAsInventory(items);
             InventoryOverlay.InventoryRenderType type = InventoryOverlay.getInventoryType(stack);
-            InventoryOverlay.InventoryProperties props = InventoryOverlay.getInventoryPropsTemp(type, count);
+            InventoryOverlay.InventoryProperties props = InventoryOverlay.getInventoryPropsTemp(type, count, slotsPerRow);
 
             int screenWidth = GuiUtils.getScaledWindowWidth();
             int screenHeight = GuiUtils.getScaledWindowHeight();
