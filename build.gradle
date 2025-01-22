@@ -21,6 +21,7 @@ dependencies {
     }
     neoForge libs.neoforge
     modImplementation libs.foxifiednetworking
+    include libs.foxifiednetworking
 
     implementation libs.jsr305
 }
