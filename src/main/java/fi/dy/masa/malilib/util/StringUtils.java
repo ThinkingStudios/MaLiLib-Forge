@@ -31,7 +31,7 @@ import net.minecraft.world.World;
 import fi.dy.masa.malilib.MaLiLib;
 import fi.dy.masa.malilib.MaLiLibConfigs;
 import fi.dy.masa.malilib.gui.LeftRight;
-import org.thinkingstudio.mafglib.util.NeoUtils;
+import org.thinkingstudio.mafglib.loader.FoxifiedLoader;
 
 /**
  * File has been merged with Post-Rewrite StringUtils
@@ -68,7 +68,7 @@ public class StringUtils
 
     public static String getModVersionString(String modId)
     {
-        return NeoUtils.getInstance().getModArtifactVersion(modId).toString();
+        return FoxifiedLoader.getModVersion(modId);
     }
 
     /**
@@ -715,6 +715,18 @@ public class StringUtils
         return fallback;
     }
 
+    public static Text getTranslatedAsTextOrFallback(String key, @Nullable String fallback)
+    {
+        String result = getTranslatedOrFallback(key, fallback);
+
+        if (result == null)
+        {
+            return Text.empty();
+        }
+
+        return Text.of(result);
+    }
+
     // Some MCP vs. Yarn vs. MC versions compatibility/wrapper stuff below this
 
     /**
@@ -751,6 +763,11 @@ public class StringUtils
         {
             return translationKey;
         }
+    }
+
+    public static Text translateAsText(String translationKey, Object... args)
+    {
+        return Text.of(translate(translationKey, args));
     }
 
     public static MutableText translateable(String translationKey)

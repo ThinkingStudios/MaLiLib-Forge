@@ -1,8 +1,10 @@
 package fi.dy.masa.malilib.test;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
+import org.jetbrains.annotations.ApiStatus;
 import org.joml.Matrix4f;
 
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -24,6 +26,7 @@ import net.minecraft.item.FilledMapItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.text.Text;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.profiler.Profiler;
@@ -38,24 +41,67 @@ import fi.dy.masa.malilib.render.RenderUtils;
 import fi.dy.masa.malilib.util.*;
 import fi.dy.masa.malilib.util.nbt.NbtBlockUtils;
 
+@ApiStatus.Experimental
 public class TestRenderHandler implements IRenderer
 {
+    private static final TestRenderHandler INSTANCE = new TestRenderHandler();
+
+    public TestRenderHandler()
+    {
+        // NO-OP
+    }
+
+    public static TestRenderHandler getInstance()
+    {
+        return INSTANCE;
+    }
+
     @Override
     public void onRenderGameOverlayLastDrawer(DrawContext drawContext, float partialTicks, Profiler profiler, MinecraftClient mc)
     {
-        if (MaLiLibConfigs.Test.TEST_CONFIG_BOOLEAN.getBooleanValue() && GuiBase.isAltDown())
+        if (MaLiLibConfigs.Test.TEST_CONFIG_BOOLEAN.getBooleanValue() &&
+            MaLiLibConfigs.Test.TEST_INVENTORY_OVERLAY.getBooleanValue() &&
+            MaLiLibConfigs.Test.TEST_INVENTORY_OVERLAY.getKeybind().isKeybindHeld())
         {
+            /*
             profiler.push(this.getProfilerSectionSupplier() + "_inventory_overlay");
-            //renderInventoryOverlay(mc, drawContext);
-            InventoryOverlay.Context context = RayTraceUtils.getTargetInventory(mc);
+            InventoryOverlay.Context context = RayTraceUtils.getTargetInventory(mc, true);
 
             if (context != null)
             {
                 renderInventoryOverlay(context, drawContext, mc);
             }
+
             profiler.pop();
+             */
+
+            TestInventoryOverlayHandler.getInstance().getRenderContext(drawContext, profiler, mc);
         }
     }
+
+    @Override
+    public void onRenderGameOverlayPost(DrawContext drawContext)
+    {
+        // NO-OP
+    }
+
+    /*
+    public void renderInventoryOverlay(InventoryOverlay.Context context, DrawContext drawContext, MinecraftClient mc)
+    {
+        if (MaLiLibConfigs.Test.TEST_INVENTORY_OVERLAY_OG.getBooleanValue())
+        {
+            // Tweakeroo style
+            renderInventoryOverlayOG(context, drawContext, mc);
+        }
+        else
+        {
+            // MiniHUD style
+            var screen = new InventoryOverlayScreen(context);
+            screen.init(mc, 0, 0);
+            screen.render(drawContext, 0, 0, 0);
+        }
+    }
+     */
 
     @Override
     public void onRenderWorldLast(Matrix4f posMatrix, Matrix4f projMatrix)
@@ -77,6 +123,39 @@ public class TestRenderHandler implements IRenderer
         }
     }
 
+    @Override
+    public void onRenderTooltipComponentInsertFirst(Item.TooltipContext context, ItemStack stack, List<Text> list)
+    {
+        if (MaLiLibConfigs.Test.TEST_CONFIG_BOOLEAN.getBooleanValue())
+        {
+            // This can cause various problems unrelated to the tooltips; but it does work.
+            /*
+            MutableText itemName = list.getFirst().copy();
+            MutableText title = Text.empty().append(StringUtils.translateAsText(MaLiLibReference.MOD_ID+".gui.tooltip.test.title"));
+            list.addFirst(title);
+             */
+            list.add(StringUtils.translateAsText(MaLiLibReference.MOD_ID+".gui.tooltip.test.first"));
+        }
+    }
+
+    @Override
+    public void onRenderTooltipComponentInsertMiddle(Item.TooltipContext context, ItemStack stack, List<Text> list)
+    {
+        if (MaLiLibConfigs.Test.TEST_CONFIG_BOOLEAN.getBooleanValue())
+        {
+            list.add(StringUtils.translateAsText(MaLiLibReference.MOD_ID+".gui.tooltip.test.middle"));
+        }
+    }
+
+    @Override
+    public void onRenderTooltipComponentInsertLast(Item.TooltipContext context, ItemStack stack, List<Text> list)
+    {
+        if (MaLiLibConfigs.Test.TEST_CONFIG_BOOLEAN.getBooleanValue())
+        {
+            list.add(StringUtils.translateAsText(MaLiLibReference.MOD_ID+".gui.tooltip.test.last"));
+        }
+    }
+
     //@Override
     // TODO 1.21.3+
     //public void onRenderWorldPreWeather(Matrix4f posMatrix, Matrix4f projMatrix, Frustum frustum, Camera camera, Fog fog, Profiler profiler)
@@ -88,7 +167,7 @@ public class TestRenderHandler implements IRenderer
 
             profiler.push(MaLiLibReference.MOD_ID + "_test_walls");
 
-            if (TestEnumConfig.TEST_WALLS_HOTKEY.getBooleanValue())
+            if (ConfigTestEnum.TEST_WALLS_HOTKEY.getBooleanValue())
             {
                 if (TestWalls.needsUpdate(camera.getBlockPos()))
                 {
@@ -357,13 +436,20 @@ public class TestRenderHandler implements IRenderer
             InventoryOverlay.renderEquipmentStacks(entityLivingBase, x, y, mc, drawContext);
         }
         */
-    public static void renderInventoryOverlay(InventoryOverlay.Context context, DrawContext drawContext, MinecraftClient mc)
+
+    // OG / Tweakeroo method also
+    public static void renderInventoryOverlayOG(InventoryOverlay.Context context, DrawContext drawContext, MinecraftClient mc)
     {
         //MinecraftClient mc = MinecraftClient.getInstance();
         LivingEntity entityLivingBase = null;
         BlockEntity be = null;
         Inventory inv = null;
         NbtCompound nbt = new NbtCompound();
+
+        if (context == null)
+        {
+            return;
+        }
 
         if (context.be() != null)
         {

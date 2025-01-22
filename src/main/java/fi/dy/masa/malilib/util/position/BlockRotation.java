@@ -30,7 +30,7 @@ public enum BlockRotation
         this.index = index;
         this.vanillaRotation = vanillaRotation;
         this.name = name;
-        this.translationKey = MaLiLibReference.ID + ".label.block_rotation." + name;
+        this.translationKey = MaLiLibReference.MOD_ID + ".label.block_rotation." + name;
     }
 
     public String getName()

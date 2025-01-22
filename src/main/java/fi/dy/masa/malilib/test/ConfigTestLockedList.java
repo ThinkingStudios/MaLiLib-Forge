@@ -2,12 +2,14 @@ package fi.dy.masa.malilib.test;
 
 import javax.annotation.Nullable;
 import com.google.common.collect.ImmutableList;
+import org.jetbrains.annotations.ApiStatus;
 
 import fi.dy.masa.malilib.MaLiLibReference;
 import fi.dy.masa.malilib.config.IConfigLockedListEntry;
 import fi.dy.masa.malilib.config.IConfigLockedListType;
 import fi.dy.masa.malilib.util.StringUtils;
 
+@ApiStatus.Experimental
 public class ConfigTestLockedList implements IConfigLockedListType
 {
     public static final ConfigTestLockedList INSTANCE = new ConfigTestLockedList();
@@ -43,7 +45,7 @@ public class ConfigTestLockedList implements IConfigLockedListType
         Entry(String configKey, String translationKey)
         {
             this.configKey = configKey;
-            this.translationKey = MaLiLibReference.ID+".gui.label.locked_test."+translationKey;
+            this.translationKey = MaLiLibReference.MOD_ID+".gui.label.locked_test."+translationKey;
         }
 
         @Override

@@ -7,7 +7,7 @@ mappings_patch="1.21+build.4"
 neoforge="21.1.91"
 
 # Mod properties
-version="0.2.2"
+version="0.2.3"
 maven-group="org.thinkingstudio.mafglib"
 archives-name="MaFgLib"
 
@@ -22,7 +22,7 @@ badpackets="neo-0.8.1"
 jsr305="3.0.2"
 
 # Gradle plugin
-architectury-loom = "1.7-SNAPSHOT"
+architectury-loom = "1.9-SNAPSHOT"
 modpublisher = "2.+"
 
 [libraries]

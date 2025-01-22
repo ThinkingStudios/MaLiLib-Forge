@@ -7,8 +7,8 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import com.llamalad7.mixinextras.lib.apache.commons.tuple.Pair;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import org.apache.commons.lang3.tuple.Pair;
 
 import net.minecraft.block.entity.BeehiveBlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
@@ -26,7 +26,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.event.Vibrations;
 
-import fi.dy.masa.malilib.util.Constants;
+import fi.dy.masa.malilib.util.data.Constants;
 
 public class NbtBlockUtils
 {
