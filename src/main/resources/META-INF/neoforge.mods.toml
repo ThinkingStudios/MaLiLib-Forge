@@ -32,10 +32,3 @@ type = "required"
 versionRange = "[1.21,)"
 ordering = "NONE"
 side = "BOTH"
-
-[[dependencies.mafglib]]
-modId = "foxified_networking"
-type = "required"
-versionRange = "*"
-ordering = "NONE"
-side = "BOTH"
