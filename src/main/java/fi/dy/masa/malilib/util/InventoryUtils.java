@@ -44,10 +44,14 @@ import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.village.TradeOffer;
+import net.minecraft.village.TradeOfferList;
 import net.minecraft.world.World;
 
 import fi.dy.masa.malilib.MaLiLib;
-import fi.dy.masa.malilib.mixin.IMixinPlayerEntity;
+import fi.dy.masa.malilib.mixin.entity.IMixinPlayerEntity;
+import fi.dy.masa.malilib.util.data.Constants;
+import fi.dy.masa.malilib.util.nbt.NbtEntityUtils;
 import fi.dy.masa.malilib.util.nbt.NbtKeys;
 
 public class InventoryUtils
@@ -638,6 +642,7 @@ public class InventoryUtils
             {
                 return null;
             }
+
             for (int i = 0; i < slotCount; i++)
             {
                 inv.setStack(i, items.get(i).copy());
@@ -657,6 +662,11 @@ public class InventoryUtils
             SimpleInventory inv = new SimpleInventory(slotCount);
             inv.readNbtList(nbt.getList(NbtKeys.INVENTORY, Constants.NBT.TAG_COMPOUND), registry);
 
+            if (inv.isEmpty())
+            {
+                return null;
+            }
+
             return inv;
         }
         else if (nbt.contains(NbtKeys.ENDER_ITEMS))
@@ -670,6 +680,11 @@ public class InventoryUtils
 
             SimpleInventory inv = new SimpleInventory(slotCount);
             inv.readNbtList(nbt.getList(NbtKeys.ENDER_ITEMS, Constants.NBT.TAG_COMPOUND), registry);
+
+            if (inv.isEmpty())
+            {
+                return null;
+            }
 
             return inv;
         }
@@ -804,6 +819,41 @@ public class InventoryUtils
         }
 
         return null;
+    }
+
+    public static DefaultedList<ItemStack> getSellingItemsFromNbt(@Nonnull NbtCompound nbt, @Nonnull DynamicRegistryManager registry)
+    {
+        TradeOfferList offers = NbtEntityUtils.getTradeOffersFromNbt(nbt, registry);
+
+        if (offers != null)
+        {
+            return getSellingItems(offers);
+        }
+
+        return DefaultedList.of();
+    }
+
+    public static DefaultedList<ItemStack> getSellingItems(@Nonnull TradeOfferList offers)
+    {
+        if (!offers.isEmpty())
+        {
+            DefaultedList<ItemStack> result = DefaultedList.of();
+
+            for (int i = 0; i < offers.size(); i++)
+            {
+                TradeOffer entry = offers.get(i);
+
+                if (entry != null)
+                {
+                    ItemStack sellItem = entry.getSellItem();
+                    result.add(sellItem.copy());
+                }
+            }
+
+            return result;
+        }
+
+        return DefaultedList.of();
     }
 
     /**
@@ -1108,8 +1158,13 @@ public class InventoryUtils
      * @param items
      * @return
      */
-    public static Inventory getAsInventory(DefaultedList<ItemStack> items)
+    public static @Nullable Inventory getAsInventory(DefaultedList<ItemStack> items)
     {
+        if (items == null || items.isEmpty())
+        {
+            return null;
+        }
+
         SimpleInventory inv = new SimpleInventory(items.size());
 
         for (int slot = 0; slot < items.size(); ++slot)

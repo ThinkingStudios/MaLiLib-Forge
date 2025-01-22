@@ -12,7 +12,9 @@ import net.minecraft.client.gl.ShaderProgram;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.*;
 import net.minecraft.client.util.Handle;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.text.Text;
 import net.minecraft.util.profiler.Profiler;
 import net.minecraft.util.profiler.Profilers;
 
@@ -112,6 +114,42 @@ public class RenderEventHandler implements IRenderDispatcher
         profiler.swap(MaLiLibReference.MOD_ID+"_game_messages");
         InfoUtils.renderInGameMessages(drawContext);
         profiler.pop();
+    }
+
+    @ApiStatus.Internal
+    public void onRenderTooltipComponentInsertFirst(Item.TooltipContext context, ItemStack stack, List<Text> list)
+    {
+        if (this.tooltipLastRenderers.isEmpty() == false)
+        {
+            for (IRenderer renderer : this.tooltipLastRenderers)
+            {
+                renderer.onRenderTooltipComponentInsertFirst(context, stack, list);
+            }
+        }
+    }
+
+    @ApiStatus.Internal
+    public void onRenderTooltipComponentInsertMiddle(Item.TooltipContext context, ItemStack stack, List<Text> list)
+    {
+        if (this.tooltipLastRenderers.isEmpty() == false)
+        {
+            for (IRenderer renderer : this.tooltipLastRenderers)
+            {
+                renderer.onRenderTooltipComponentInsertMiddle(context, stack, list);
+            }
+        }
+    }
+
+    @ApiStatus.Internal
+    public void onRenderTooltipComponentInsertLast(Item.TooltipContext context, ItemStack stack, List<Text> list)
+    {
+        if (this.tooltipLastRenderers.isEmpty() == false)
+        {
+            for (IRenderer renderer : this.tooltipLastRenderers)
+            {
+                renderer.onRenderTooltipComponentInsertLast(context, stack, list);
+            }
+        }
     }
 
     @ApiStatus.Internal

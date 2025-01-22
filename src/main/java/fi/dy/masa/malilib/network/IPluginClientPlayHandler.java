@@ -3,11 +3,8 @@ package fi.dy.masa.malilib.network;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Objects;
-import lol.bai.badpackets.api.PacketReceiver;
-import lol.bai.badpackets.api.PacketSender;
-import lol.bai.badpackets.api.play.ClientPlayContext;
-import lol.bai.badpackets.api.play.PlayPackets;
-import lol.bai.badpackets.impl.registry.ChannelRegistry;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.nbt.NbtCompound;
@@ -24,7 +21,7 @@ import fi.dy.masa.malilib.MaLiLib;
  * Interface for ClientPlayHandler, for downstream mods.
  * @param <T> (Payload)
  */
-public interface IPluginClientPlayHandler<T extends CustomPayload> extends PacketReceiver<ClientPlayContext, T>
+public interface IPluginClientPlayHandler<T extends CustomPayload> extends ClientPlayNetworking.PlayPayloadHandler<T>
 {
     int FROM_SERVER = 1;
     int TO_SERVER = 2;
@@ -59,8 +56,8 @@ public interface IPluginClientPlayHandler<T extends CustomPayload> extends Packe
     void reset(Identifier channel);
 
     /**
-     * Register your Payload with BadPackets.
-     * See the BadPackets Java Docs under PlayPackets -> registerServerChannel() and registerClientChannel()
+     * Register your Payload with Fabric API.
+     * See the fabric-networking-api-v1 Java Docs under PayloadTypeRegistry -> register()
      * for more information on how to do this.
      * -
      * @param id (Your Payload Id<T>)
@@ -75,12 +72,12 @@ public interface IPluginClientPlayHandler<T extends CustomPayload> extends Packe
             {
                 switch (direction)
                 {
-                    case TO_SERVER, FROM_CLIENT -> PlayPackets.registerServerChannel(id, codec);
-                    case FROM_SERVER, TO_CLIENT -> PlayPackets.registerClientChannel(id, codec);
+                    case TO_SERVER, FROM_CLIENT -> PayloadTypeRegistry.playC2S().register(id, codec);
+                    case FROM_SERVER, TO_CLIENT -> PayloadTypeRegistry.playS2C().register(id, codec);
                     default ->
                     {
-                        PlayPackets.registerServerChannel(id, codec);
-                        PlayPackets.registerClientChannel(id, codec);
+                        PayloadTypeRegistry.playC2S().register(id, codec);
+                        PayloadTypeRegistry.playS2C().register(id, codec);
                     }
                 }
             }
@@ -99,21 +96,20 @@ public interface IPluginClientPlayHandler<T extends CustomPayload> extends Packe
     /**
      * Register your Packet Receiver function.
      * You can use the HANDLER itself (Singleton method), or any other class that you choose.
-     * See the BadPackets Java Docs under PlayPackets.registerClientReceiver()
+     * See the fabric-network-api-v1 Java Docs under ClientPlayNetworking.registerGlobalReceiver()
      * for more information on how to do this.
      * -
      * @param id (Your Payload Id<T>)
      * @param receiver (Your Packet Receiver // if null, uses this::receivePlayPayload)
      * @return (True / False)
      */
-    default boolean registerPlayReceiver(@Nonnull CustomPayload.Id<T> id, @Nullable PacketReceiver<ClientPlayContext, T> receiver)
+    default boolean registerPlayReceiver(@Nonnull CustomPayload.Id<T> id, @Nullable ClientPlayNetworking.PlayPayloadHandler<T> receiver)
     {
         if (this.isPlayRegistered(this.getPayloadChannel()))
         {
             try
             {
-                PlayPackets.registerClientReceiver(id, Objects.requireNonNullElse(receiver, this::receivePlayPayload));
-                return true;
+                return ClientPlayNetworking.registerGlobalReceiver(id, Objects.requireNonNullElse(receiver, this::receivePlayPayload));
             }
             catch (IllegalArgumentException e)
             {
@@ -129,19 +125,21 @@ public interface IPluginClientPlayHandler<T extends CustomPayload> extends Packe
     /**
      * Unregisters your Packet Receiver function.
      * You can use the HANDLER itself (Singleton method), or any other class that you choose.
+     * See the fabric-network-api-v1 Java Docs under ClientPlayNetworking.unregisterGlobalReceiver()
+     * for more information on how to do this.
      */
     default void unregisterPlayReceiver()
     {
-        ChannelRegistry.PLAY_C2S.getChannels().remove(this.getPayloadChannel());
+        ClientPlayNetworking.unregisterGlobalReceiver(this.getPayloadChannel());
     }
 
     /**
      * Receive Payload by pointing static receive() method to this to convert Payload to its data decode() function.
      * -
-     * @param ctx (BadPackets Context)
      * @param payload (Payload to decode)
+     * @param ctx (Fabric Context)
      */
-    void receivePlayPayload(ClientPlayContext ctx, T payload);
+    void receivePlayPayload(T payload, ClientPlayNetworking.Context ctx);
 
     /**
      * Receive Payload via the legacy "onCustomPayload" from a Network Handler Mixin interface.
@@ -185,7 +183,7 @@ public interface IPluginClientPlayHandler<T extends CustomPayload> extends Packe
     void encodeWithSplitter(PacketByteBuf buf, ClientPlayNetworkHandler handler);
 
     /**
-     * Sends the Payload to the server using the BadPackets interface.
+     * Sends the Payload to the server using the Fabric-API interface.
      * -
      * @param payload (The Payload to send)
      * @return (true/false --> for error control)
@@ -194,9 +192,9 @@ public interface IPluginClientPlayHandler<T extends CustomPayload> extends Packe
     {
         if (payload.getId().id().equals(this.getPayloadChannel()) && this.isPlayRegistered(this.getPayloadChannel()))
         {
-            if (PacketSender.c2s().canSend(payload.getId()))
+            if (ClientPlayNetworking.canSend(payload.getId()))
             {
-                PacketSender.c2s().send(payload);
+                ClientPlayNetworking.send(payload);
                 return true;
             }
         }
