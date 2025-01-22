@@ -26,8 +26,7 @@ dependencies {
         mappings libs.yarn.mappings.patch
     }
     neoForge libs.neoforge
-    //modImplementation libs.badpackets
-    modImplementation("com.github.TexBlock:FoxifiedNetworking:1.21.1~dev-SNAPSHOT")
+    modImplementation libs.foxifiednetworking
 
     implementation libs.jsr305
 }
