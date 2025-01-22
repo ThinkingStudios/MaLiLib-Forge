@@ -11,7 +11,6 @@ import net.neoforged.fml.loading.FMLPaths;
 import net.neoforged.fml.loading.moddiscovery.ModInfo;
 
 import java.nio.file.Path;
-import java.util.List;
 import java.util.function.Consumer;
 
 public final class FoxifiedLoader {

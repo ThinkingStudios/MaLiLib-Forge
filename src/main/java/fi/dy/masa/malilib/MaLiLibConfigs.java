@@ -13,9 +13,11 @@ import fi.dy.masa.malilib.config.IConfigHandler;
 import fi.dy.masa.malilib.config.IConfigValue;
 import fi.dy.masa.malilib.config.options.*;
 import fi.dy.masa.malilib.hotkeys.IHotkey;
+import fi.dy.masa.malilib.hotkeys.KeyAction;
+import fi.dy.masa.malilib.hotkeys.KeybindSettings;
+import fi.dy.masa.malilib.test.ConfigTestEnum;
 import fi.dy.masa.malilib.test.ConfigTestLockedList;
 import fi.dy.masa.malilib.test.ConfigTestOptList;
-import fi.dy.masa.malilib.test.TestEnumConfig;
 import fi.dy.masa.malilib.util.FileUtils;
 import fi.dy.masa.malilib.util.JsonUtils;
 import fi.dy.masa.malilib.util.Color4f;
@@ -74,6 +76,10 @@ public class MaLiLibConfigs implements IConfigHandler
     }
 
     private static final String TEST_KEY = MaLiLibReference.ID+".config.test";
+    private static final KeybindSettings OVERLAY_TOGGLE = KeybindSettings.create(KeybindSettings.Context.ANY, KeyAction.PRESS, true, true, false, true);
+    //private static final KeybindSettings GUI_RELAXED = KeybindSettings.create(KeybindSettings.Context.GUI, KeyAction.PRESS, true, false, false, false);
+    private static final KeybindSettings GUI_RELAXED_CANCEL = KeybindSettings.create(KeybindSettings.Context.GUI, KeyAction.PRESS, true, false, false, true);
+    //private static final KeybindSettings GUI_NO_ORDER = KeybindSettings.create(KeybindSettings.Context.GUI, KeyAction.PRESS, false, false, false, true);
     public static class Test
     {
         public static final ConfigBoolean           TEST_CONFIG_BOOLEAN             = new ConfigBoolean("testBoolean", false, "Test Boolean").apply(TEST_KEY);
@@ -89,6 +95,10 @@ public class MaLiLibConfigs implements IConfigHandler
         public static final ConfigStringList        TEST_CONFIG_STRING_LIST         = new ConfigStringList("testStringList", ImmutableList.of("testString1", "testString2"), "Test String List").apply(TEST_KEY);
         public static final ConfigLockedList        TEST_CONFIG_LOCKED_LIST         = new ConfigLockedList("testLockedConfigList", ConfigTestLockedList.INSTANCE, "Test Locked List").apply(TEST_KEY);
         public static final ConfigInteger           TEST_BUNDLE_PREVIEW_WIDTH       = new ConfigInteger("testBundlePreviewWidth", 9, 6, 9, "Test Bundle Preview Width").apply(TEST_KEY);
+        public static final ConfigBooleanHotkeyed   TEST_INVENTORY_OVERLAY          = new ConfigBooleanHotkeyed("testInventoryOverlay", false, "LEFT_ALT").apply(TEST_KEY);
+        public static final ConfigBooleanHotkeyed   TEST_INVENTORY_OVERLAY_OG       = new ConfigBooleanHotkeyed("testInventoryOverlayOG", false, "").apply(TEST_KEY);
+        public static final ConfigHotkey            TEST_INVENTORY_OVERLAY_TOGGLE   = new ConfigHotkey("testInventoryOverlayToggle", "BUTTON_3", OVERLAY_TOGGLE).apply(TEST_KEY);
+        public static final ConfigHotkey            TEST_GUI_KEYBIND                = new ConfigHotkey("testGuiKeybind", "", GUI_RELAXED_CANCEL).apply(TEST_KEY);
 
         public static final ImmutableList<IConfigBase> OPTIONS = ImmutableList.of(
                 TEST_CONFIG_BOOLEAN,
@@ -103,11 +113,19 @@ public class MaLiLibConfigs implements IConfigHandler
                 TEST_CONFIG_STRING,
                 TEST_CONFIG_STRING_LIST,
                 TEST_CONFIG_LOCKED_LIST,
-                TEST_BUNDLE_PREVIEW_WIDTH
+                TEST_BUNDLE_PREVIEW_WIDTH,
+                TEST_INVENTORY_OVERLAY,
+                TEST_INVENTORY_OVERLAY_OG,
+                TEST_INVENTORY_OVERLAY_TOGGLE,
+                TEST_GUI_KEYBIND
         );
 
         public static final List<IHotkey> HOTKEY_LIST = ImmutableList.of(
-                TEST_CONFIG_BOOLEAN_HOTKEYED
+                TEST_CONFIG_BOOLEAN_HOTKEYED,
+                TEST_INVENTORY_OVERLAY,
+                TEST_INVENTORY_OVERLAY_OG,
+                TEST_INVENTORY_OVERLAY_TOGGLE,
+                TEST_GUI_KEYBIND
         );
     }
 
@@ -136,7 +154,7 @@ public class MaLiLibConfigs implements IConfigHandler
                 if (MaLiLibReference.DEBUG_MODE)
                 {
                     ConfigUtils.readConfigBase(root, "Test", Test.OPTIONS);
-                    ConfigUtils.readHotkeyToggleOptions(root, "TestEnumHotkeys", "TestEnumToggles", TestEnumConfig.VALUES);
+                    ConfigUtils.readHotkeyToggleOptions(root, "TestEnumHotkeys", "TestEnumToggles", ConfigTestEnum.VALUES);
                 }
 
                 if (MaLiLibReference.EXPERIMENTAL_MODE)
@@ -161,7 +179,7 @@ public class MaLiLibConfigs implements IConfigHandler
             if (MaLiLibReference.DEBUG_MODE)
             {
                 ConfigUtils.writeConfigBase(root, "Test", Test.OPTIONS);
-                ConfigUtils.writeHotkeyToggleOptions(root, "TestEnumHotkeys", "TestEnumToggles", TestEnumConfig.VALUES);
+                ConfigUtils.writeHotkeyToggleOptions(root, "TestEnumHotkeys", "TestEnumToggles", ConfigTestEnum.VALUES);
             }
 
             if (MaLiLibReference.EXPERIMENTAL_MODE)
