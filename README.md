@@ -4,7 +4,7 @@
 
 # MaFgLib
 
-**This mod requires [BadPackets](https://modrinth.com/mod/badpackets) in 1.20.4 ~ 1.20.6 and .**
+**This mod requires [BadPackets](https://modrinth.com/mod/badpackets) in 1.20.4 ~ 1.20.6 and below 1.21.x-0.2.3.**
 
 MaLiLib unofficial (Neo)Forge port.
 
