@@ -6,7 +6,6 @@ import fi.dy.masa.malilib.compat.modmenu.ModMenuImpl;
 import fi.dy.masa.malilib.event.RenderEventHandler;
 import net.minecraft.client.MinecraftClient;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.bus.api.EventPriority;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.loading.FMLLoader;
