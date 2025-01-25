@@ -22,20 +22,13 @@ config = "mafglib.mixins.json"
 [[dependencies.mafglib]]
 modId = "neoforge"
 type = "required"
-versionRange = "[21,)"
+versionRange = "[21.3,)"
 ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.mafglib]]
 modId = "minecraft"
 type = "required"
-versionRange = "[1.21.4,)"
-ordering = "NONE"
-side = "BOTH"
-
-[[dependencies.mafglib]]
-modId = "badpackets"
-type = "required"
-versionRange = "[0.8.1,)"
+versionRange = "[1.21.3,)"
 ordering = "NONE"
 side = "BOTH"
