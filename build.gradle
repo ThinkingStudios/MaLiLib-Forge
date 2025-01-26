@@ -11,12 +11,6 @@ group = libs.versions.maven.group.get()
 repositories {
     maven { url "https://jitpack.io" }
     maven { url "https://maven.neoforged.net/releases/" }
-    maven {
-        url "https://maven2.bai.lol"
-        content {
-            includeGroup "lol.bai"
-        }
-    }
 }
 
 dependencies {
@@ -86,6 +80,4 @@ publisher {
     setCurseEnvironment("client")
     setArtifact(remapJar)
     addAdditionalFile(sourcesJar)
-    modrinthDepends.required("badpackets")
-    curseDepends.required("badpackets")
 }
