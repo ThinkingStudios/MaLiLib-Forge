@@ -22,7 +22,7 @@ foxifiednetworking="1.21.1~dev-SNAPSHOT"
 jsr305="3.0.2"
 
 # Gradle plugin
-architectury-loom = "1.7-SNAPSHOT"
+architectury-loom = "1.9-SNAPSHOT"
 modpublisher = "2.+"
 
 [libraries]
