@@ -4,10 +4,10 @@
 minecraft_version="1.21.1"
 yarn_mappings="1.21.1+build.3"
 mappings_patch="1.21+build.4"
-neoforge="21.1.97"
+neoforge="21.1.114"
 
 # Mod properties
-version="0.2.3"
+version="0.2.4"
 maven-group="org.thinkingstudio.mafglib"
 archives-name="MaFgLib"
 

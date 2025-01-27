@@ -10,6 +10,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.ShulkerBoxBlock;
+import net.minecraft.block.entity.ShulkerBoxBlockEntity;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
@@ -49,6 +50,8 @@ import fi.dy.masa.malilib.gui.GuiBase;
 import fi.dy.masa.malilib.util.*;
 import fi.dy.masa.malilib.util.PositionUtils.HitPart;
 import fi.dy.masa.malilib.util.nbt.NbtBlockUtils;
+
+import static fi.dy.masa.malilib.render.InventoryOverlay.INV_PROPS_TEMP;
 
 public class RenderUtils
 {

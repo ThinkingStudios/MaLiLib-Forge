@@ -19,6 +19,7 @@ public class MaFgLib {
     public MaFgLib(ModContainer modContainer) {
         if (FMLLoader.getDist().isClient()) {
             modContainer.registerExtensionPoint(IConfigScreenFactory.class, new ModMenuImpl().getModConfigScreenFactory());
+
             MaLiLib.onInitialize();
 
             NeoForge.EVENT_BUS.addListener(EventPriority.HIGHEST, RenderGuiLayerEvent.Post.class, event -> {
