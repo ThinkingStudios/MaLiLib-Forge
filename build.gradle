@@ -11,6 +11,7 @@ group = libs.versions.maven.group.get()
 repositories {
     maven { url "https://jitpack.io" }
     maven { url "https://maven.neoforged.net/releases/" }
+    maven { url "https://dl.cloudsmith.io/public/thinkingstudio/foxifiednetworking/maven/" }
 }
 
 dependencies {
@@ -21,6 +22,7 @@ dependencies {
     }
     neoForge libs.neoforge
     modImplementation libs.foxifiednetworking
+    include libs.foxifiednetworking
 
     implementation libs.jsr305
 }
