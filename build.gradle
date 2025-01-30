@@ -21,14 +21,15 @@ dependencies {
         mappings libs.yarn.mappings.patch
     }
     neoForge libs.neoforge
-    modImplementation(include("org.sinytra:forgified-fabric-loader:2.5.34+0.16.0+1.21.1"))
+    // ForgifiedFabricAPI
     for (String module in ffapi_modules.split(",")) {
+        // Fabric API Base
         if (module == "fabric-api-base") {
-            modApi(include("org.sinytra.forgified-fabric-api:$module:0.4.42+d1308ded19"))
+            modApi(include("org.sinytra.forgified-fabric-api:$module:0.4.42+d1308ded19")) { transitive = false }
         }
-
+        // Fabric Networking API V1
         if (module == "fabric-networking-api-v1") {
-            modApi(include("org.sinytra.forgified-fabric-api:$module:4.3.0+0d25d43e19"))
+            modApi(include("org.sinytra.forgified-fabric-api:$module:4.3.0+0d25d43e19")) { transitive = false }
         }
     }
 
