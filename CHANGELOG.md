@@ -1,2 +1,2 @@
-## Change
+## Changelog
 - update FoxifiedNetworkingAPI version
