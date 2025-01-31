@@ -11,6 +11,7 @@ group = libs.versions.maven.group.get()
 repositories {
     maven { url "https://jitpack.io" }
     maven { url "https://maven.neoforged.net/releases/" }
+    maven { url "https://maven.su5ed.dev/releases" }
     maven { url "https://dl.cloudsmith.io/public/thinkingstudio/foxifiednetworking/maven/" }
 }
 
