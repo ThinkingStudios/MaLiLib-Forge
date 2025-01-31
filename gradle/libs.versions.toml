@@ -7,7 +7,7 @@ mappings_patch="1.21+build.4"
 neoforge="21.3.58"
 
 # Mod properties
-version="0.2.5"
+version="0.2.6"
 maven-group="org.thinkingstudio.mafglib"
 archives-name="MaFgLib"
 
@@ -16,7 +16,7 @@ id-modrinth="SKI34J7B"
 id-curseforge="910766"
 
 # Mod dependencies
-foxifiednetworking="0.1.0-alpha2+mc1.21.3"
+foxifiednetworking="0.1.0alpha3+mc1.21.3"
 
 # Libraries
 jsr305="3.0.2"
