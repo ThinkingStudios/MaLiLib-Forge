@@ -1,2 +1,2 @@
 ## Changelog
-- update FoxifiedNetworkingAPI version
+- Use our own modification of FFAPI
