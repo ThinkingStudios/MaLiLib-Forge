@@ -12,7 +12,7 @@ repositories {
     maven { url "https://jitpack.io" }
     maven { url "https://maven.neoforged.net/releases/" }
     maven { url "https://maven.su5ed.dev/releases" }
-    maven { url "https://dl.cloudsmith.io/public/thinkingstudio/foxifiednetworking/maven/" }
+    maven { url "https://dl.cloudsmith.io/public/thinkingstudio/forgifiedfabricapi/maven/" }
 }
 
 dependencies {
@@ -22,8 +22,17 @@ dependencies {
         mappings libs.yarn.mappings.patch
     }
     neoForge libs.neoforge
-    modImplementation libs.foxifiednetworking
-    include libs.foxifiednetworking
+    // ForgifiedFabricAPI
+    for (String module in ffapi_modules.split(",")) {
+        // Fabric API Base
+        if (module == "fabric-api-base") {
+            modApi(include("org.sinytra.forgified-fabric-api:$module:0.4.42+d1308ded19")) { transitive = false }
+        }
+        // Fabric Networking API V1
+        if (module == "fabric-networking-api-v1") {
+            modApi(include("org.sinytra.forgified-fabric-api:$module:4.3.2+cfe47bf204")) { transitive = false }
+        }
+    }
 
     implementation libs.jsr305
 }
