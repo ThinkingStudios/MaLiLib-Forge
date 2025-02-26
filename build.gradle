@@ -11,7 +11,7 @@ group = libs.versions.maven.group.get()
 repositories {
     maven { url "https://jitpack.io" }
     maven { url "https://maven.neoforged.net/releases/" }
-    maven { url "https://dl.cloudsmith.io/public/thinkingstudio/forgifiedfabricapi/maven/" }
+    maven { url "https://maven.su5ed.dev/releases" }
 }
 
 dependencies {
@@ -29,7 +29,7 @@ dependencies {
         }
         // Fabric Networking API V1
         if (module == "fabric-networking-api-v1") {
-            modApi(include("org.sinytra.forgified-fabric-api:$module:4.3.0+cfe47bf219")) { transitive = false }
+            modApi(include("org.sinytra.forgified-fabric-api:$module:4.3.0+0d25d43e19")) { transitive = false }
         }
     }
 
