@@ -1,4 +1,2 @@
 ## Changelog
-- Use our own modification of FFAPI
-- fix render duplicate HUD
-- fix HUD background
+- fix include FFAPI version issue

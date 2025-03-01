@@ -30,7 +30,7 @@ dependencies {
         }
         // Fabric Networking API V1
         if (module == "fabric-networking-api-v1") {
-            modApi(include("org.sinytra.forgified-fabric-api:$module:4.3.2+cfe47bf204")) { transitive = false }
+            modApi(include("org.sinytra.forgified-fabric-api:$module:4.3.1+cfe47bf240")) { transitive = false }
         }
     }
 
