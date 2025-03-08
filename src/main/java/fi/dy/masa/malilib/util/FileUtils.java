@@ -1,19 +1,15 @@
 package fi.dy.masa.malilib.util;
 
-import javax.annotation.Nullable;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
-import com.google.common.collect.ImmutableSet;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtIo;
-import net.minecraft.nbt.NbtSizeTracker;
+import javax.annotation.Nullable;
+
 import fi.dy.masa.malilib.MaLiLib;
 import fi.dy.masa.malilib.config.value.FileWriteType;
 import fi.dy.masa.malilib.util.game.wrap.GameWrap;
@@ -27,23 +23,34 @@ public class FileUtils
     public static final Predicate<Path> ALWAYS_FALSE_FILEFILTER = p -> false;
     public static final Predicate<Path> ANY_FILE_FILEFILTER = Files::isRegularFile;
     public static final Predicate<Path> JSON_FILEFILTER = (f) -> Files.isRegularFile(f) && f.getFileName().toString().endsWith(".json");
-    private static final Set<Character> ILLEGAL_CHARACTERS = ImmutableSet.of( '/', '\n', '\r', '\t', '\0', '\f', '`', '?', '*', '\\', '<', '>', '|', '\"', ':' );
 
+    /**
+     * Please stop using the File object
+     * @return ()
+     */
+    @Deprecated(forRemoval = true)
     public static File getConfigDirectory()
     {
-        //return new File(MinecraftClient.getInstance().runDirectory, "config");
         return new File(GameWrap.getClient().runDirectory, "config");
     }
 
+    /**
+     * Please stop using the File object
+     * @return ()
+     */
+    @Deprecated(forRemoval = true)
     public static File getMinecraftDirectory()
     {
-        //return MinecraftClient.getInstance().runDirectory;
         return GameWrap.getClient().runDirectory;
     }
 
-    public static Path getMinecraftDirectoryPath()
+    public static Path getConfigDirectoryAsPath()
     {
-        //return MinecraftClient.getInstance().runDirectory;
+        return GameWrap.getClient().runDirectory.toPath().resolve("config");
+    }
+
+    public static Path getMinecraftDirectoryAsPath()
+    {
         return GameWrap.getClient().runDirectory.toPath();
     }
 
@@ -82,14 +89,7 @@ public class FileUtils
     }
 
     public static boolean createDirectoriesIfMissing(Path dir,
-                                                     Consumer<String> messageConsumer)
-    {
-        return createDirectoriesIfMissing(dir, messageConsumer, "Failed to create the directory '%s'");
-    }
-
-    public static boolean createDirectoriesIfMissing(Path dir,
-                                                     @Nullable Consumer<String> messageConsumer,
-                                                     @Nullable String message)
+                                                     @Nullable Consumer<String> messageConsumer)
     {
         try
         {
@@ -100,9 +100,10 @@ public class FileUtils
         }
         catch (Exception e)
         {
-            if (messageConsumer != null && message != null)
+            if (messageConsumer != null)
             {
-                messageConsumer.accept(String.format(message, dir.toAbsolutePath()));
+                messageConsumer.accept(StringUtils.translate("malilib.message.error.failed_to_create_directory",
+                                                             dir.toAbsolutePath()));
             }
 
             return false;
@@ -118,13 +119,6 @@ public class FileUtils
 
     public static boolean createFile(Path file, Consumer<String> messageConsumer)
     {
-        return createFile(file, messageConsumer, "Failed to create the file '%s'");
-    }
-
-    public static boolean createFile(Path file,
-                                     @Nullable Consumer<String> messageConsumer,
-                                     @Nullable String message)
-    {
         try
         {
             Files.createFile(file);
@@ -132,9 +126,10 @@ public class FileUtils
         }
         catch (Exception e)
         {
-            if (messageConsumer != null && message != null)
+            if (messageConsumer != null)
             {
-                messageConsumer.accept(String.format(message, file.toAbsolutePath()));
+                messageConsumer.accept(StringUtils.translate("malilib.message.error.failed_to_create_file",
+                                                             file.toAbsolutePath()));
             }
         }
 
@@ -173,8 +168,8 @@ public class FileUtils
         }
         catch (Exception e)
         {
-            messageConsumer.accept(String.format("Failed to copy file '%s' to '%s'\n%s",
-                                                 srcFile.toAbsolutePath(), dstFile.toAbsolutePath(), e));
+            messageConsumer.accept(StringUtils.translate("malilib.message.error.failed_to_copy_file_with_message",
+                                                        srcFile.toAbsolutePath(), dstFile.toAbsolutePath(), e.getMessage()));
             return false;
         }
     }
@@ -211,7 +206,7 @@ public class FileUtils
         }
         catch (Exception e)
         {
-            messageConsumer.accept(String.format("Failed to move file '%s' to '%s'",
+            messageConsumer.accept(StringUtils.translate("malilib.message.error.failed_to_move_file",
                                                  srcFile.toAbsolutePath(), dstFile.toAbsolutePath()));
             return false;
         }
@@ -231,7 +226,8 @@ public class FileUtils
         }
         catch (Exception e)
         {
-            messageConsumer.accept(String.format("Failed to delete file '%s'", file.toAbsolutePath()));
+            messageConsumer.accept(StringUtils.translate("malilib.message.error.failed_to_delete_file",
+                                                         file.toAbsolutePath()));
             return false;
         }
     }
@@ -280,7 +276,7 @@ public class FileUtils
      * Checks that the target directory exists, and the file either doesn't exist,
      * or the canOverwrite argument is true and the file is writable
      */
-    public static boolean canWriteToFile(Path dir, String fileName, boolean canOverwrite)
+    public static boolean canWriteToFileAsPath(Path dir, String fileName, boolean canOverwrite)
     {
         if (Files.isDirectory(dir))
         {
@@ -370,54 +366,58 @@ public class FileUtils
         return path;
     }
 
+    public static String getJoinedTrailingPathElements(Path file, Path rootPath, int maxStringLength, String separator)
+    {
+        StringBuilder path = new StringBuilder();
+
+        if (maxStringLength <= 0)
+        {
+            return "...";
+        }
+
+        while (file != null)
+        {
+            String name = file.getFileName().toString();
+
+            if ((path.length() == 0) == false)
+            {
+                path.insert(0, name + separator);
+            }
+            else
+            {
+                path = new StringBuilder(name);
+            }
+
+            int len = path.length();
+
+            if (len > maxStringLength)
+            {
+                path = new StringBuilder("... " + path.substring(len - maxStringLength, len));
+                break;
+            }
+
+            if (file.equals(rootPath))
+            {
+                break;
+            }
+
+            file = file.getParent();
+        }
+
+        return path.toString();
+    }
+
+    @Deprecated(forRemoval = true)
+    public static String generateSafeFileName(String name)
+    {
+        return FileNameUtils.generateSafeFileName(name);
+    }
+
+    @Deprecated(forRemoval = true)
     public static String getNameWithoutExtension(String name)
     {
         int i = name.lastIndexOf(".");
         return i != -1 ? name.substring(0, i) : name;
-    }
-
-    public static String generateSimpleSafeFileName(String name)
-    {
-        return name.toLowerCase(Locale.US).replaceAll("\\W", "_");
-    }
-
-    public static String generateSafeFileName(String name)
-    {
-        StringBuilder sb = new StringBuilder(name.length());
-
-        for (int i = 0; i < name.length(); ++i)
-        {
-            char c = name.charAt(i);
-
-            if (ILLEGAL_CHARACTERS.contains(c) == false)
-            {
-                sb.append(c);
-            }
-        }
-
-        // Some weird reserved windows keywords apparently... FFS >_>
-        return sb.toString().replaceAll("COM", "").replaceAll("PRN", "");
-    }
-
-    @Nullable
-    public static NbtCompound readNBTFile(File file)
-    {
-        if (file.exists() && file.isFile() && file.canRead())
-        {
-            try
-            {
-                FileInputStream is = new FileInputStream(file);
-                NbtCompound nbt = NbtIo.readCompressed(is, NbtSizeTracker.ofUnlimitedBytes());
-                is.close();
-                return nbt;
-            }
-            catch (Exception e)
-            {
-                MaLiLib.LOGGER.warn("Failed to read NBT data from file '{}'", file.getAbsolutePath());
-            }
-        }
-
-        return null;
     }
 
     public static boolean writeDataToFile(final Path file, Consumer<BufferedWriter> dataWriter, FileWriteType writeType)

@@ -46,6 +46,7 @@ import net.minecraft.util.math.random.LocalRandom;
 import net.minecraft.village.VillagerData;
 import net.minecraft.village.VillagerProfession;
 
+import fi.dy.masa.malilib.MaLiLibConfigs;
 import fi.dy.masa.malilib.config.HudAlignment;
 import fi.dy.masa.malilib.gui.GuiBase;
 import fi.dy.masa.malilib.mixin.IMixinDrawContext;
@@ -232,7 +233,7 @@ public class RenderUtils
         }
         catch (Exception ignored) { }
 
-        RenderSystem.disableBlend();
+        //RenderSystem.disableBlend();
     }
 
     /**
@@ -288,6 +289,12 @@ public class RenderUtils
         drawTexturedRect(texture, x, y, u, v, width, height, 0F, -1, drawContext);
     }
 
+    public static void drawTexturedRectAndDraw(Identifier texture, int x, int y, int u, int v, int width, int height, DrawContext drawContext)
+    {
+        drawTexturedRect(texture, x, y, u, v, width, height, 0F, -1, drawContext);
+        forceDraw(drawContext);
+    }
+
     /**
      * New DrawContext-based Textured Rect method.  Use this when the original method fails.
      *
@@ -304,6 +311,12 @@ public class RenderUtils
     public static void drawTexturedRect(Identifier texture, int x, int y, int u, int v, int width, int height, float zLevel, DrawContext drawContext)
     {
         drawTexturedRect(texture, x, y, u, v, width, height, zLevel, -1, drawContext);
+    }
+
+    public static void drawTexturedRectAndDraw(Identifier texture, int x, int y, int u, int v, int width, int height, float zLevel, DrawContext drawContext)
+    {
+        drawTexturedRect(texture, x, y, u, v, width, height, zLevel, -1, drawContext);
+        forceDraw(drawContext);
     }
 
     /**
@@ -334,7 +347,7 @@ public class RenderUtils
         vertexConsumer.vertex(matrix4f, x + width  , y            , zLevel).texture((u + width) * pixelWidth,  v           * pixelWidth).color(argb);
         vertexConsumer.vertex(matrix4f, x             , y            , zLevel).texture( u          * pixelWidth,  v           * pixelWidth).color(argb);
 
-        forceDraw(drawContext);
+        //forceDraw(drawContext);
     }
 
     public static void drawTexturedRectBatched(int x, int y, int u, int v, int width, int height, BufferBuilder buffer)
@@ -427,7 +440,7 @@ public class RenderUtils
             drawContext.getMatrices().pop();
             //RenderSystem.applyModelViewMatrix();
 
-            //RenderSystem.enableDepthTest();
+            //RenderSystem.disableDepthTest();
             //enableDiffuseLightingGui3D();
         }
     }
@@ -526,9 +539,18 @@ public class RenderUtils
         }
     }
 
-    public static int renderText(int xOff, int yOff, double scale, int textColor, int bgColor,
-            HudAlignment alignment, boolean useBackground, boolean useShadow, List<String> lines,
-            DrawContext drawContext)
+    public static int renderText(int xOff, int yOff, double scale, int textColor, int bgColor, HudAlignment alignment,
+                                 boolean useBackground, boolean useShadow,
+                                 List<String> lines, DrawContext drawContext)
+    {
+        return renderText(xOff, yOff, scale, textColor, bgColor, alignment,
+                          useBackground, useShadow, MaLiLibConfigs.Generic.ENABLE_STATUS_EFFECTS_SHIFT.getBooleanValue(),
+                          lines, drawContext);
+    }
+
+    public static int renderText(int xOff, int yOff, double scale, int textColor, int bgColor, HudAlignment alignment,
+                                 boolean useBackground, boolean useShadow, boolean useStatusShift,
+                                 List<String> lines, DrawContext drawContext)
     {
         TextRenderer fontRenderer = mc().textRenderer;
         final int scaledWidth = GuiUtils.getScaledWindowWidth();
@@ -565,7 +587,11 @@ public class RenderUtils
         double posY = yOff + bgMargin;
 
         posY = getHudPosY((int) posY, yOff, contentHeight, scale, alignment);
-        posY += getHudOffsetForPotions(alignment, scale, mc().player);
+
+        if (useStatusShift)
+        {
+            posY += getHudOffsetForPotions(alignment, scale, mc().player);
+        }
 
         for (String line : lines)
         {
@@ -953,7 +979,7 @@ public class RenderUtils
 
         if (disableDepth)
         {
-            RenderSystem.depthMask(false);
+            //RenderSystem.depthMask(false);
             RenderSystem.disableDepthTest();
         }
 
@@ -982,24 +1008,28 @@ public class RenderUtils
         Matrix4f modelMatrix = new Matrix4f();
         modelMatrix.identity();
 
+        BufferAllocator allocator = new BufferAllocator(RenderLayer.DEFAULT_BUFFER_SIZE);
+
         for (String line : text)
         {
             if (disableDepth)
             {
-                RenderSystem.depthMask(false);
+                //RenderSystem.depthMask(false);
                 RenderSystem.disableDepthTest();
-                VertexConsumerProvider.Immediate immediate = VertexConsumerProvider.immediate(new BufferAllocator(RenderLayer.DEFAULT_BUFFER_SIZE));
+                VertexConsumerProvider.Immediate immediate = VertexConsumerProvider.immediate(allocator);
                 textRenderer.draw(line, -strLenHalf, textY, 0x20000000 | (textColor & 0xFFFFFF), false, modelMatrix, immediate, TextRenderer.TextLayerType.SEE_THROUGH, 0, 15728880);
                 immediate.draw();
                 RenderSystem.enableDepthTest();
-                RenderSystem.depthMask(true);
+                //RenderSystem.depthMask(true);
             }
 
-            VertexConsumerProvider.Immediate immediate = VertexConsumerProvider.immediate(new BufferAllocator(RenderLayer.DEFAULT_BUFFER_SIZE));
+            VertexConsumerProvider.Immediate immediate = VertexConsumerProvider.immediate(allocator);
             textRenderer.draw(line, -strLenHalf, textY, textColor, false, modelMatrix, immediate, TextRenderer.TextLayerType.SEE_THROUGH, 0, 15728880);
             immediate.draw();
             textY += textRenderer.fontHeight;
         }
+
+        allocator.close();
 
         if (disableDepth == false)
         {
@@ -1009,7 +1039,7 @@ public class RenderUtils
 
         color(1f, 1f, 1f, 1f);
         RenderSystem.enableCull();
-        RenderSystem.disableBlend();
+        //RenderSystem.disableBlend();
         global4fStack.popMatrix();
     }
 
@@ -1250,6 +1280,8 @@ public class RenderUtils
     {
         if (stack.getItem() instanceof FilledMapItem && (!requireShift || GuiBase.isShiftDown()))
         {
+            forceDraw(drawContext);
+            //RenderSystem.enableDepthTest();
             color(1f, 1f, 1f, 1f);
 
             int y1 = y - dimensions - 20;
@@ -1265,9 +1297,10 @@ public class RenderUtils
 
             Identifier bgTexture = mapState == null ? TEXTURE_MAP_BACKGROUND : TEXTURE_MAP_BACKGROUND_CHECKERBOARD;
             //bindTexture(bgTexture);
+            //setupBlend();
+
             VertexConsumer vertex = bindTexture(bgTexture, drawContext);
             Matrix4f matrix4f = drawContext.getMatrices().peek().getPositionMatrix();
-            //setupBlend();
 
             vertex.vertex(matrix4f, x1, y2, z).color(-1).texture(0.0f, 1.0f).light(uv);
             vertex.vertex(matrix4f, x2, y2, z).color(-1).texture(1.0f, 1.0f).light(uv);
@@ -1276,10 +1309,10 @@ public class RenderUtils
 
             forceDraw(drawContext);
 
-            //RenderSystem.setShader(ShaderProgramKeys.POSITION_TEX_COLOR);
-            //RenderSystem.setShader(GameRenderer::getPositionTexProgram);
-            //RenderSystem.applyModelViewMatrix();
             /*
+            RenderSystem.setShader(ShaderProgramKeys.POSITION_TEX_COLOR);
+            //RenderSystem.applyModelViewMatrix();
+
             Tessellator tessellator = Tessellator.getInstance();
             BufferBuilder buffer = tessellator.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_TEXTURE);
             BuiltBuffer builtBuffer;
@@ -1297,8 +1330,7 @@ public class RenderUtils
             }
             catch (Exception ignored) { }
 
-            RenderSystem.disableBlend();
-
+            //RenderSystem.disableBlend();
              */
 
             if (mapState != null)
@@ -1306,7 +1338,8 @@ public class RenderUtils
                 x1 += 8;
                 y1 += 8;
                 z = 310;
-                VertexConsumerProvider.Immediate consumer = VertexConsumerProvider.immediate(new BufferAllocator(RenderLayer.DEFAULT_BUFFER_SIZE));
+                BufferAllocator allocator = new BufferAllocator(RenderLayer.DEFAULT_BUFFER_SIZE);
+                VertexConsumerProvider.Immediate consumer = VertexConsumerProvider.immediate(allocator);
                 double scale = (double) (dimensions - 16) / 128.0D;
 
                 MatrixStack matrixStack = new MatrixStack();
@@ -1319,7 +1352,10 @@ public class RenderUtils
                 mc().getMapRenderer().draw(mapRenderState, matrixStack, consumer, false, uv);
                 consumer.draw();
                 matrixStack.pop();
+                allocator.close();
             }
+
+            //RenderSystem.disableDepthTest();
         }
     }
 
@@ -1350,7 +1386,8 @@ public class RenderUtils
             int y = MathHelper.clamp(baseY - height, 0, screenHeight - height);
 
             // Mask items behind the shulker box display, trying to minimize the sharp corners
-            drawTexturedRect(GuiBase.BG_TEXTURE, x + 1, y + 1, 0, 0, props.width - 2, props.height - 2, drawContext);
+            //drawTexturedRect(GuiBase.BG_TEXTURE, x + 1, y + 1, 0, 0, props.width - 2, props.height - 2, drawContext);
+            forceDraw(drawContext);
 
             if (stack.getItem() instanceof BlockItem && ((BlockItem) stack.getItem()).getBlock() instanceof ShulkerBoxBlock)
             {
@@ -1429,8 +1466,8 @@ public class RenderUtils
             int y = MathHelper.clamp(baseY - height, 0, screenHeight - height);
 
             // Mask items behind the shulker box display, trying to minimize the sharp corners
-            drawTexturedRect(GuiBase.BG_TEXTURE, x + 1, y + 1, 0, 0, props.width - 2, props.height - 2, drawContext);
-
+            //drawTexturedRect(GuiBase.BG_TEXTURE, x + 1, y + 1, 0, 0, props.width - 2, props.height - 2, drawContext);
+            forceDraw(drawContext);
             setBundleBackgroundTintColor(stack, useBgColors);
             disableDiffuseLighting();
 
@@ -1492,8 +1529,8 @@ public class RenderUtils
             int y = MathHelper.clamp(baseY - height, 0, screenHeight - height);
 
             // Mask items behind the shulker box display, trying to minimize the sharp corners
-            drawTexturedRect(GuiBase.BG_TEXTURE, x + 1, y + 1, 0, 0, props.width - 2, props.height - 2, drawContext);
-
+            //drawTexturedRect(GuiBase.BG_TEXTURE, x + 1, y + 1, 0, 0, props.width - 2, props.height - 2, drawContext);
+            forceDraw(drawContext);
             color(1f, 1f, 1f, 1f);
             disableDiffuseLighting();
 

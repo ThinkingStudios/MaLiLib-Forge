@@ -2,7 +2,6 @@ package fi.dy.masa.malilib.mixin;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.LayeredDrawer;
 import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.client.render.RenderTickCounter;
 import net.neoforged.neoforge.client.gui.GuiLayerManager;
@@ -21,15 +20,12 @@ import fi.dy.masa.malilib.event.RenderEventHandler;
 public abstract class MixinInGameHud
 {
     @Shadow @Final private MinecraftClient client;
-    //@Shadow @Final private LayeredDrawer layeredDrawer;
-
     @Shadow @Final private GuiLayerManager layerManager;
 
     @Inject(method = "<init>", at = @At("TAIL"))
     private void onInit(CallbackInfo info)
     {
         this.layerManager.add(VanillaGuiLayers.SUBTITLE_OVERLAY, this::malilib_renderGameOverlayLastDrawer);
-        //this.layeredDrawer.addLayer(this::malilib_renderGameOverlayLastDrawer);
     }
 
     @Inject(method = "render", at = @At("TAIL"))

@@ -1,4 +1,2 @@
 ## Changelog
-- Use our own modification of FFAPI
-- fix render duplicate HUD
-- fix HUD background
+- sync upstream 1.21.4-0.23.2
