@@ -1,4 +1,2 @@
 ## Change
-- Use official FFAPI version
-- fix render duplicate HUD
-- fix HUD background
+- fix include FFAPI version issue
