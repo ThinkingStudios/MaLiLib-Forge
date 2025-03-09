@@ -6,7 +6,11 @@ public class MaLiLibDataGen
 {
     public static void onInitializeDataGenerator(GatherDataEvent.Client event)
     {
-        event.createProvider(BlockTagDataGenerator::new);
+        var generator = event.getGenerator();
+        var output = generator.getPackOutput();
+        var lookupProvider = event.getLookupProvider();
+
+        event.addProvider(new BlockTagDataGenerator(output, lookupProvider));
         //event.createProvider(ItemTagGenerator::new);
     }
 }
