@@ -2,6 +2,7 @@ package fi.dy.masa.malilib.util;
 
 import java.io.File;
 import java.net.SocketAddress;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -12,7 +13,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
-import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.client.MinecraftClient;
@@ -31,7 +31,7 @@ import net.minecraft.world.World;
 import fi.dy.masa.malilib.MaLiLib;
 import fi.dy.masa.malilib.MaLiLibConfigs;
 import fi.dy.masa.malilib.gui.LeftRight;
-import org.thinkingstudio.mafglib.loader.FoxifiedLoader;
+import fi.dy.masa.malilib.util.time.DurationFormat;
 
 /**
  * File has been merged with Post-Rewrite StringUtils
@@ -68,15 +68,15 @@ public class StringUtils
 
     public static String getModVersionString(String modId)
     {
-        return FoxifiedLoader.getModVersion(modId);
+        return org.thinkingstudio.mafglib.loader.FoxifiedLoader.getModVersion(modId);
     }
 
     /**
      * Removes the string <b>extension</b> from the end of <b>str</b>,
      * if <b>str</b> ends in <b>extension</b>
-     * @param str
-     * @param extension
-     * @return
+     * @param str ()
+     * @param extension ()
+     * @return ()
      */
     public static String stripExtensionIfMatches(String str, String extension)
     {
@@ -91,9 +91,9 @@ public class StringUtils
     /**
      * Parses the given string as a hexadecimal value, if it begins with '#' or '0x'.
      * Otherwise tries to parse it as a regular base 10 integer.
-     * @param colorStr
-     * @param defaultColor
-     * @return
+     * @param colorStr ()
+     * @param defaultColor ()
+     * @return ()
      */
     public static int getColor(String colorStr, int defaultColor)
     {
@@ -112,8 +112,8 @@ public class StringUtils
 
     /**
      * Splits the given camel-case string into parts separated by a space
-     * @param str
-     * @return
+     * @param str ()
+     * @return ()
      */
     // https://stackoverflow.com/questions/2559759/how-do-i-convert-camelcase-into-human-readable-names-in-java
     public static String splitCamelCase(String str)
@@ -171,6 +171,15 @@ public class StringUtils
         sender.sendMessage(Text.translatable(messageKey, name), false);
     }
 
+    public static void sendOpenFileChatMessage(PlayerEntity sender, String messageKey, Path file)
+    {
+        Text name = Text.literal(file.getFileName().toString())
+                        .formatted(net.minecraft.util.Formatting.UNDERLINE)
+                        .styled((style) -> style.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_FILE, file.toAbsolutePath().toString())));
+
+        sender.sendMessage(Text.translatable(messageKey, name), false);
+    }
+
     public static int getMaxStringRenderWidth(String... strings)
     {
         return getMaxStringRenderWidth(Arrays.asList(strings));
@@ -218,9 +227,9 @@ public class StringUtils
 
     /**
      * Splits the given string into lines up to maxLineLength long
-     * @param linesOut
-     * @param textIn
-     * @param maxLineLength
+     * @param linesOut ()
+     * @param textIn ()
+     * @param maxLineLength ()
      */
     public static void splitTextToLines(List<String> linesOut, String textIn, int maxLineLength)
     {
@@ -496,11 +505,11 @@ public class StringUtils
     /**
      * Shrinks the given string until it can fit into the provided maximum width,
      * and adds the provided clamping indicator to indicate that the string is longer than what is shown.
-     * @param text
-     * @param maxWidth
+     * @param text ()
+     * @param maxWidth ()
      * @param side the side from which to shrink the string
      * @param indicator the appended shrinkage indicator, for example "..."
-     * @return
+     * @return ()
      */
     public static String clampTextToRenderLength(String text, final int maxWidth, LeftRight side, String indicator)
     {
@@ -579,7 +588,9 @@ public class StringUtils
                 // This used to be just MinecraftServer::getLevelName().
                 // Getting the name would now require an @Accessor for MinecraftServer.field_23784
                 String name = server.getSaveProperties().getLevelName();
-                return FileUtils.generateSimpleSafeFileName(name); 
+                // this was breaking non-US Locale file names
+                //return FileUtils.generateSimpleSafeFileName(name);
+                return FileNameUtils.generateSafeFileName(name);
             }
         }
         else
@@ -617,12 +628,12 @@ public class StringUtils
 
     /**
      * Returns a file name based on the current server or world name.
-     * If <b>globalData</b> is false, the the name will also include the current dimension ID.
-     * @param globalData
-     * @param prefix
-     * @param suffix
+     * If <b>globalData</b> is false, the name will also include the current dimension ID.
+     * @param globalData ()
+     * @param prefix ()
+     * @param suffix ()
      * @param defaultName the default file name, if getting a per-server/world name fails
-     * @return
+     * @return ()
      */
     public static String getStorageFileName(boolean globalData, String prefix, String suffix, String defaultName)
     {
@@ -649,7 +660,7 @@ public class StringUtils
             name = prefix + defaultName + suffix;
         }
 
-        return FileNameUtils.generateSimpleSafeFileName(name) + suffix;
+        return FileNameUtils.generateSafeFileName(name) + suffix;
     }
 
     public static String stringifyAddress(SocketAddress address)
@@ -731,9 +742,9 @@ public class StringUtils
 
     /**
      * Just a wrapper around I18n, to reduce the number of changed lines between MCP/Yarn versions of mods
-     * @param translationKey
-     * @param args
-     * @return
+     * @param translationKey ()
+     * @param args ()
+     * @return ()
      */
     public static String translate(String translationKey, Object... args)
     {
@@ -802,7 +813,7 @@ public class StringUtils
 
     /**
      * Just a wrapper to get the font height from the Font/TextRenderer
-     * @return
+     * @return ()
      */
     public static int getFontHeight()
     {
@@ -817,7 +828,6 @@ public class StringUtils
     public static void drawString(int x, int y, int color, String text, DrawContext drawContext)
     {
         drawContext.drawText(net.minecraft.client.MinecraftClient.getInstance().textRenderer, text, x, y, color, false);
-        //RenderUtils.forceDraw(drawContext);
     }
 
     /**
@@ -827,6 +837,8 @@ public class StringUtils
      */
     public static String getDurationString(long durationMs)
     {
-        return DurationFormatUtils.formatDurationWords(durationMs, true, true);
+        return DurationFormat.PRETTY.format(durationMs);
+        // OG method
+        //return DurationFormatUtils.formatDurationWords(durationMs, true, true);
     }
 }

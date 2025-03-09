@@ -8,6 +8,28 @@ base.archivesName = libs.versions.archives.name.get()
 version = "${libs.versions.version.get()}-mc${libs.versions.minecraft.version.get()}"
 group = libs.versions.maven.group.get()
 
+def generatedResources = file("src/generated")
+
+sourceSets {
+    main {
+        resources.srcDir generatedResources
+    }
+}
+
+// Architectury Loom's datagen is broken
+/*
+loom {
+    runs {
+        clientData {
+            data()
+            programArgs "--all", "--mod", "mafglib"
+            programArgs "--output", generatedResources.absolutePath
+            //programArgs "--includeClient"
+        }
+    }
+}
+ */
+
 repositories {
     maven { url "https://jitpack.io" }
     maven { url "https://maven.neoforged.net/releases/" }
@@ -32,6 +54,11 @@ dependencies {
         if (module == "fabric-networking-api-v1") {
             modApi(include("org.sinytra.forgified-fabric-api:$module:4.3.1+cfe47bf240")) { transitive = false }
         }
+    }
+
+    if (System.getenv("CI") != null) {
+        // For 1.21
+        modLocalRuntime "com.github.jab125.architectury-data-generation-fix:architectury-data-generation-fix-fabric:21.0.1"
     }
 
     implementation libs.jsr305

@@ -1,16 +1,15 @@
 package fi.dy.masa.malilib.util.nbt;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.UUID;
 import java.util.function.Function;
-import java.util.zip.GZIPOutputStream;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.nbt.*;
 import net.minecraft.util.math.BlockPos;
@@ -24,7 +23,6 @@ import fi.dy.masa.malilib.util.game.wrap.NbtWrap;
 /**
  * Post-ReWrite code
  */
-@ApiStatus.Experimental
 public class NbtUtils
 {
 	@Nullable
@@ -84,47 +82,47 @@ public class NbtUtils
 		return list;
 	}
 
-	public static @NotNull NbtCompound createBlockPos(@Nonnull BlockPos pos)
+	public static @Nonnull NbtCompound createBlockPos(@Nonnull BlockPos pos)
 	{
 		return writeBlockPos(pos, new NbtCompound());
 	}
 
-	public static @NotNull NbtCompound createBlockPosTag(@Nonnull BlockPos pos)
+	public static @Nonnull NbtCompound createBlockPosTag(@Nonnull BlockPos pos)
 	{
 		return writeBlockPos(pos, new NbtCompound());
 	}
 
-	public static @NotNull NbtCompound createBlockPosTag(@Nonnull Vec3i pos)
+	public static @Nonnull NbtCompound createBlockPosTag(@Nonnull Vec3i pos)
 	{
 		return putVec3i(new NbtCompound(), pos);
 	}
 
-	public static @NotNull NbtCompound createVec3iTag(@Nonnull Vec3i pos)
+	public static @Nonnull NbtCompound createVec3iTag(@Nonnull Vec3i pos)
 	{
 		return putVec3i(new NbtCompound(), pos);
 	}
 
-	public static @NotNull NbtCompound createVec3iToArray(@Nonnull Vec3i pos, String tagName)
+	public static @Nonnull NbtCompound createVec3iToArray(@Nonnull Vec3i pos, String tagName)
 	{
 		return writeBlockPosToArrayTag(pos, new NbtCompound(), tagName);
 	}
 
-	public static @NotNull NbtCompound createVec3iToArrayTag(@Nonnull Vec3i pos, String tagName)
+	public static @Nonnull NbtCompound createVec3iToArrayTag(@Nonnull Vec3i pos, String tagName)
 	{
 		return writeBlockPosToArrayTag(pos, new NbtCompound(), tagName);
 	}
 
-	public static @NotNull NbtCompound createEntityPosition(@Nonnull Vec3d pos)
+	public static @Nonnull NbtCompound createEntityPosition(@Nonnull Vec3d pos)
 	{
 		return createEntityPositionToTag(pos);
 	}
 
-	public static @NotNull NbtCompound createEntityPositionToTag(@Nonnull Vec3d pos)
+	public static @Nonnull NbtCompound createEntityPositionToTag(@Nonnull Vec3d pos)
 	{
 		return writeVec3dToListTag(pos, new NbtCompound(), NbtKeys.POS);
 	}
 
-	public static @NotNull NbtCompound putVec3i(@Nonnull NbtCompound tag, @Nonnull Vec3i pos)
+	public static @Nonnull NbtCompound putVec3i(@Nonnull NbtCompound tag, @Nonnull Vec3i pos)
 	{
 		NbtWrap.putInt(tag, "x", pos.getX());
 		NbtWrap.putInt(tag, "y", pos.getY());
@@ -132,12 +130,12 @@ public class NbtUtils
 		return tag;
 	}
 
-	public static @NotNull NbtCompound writeBlockPosToTag(@Nonnull BlockPos pos, @Nonnull NbtCompound tag)
+	public static @Nonnull NbtCompound writeBlockPosToTag(@Nonnull BlockPos pos, @Nonnull NbtCompound tag)
 	{
 		return writeBlockPos(pos, tag);
 	}
 
-	public static @NotNull NbtCompound writeBlockPos(@Nonnull BlockPos pos, @Nonnull NbtCompound tag)
+	public static @Nonnull NbtCompound writeBlockPos(@Nonnull BlockPos pos, @Nonnull NbtCompound tag)
 	{
 		NbtWrap.putInt(tag, "x", pos.getX());
 		NbtWrap.putInt(tag, "y", pos.getY());
@@ -146,7 +144,7 @@ public class NbtUtils
 		return tag;
 	}
 
-	public static @NotNull NbtCompound writeBlockPosToListTag(@Nonnull Vec3i pos, @Nonnull NbtCompound tag, String tagName)
+	public static @Nonnull NbtCompound writeBlockPosToListTag(@Nonnull Vec3i pos, @Nonnull NbtCompound tag, String tagName)
 	{
 		NbtList tagList = new NbtList();
 
@@ -158,17 +156,17 @@ public class NbtUtils
 		return tag;
 	}
 
-	public static @NotNull NbtCompound writeVec3iToArray(@Nonnull Vec3i pos, @Nonnull NbtCompound tag, String tagName)
+	public static @Nonnull NbtCompound writeVec3iToArray(@Nonnull Vec3i pos, @Nonnull NbtCompound tag, String tagName)
 	{
 		return writeBlockPosToArrayTag(pos, tag, tagName);
 	}
 
-	public static @NotNull NbtCompound writeVec3iToArrayTag(@Nonnull Vec3i pos, @Nonnull NbtCompound tag, String tagName)
+	public static @Nonnull NbtCompound writeVec3iToArrayTag(@Nonnull Vec3i pos, @Nonnull NbtCompound tag, String tagName)
 	{
 		return writeBlockPosToArrayTag(pos, tag, tagName);
 	}
 
-	public static @NotNull NbtCompound writeBlockPosToArrayTag(@Nonnull Vec3i pos, @Nonnull NbtCompound tag, String tagName)
+	public static @Nonnull NbtCompound writeBlockPosToArrayTag(@Nonnull Vec3i pos, @Nonnull NbtCompound tag, String tagName)
 	{
 		int[] arr = new int[]{pos.getX(), pos.getY(), pos.getZ()};
 
@@ -271,12 +269,12 @@ public class NbtUtils
 		return null;
 	}
 
-	public static @NotNull NbtCompound removeBlockPos(@Nonnull NbtCompound tag)
+	public static @Nonnull NbtCompound removeBlockPos(@Nonnull NbtCompound tag)
 	{
 		return removeBlockPosFromTag(tag);
 	}
 
-	public static @NotNull NbtCompound removeBlockPosFromTag(@Nonnull NbtCompound tag)
+	public static @Nonnull NbtCompound removeBlockPosFromTag(@Nonnull NbtCompound tag)
 	{
 		NbtWrap.remove(tag, "x");
 		NbtWrap.remove(tag, "y");
@@ -285,22 +283,22 @@ public class NbtUtils
 		return tag;
 	}
 
-	public static @NotNull NbtCompound writeEntityPosition(@Nonnull Vec3d pos, @Nonnull NbtCompound tag)
+	public static @Nonnull NbtCompound writeEntityPosition(@Nonnull Vec3d pos, @Nonnull NbtCompound tag)
 	{
 		return writeVec3dToListTag(pos, tag, NbtKeys.POS);
 	}
 
-	public static @NotNull NbtCompound writeEntityPositionToTag(@Nonnull Vec3d pos, @Nonnull NbtCompound tag)
+	public static @Nonnull NbtCompound writeEntityPositionToTag(@Nonnull Vec3d pos, @Nonnull NbtCompound tag)
 	{
 		return writeVec3dToListTag(pos, tag, NbtKeys.POS);
 	}
 
-	public static @NotNull NbtCompound writeVec3dToListTag(@Nonnull Vec3d pos, @Nonnull NbtCompound tag)
+	public static @Nonnull NbtCompound writeVec3dToListTag(@Nonnull Vec3d pos, @Nonnull NbtCompound tag)
 	{
 		return writeVec3dToListTag(pos, tag, NbtKeys.POS);
 	}
 
-	public static @NotNull NbtCompound writeVec3dToListTag(@Nonnull Vec3d pos, @Nonnull NbtCompound tag, String tagName)
+	public static @Nonnull NbtCompound writeVec3dToListTag(@Nonnull Vec3d pos, @Nonnull NbtCompound tag, String tagName)
 	{
 		NbtList posList = new NbtList();
 
@@ -380,7 +378,7 @@ public class NbtUtils
 	 * @param tag ()
 	 * @return ()
 	 */
-	public static @NotNull NbtCompound writeAttachedPosToTag(@Nonnull BlockPos pos, @Nonnull NbtCompound tag)
+	public static @Nonnull NbtCompound writeAttachedPosToTag(@Nonnull BlockPos pos, @Nonnull NbtCompound tag)
 	{
 		tag.putInt("TileX", pos.getX());
 		tag.putInt("TileY", pos.getY());
@@ -389,6 +387,7 @@ public class NbtUtils
 		return tag;
 	}
 
+	@Deprecated(forRemoval = true)
 	@Nullable
 	public static NbtCompound readNbtFromFile(@Nonnull File file)
 	{
@@ -396,11 +395,12 @@ public class NbtUtils
 	}
 
 	@Nullable
-	public static NbtCompound readNbtFromFile(@Nonnull Path file)
+	public static NbtCompound readNbtFromFileAsPath(@Nonnull Path file)
 	{
-		return readNbtFromFile(file, NbtSizeTracker.ofUnlimitedBytes());
+		return readNbtFromFileAsPath(file, NbtSizeTracker.ofUnlimitedBytes());
 	}
 
+	@Deprecated(forRemoval = true)
 	@Nullable
 	public static NbtCompound readNbtFromFile(@Nonnull File file, NbtSizeTracker tracker)
 	{
@@ -417,7 +417,7 @@ public class NbtUtils
 		}
 		catch (Exception e)
 		{
-			MaLiLib.LOGGER.warn("Failed to read NBT data from file '{}' (failed to create the input stream)", file.getAbsolutePath());
+			MaLiLib.LOGGER.warn("readNbtFromFile: Failed to read NBT data from file '{}' (failed to create the input stream)", file.getAbsolutePath());
 			return null;
 		}
 
@@ -453,27 +453,27 @@ public class NbtUtils
 
 		if (nbt == null)
 		{
-			MaLiLib.LOGGER.warn("Failed to read NBT data from file '{}'", file.getAbsolutePath());
+			MaLiLib.LOGGER.warn("readNbtFromFile: Failed to read NBT data from file '{}'", file.getAbsolutePath());
 		}
 
 		return nbt;
 	}
 
 	@Nullable
-	public static NbtCompound readNbtFromFile(@Nonnull Path file, NbtSizeTracker tracker)
+	public static NbtCompound readNbtFromFileAsPath(@Nonnull Path file, NbtSizeTracker tracker)
 	{
-		if (Files.isReadable(file) == false)
+		if (!Files.exists(file) || !Files.isReadable(file))
 		{
 			return null;
 		}
 
-		try (InputStream is = Files.newInputStream(file))
+		try
 		{
-			NbtIo.readCompressed(is, tracker);
+			return NbtIo.readCompressed(Files.newInputStream(file), tracker);
 		}
 		catch (Exception e)
 		{
-			MaLiLib.LOGGER.warn("Failed to read NBT data from file '{}'", file.toAbsolutePath());
+			MaLiLib.LOGGER.warn("readNbtFromFileAsPath: Failed to read NBT data from file '{}'", file.toString());
 		}
 
 		return null;
@@ -482,24 +482,50 @@ public class NbtUtils
 	/**
 	 * Write the compound tag, gzipped, to the output stream.
 	 */
+	public static void writeCompressed(@Nonnull NbtCompound tag, @Nonnull OutputStream outputStream)
+    {
+		try
+		{
+			NbtIo.writeCompressed(tag, outputStream);
+		}
+		catch (Exception err)
+		{
+			MaLiLib.LOGGER.warn("writeCompressed: Failed to write NBT data to output stream");
+		}
+	}
+
+	public static void writeCompressed(@Nonnull NbtCompound tag, @Nonnull Path file)
+	{
+		try
+		{
+			NbtIo.writeCompressed(tag, file);
+		}
+		catch (Exception err)
+		{
+			MaLiLib.LOGGER.warn("writeCompressed: Failed to write NBT data to file");
+		}
+	}
+
+	// todo this must have been an older method for this that no longer works
+	/*
 	public static void writeCompressed(@Nonnull NbtCompound tag, String tagName, @Nonnull OutputStream outputStream)
-			throws IOException
-	{
-		try (DataOutputStream dataoutputstream = new DataOutputStream(new BufferedOutputStream(new GZIPOutputStream(outputStream))))
+    {
+		try
 		{
-			writeTag(tag, tagName, dataoutputstream);
+			DataOutputStream output = new DataOutputStream(new BufferedOutputStream(new GZIPOutputStream(outputStream)));
+			int typeId = NbtWrap.getTypeId(tag);
+			output.writeByte(typeId);
+
+			if (typeId != 0)
+			{
+				output.writeUTF(tagName);
+				tag.write(output);
+			}
+		}
+		catch (Exception err)
+		{
+			MaLiLib.LOGGER.warn("writeCompressed: Failed to write NBT data to file");
 		}
 	}
-
-	private static void writeTag(NbtElement tag, String tagName, DataOutput output) throws IOException
-	{
-		int typeId = NbtWrap.getTypeId(tag);
-		output.writeByte(typeId);
-
-		if (typeId != 0)
-		{
-			output.writeUTF(tagName);
-			tag.write(output);
-		}
-	}
+	 */
 }

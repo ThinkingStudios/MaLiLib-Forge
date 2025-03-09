@@ -17,11 +17,13 @@ import fi.dy.masa.malilib.gui.interfaces.IFileBrowserIconProvider;
 import fi.dy.masa.malilib.gui.interfaces.ISelectionListener;
 import fi.dy.masa.malilib.gui.widgets.WidgetFileBrowserBase.DirectoryEntry;
 import fi.dy.masa.malilib.render.RenderUtils;
+import fi.dy.masa.malilib.util.FileNameUtils;
 import fi.dy.masa.malilib.util.FileUtils;
 import fi.dy.masa.malilib.util.KeyCodes;
 
 public abstract class WidgetFileBrowserBase extends WidgetListBase<DirectoryEntry, WidgetDirectoryEntry> implements IDirectoryNavigator
 {
+    // TODO -- Remove the file system; needs to deal with the FileFilter mechanism to make it compat with Path
     protected static final FileFilter DIRECTORY_FILTER = new FileFilterDirectories();
     public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
@@ -203,7 +205,7 @@ public abstract class WidgetFileBrowserBase extends WidgetListBase<DirectoryEntr
     {
         for (File file : dir.listFiles(filter))
         {
-            String name = FileUtils.getNameWithoutExtension(file.getName().toLowerCase());
+            String name = FileNameUtils.getFileNameWithoutExtension(file.getName().toLowerCase());
 
             if (filterText == null || this.matchesFilter(name, filterText))
             {
