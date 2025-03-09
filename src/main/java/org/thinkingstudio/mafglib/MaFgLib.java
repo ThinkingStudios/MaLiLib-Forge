@@ -15,10 +15,11 @@ import org.thinkingstudio.mafglib.loader.FoxifiedLoader;
 @Mod(value = MaLiLibReference.MOD_ID, dist = Dist.CLIENT)
 public class MaFgLib {
     public MaFgLib(ModContainer modContainer, IEventBus modEventBus) {
-        //modEventBus.addListener(MaLiLibDataGen::onInitializeDataGenerator);
+
         if (FMLLoader.getDist().isClient()) {
             FoxifiedLoader.registerExtensionPoint(modContainer, IConfigScreenFactory.class, new ModMenuImpl().getModConfigScreenFactory());
             MaLiLib.onInitialize();
+            modEventBus.addListener(MaLiLibDataGen::onInitializeDataGenerator);
         }
     }
 }
