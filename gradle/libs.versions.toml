@@ -7,7 +7,7 @@ mappings_patch="1.21+build.4"
 neoforge="21.4.109-beta"
 
 # Mod properties
-version="0.2.9"
+version="0.2.10"
 maven-group="org.thinkingstudio.mafglib"
 archives-name="MaFgLib"
 
