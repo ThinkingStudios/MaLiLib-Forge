@@ -8,10 +8,10 @@ public class MaLiLibDataGen
     {
         var generator = event.getGenerator();
         var output = generator.getPackOutput();
+        var lookupProvider = event.getLookupProvider();
         var existingFileHelper = event.getExistingFileHelper();
-        var registriesFuture = event.getLookupProvider();
 
-        generator.addProvider(event.includeClient(), new BlockTagDataGenerator(output, registriesFuture, existingFileHelper));
+        generator.addProvider(event.includeClient(), new BlockTagDataGenerator(output, lookupProvider, existingFileHelper));
         //pack.addProvider(ItemTagGenerator::new);
     }
 }
