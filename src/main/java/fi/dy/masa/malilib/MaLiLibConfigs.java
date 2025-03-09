@@ -1,6 +1,7 @@
 package fi.dy.masa.malilib;
 
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 
 import com.google.common.collect.ImmutableList;
@@ -21,6 +22,8 @@ import fi.dy.masa.malilib.test.ConfigTestOptList;
 import fi.dy.masa.malilib.util.FileUtils;
 import fi.dy.masa.malilib.util.JsonUtils;
 import fi.dy.masa.malilib.util.Color4f;
+import fi.dy.masa.malilib.util.time.DurationFormat;
+import fi.dy.masa.malilib.util.time.TimeFormat;
 
 public class MaLiLibConfigs implements IConfigHandler
 {
@@ -29,24 +32,27 @@ public class MaLiLibConfigs implements IConfigHandler
     private static final String GENERIC_KEY = MaLiLibReference.ID+".config.generic";
     public static class Generic
     {
-        public static final ConfigHotkey            IGNORED_KEYS              = new ConfigHotkey            ("ignoredKeys",      "").apply(GENERIC_KEY);
-        public static final ConfigHotkey            OPEN_GUI_CONFIGS          = new ConfigHotkey            ("openGuiConfigs",   "A,C").apply(GENERIC_KEY);
-        public static final ConfigBooleanHotkeyed   ENABLE_CONFIG_SWITCHER    = new ConfigBooleanHotkeyed   ("enableConfigSwitcher",    true, "").apply(GENERIC_KEY);
-        public static final ConfigBoolean           REALMS_COMMON_CONFIG      = new ConfigBoolean           ("realmsCommonConfig",      true).apply(GENERIC_KEY);
-        //public static final ConfigBooleanHotkeyed   ENABLE_ACTIONBAR_MESSAGES = new ConfigBooleanHotkeyed   ("enableActionbarMessages", true, "").apply(GENERIC_KEY);
+        public static final ConfigHotkey            IGNORED_KEYS                = new ConfigHotkey            ("ignoredKeys",      "").apply(GENERIC_KEY);
+        public static final ConfigHotkey            OPEN_GUI_CONFIGS            = new ConfigHotkey            ("openGuiConfigs",   "A,C").apply(GENERIC_KEY);
+        //public static final ConfigBooleanHotkeyed   ENABLE_ACTIONBAR_MESSAGES   = new ConfigBooleanHotkeyed   ("enableActionbarMessages", true, "").apply(GENERIC_KEY);
+        public static final ConfigBooleanHotkeyed   ENABLE_CONFIG_SWITCHER      = new ConfigBooleanHotkeyed   ("enableConfigSwitcher",    true, "").apply(GENERIC_KEY);
+        public static final ConfigBooleanHotkeyed   ENABLE_STATUS_EFFECTS_SHIFT = new ConfigBooleanHotkeyed   ("enableStatusEffectsShift",true, "").apply(GENERIC_KEY);
+        public static final ConfigBoolean           REALMS_COMMON_CONFIG        = new ConfigBoolean           ("realmsCommonConfig",      true).apply(GENERIC_KEY);
 
         public static final ImmutableList<IConfigValue> OPTIONS = ImmutableList.of(
                 IGNORED_KEYS,
                 OPEN_GUI_CONFIGS,
+                //ENABLE_ACTIONBAR_MESSAGES,
                 ENABLE_CONFIG_SWITCHER,
+                ENABLE_STATUS_EFFECTS_SHIFT,
                 REALMS_COMMON_CONFIG
-                //ENABLE_ACTIONBAR_MESSAGES
         );
 
         // Can't add OPEN_GUI_CONFIGS here, because things will break
         public static final List<IHotkey> HOTKEY_LIST = ImmutableList.of(
-                ENABLE_CONFIG_SWITCHER
-                //ENABLE_ACTIONBAR_MESSAGES
+                //ENABLE_ACTIONBAR_MESSAGES,
+                ENABLE_CONFIG_SWITCHER,
+                ENABLE_STATUS_EFFECTS_SHIFT
         );
     }
 
@@ -99,6 +105,9 @@ public class MaLiLibConfigs implements IConfigHandler
         public static final ConfigBooleanHotkeyed   TEST_INVENTORY_OVERLAY_OG       = new ConfigBooleanHotkeyed("testInventoryOverlayOG", false, "").apply(TEST_KEY);
         public static final ConfigHotkey            TEST_INVENTORY_OVERLAY_TOGGLE   = new ConfigHotkey("testInventoryOverlayToggle", "BUTTON_3", OVERLAY_TOGGLE).apply(TEST_KEY);
         public static final ConfigHotkey            TEST_GUI_KEYBIND                = new ConfigHotkey("testGuiKeybind", "", GUI_RELAXED_CANCEL).apply(TEST_KEY);
+        public static final ConfigOptionList        TEST_DATE_TIME_OPTION           = new ConfigOptionList("testDateTimeList", TimeFormat.RFC1123).apply(TEST_KEY);
+        public static final ConfigOptionList        TEST_DURATION_OPTION            = new ConfigOptionList("testDurationList", DurationFormat.PRETTY).apply(TEST_KEY);
+        public static final ConfigHotkey            TEST_RUN_DATETIME_TEST          = new ConfigHotkey("testRunDateTimeTest", "").apply(TEST_KEY);
 
         public static final ImmutableList<IConfigBase> OPTIONS = ImmutableList.of(
                 TEST_CONFIG_BOOLEAN,
@@ -117,7 +126,10 @@ public class MaLiLibConfigs implements IConfigHandler
                 TEST_INVENTORY_OVERLAY,
                 TEST_INVENTORY_OVERLAY_OG,
                 TEST_INVENTORY_OVERLAY_TOGGLE,
-                TEST_GUI_KEYBIND
+                TEST_GUI_KEYBIND,
+                TEST_DATE_TIME_OPTION,
+                TEST_DURATION_OPTION,
+                TEST_RUN_DATETIME_TEST
         );
 
         public static final List<IHotkey> HOTKEY_LIST = ImmutableList.of(
@@ -125,24 +137,39 @@ public class MaLiLibConfigs implements IConfigHandler
                 TEST_INVENTORY_OVERLAY,
                 TEST_INVENTORY_OVERLAY_OG,
                 TEST_INVENTORY_OVERLAY_TOGGLE,
-                TEST_GUI_KEYBIND
+                TEST_GUI_KEYBIND,
+                TEST_RUN_DATETIME_TEST
         );
     }
 
+    // Stuff used by any Post-Rewrite Code
     private static final String EXPERIMENTAL_KEY = MaLiLibReference.ID+".config.experimental";
     public static class Experimental
     {
+        // Generic
+        public static final ConfigBoolean           SORT_CONFIGS_BY_NAME            = new ConfigBoolean("sortConfigsByName", false).apply(EXPERIMENTAL_KEY);
+        public static final ConfigBoolean           SORT_EXTENSION_MOD_OPTIONS      = new ConfigBoolean("sortExtensionModOptions", false).apply(EXPERIMENTAL_KEY);
+
+        // Internal
+        public static final ConfigString            ACTIVE_CONFIG_PROFILE           = new ConfigString("activeConfigProfile", "").apply(EXPERIMENTAL_KEY);
+
         public static final ImmutableList<IConfigBase> OPTIONS = ImmutableList.of(
+                // Generic
+                SORT_CONFIGS_BY_NAME,
+                SORT_EXTENSION_MOD_OPTIONS,
+
+                // Internal
+                ACTIVE_CONFIG_PROFILE
         );
     }
 
     public static void loadFromFile()
     {
-        File configFile = new File(FileUtils.getConfigDirectory(), CONFIG_FILE_NAME);
+        Path configFile = FileUtils.getConfigDirectoryAsPath().resolve(CONFIG_FILE_NAME);
 
-        if (configFile.exists() && configFile.isFile() && configFile.canRead())
+        if (Files.exists(configFile) && Files.isReadable(configFile))
         {
-            JsonElement element = JsonUtils.parseJsonFile(configFile);
+            JsonElement element = JsonUtils.parseJsonFileAsPath(configFile);
 
             if (element != null && element.isJsonObject())
             {
@@ -161,15 +188,33 @@ public class MaLiLibConfigs implements IConfigHandler
                 {
                     ConfigUtils.readConfigBase(root, "Experimental", Experimental.OPTIONS);
                 }
+
+                //MaLiLib.debugLog("loadFromFile(): Successfully loaded config file '{}'.", configFile.toAbsolutePath());
+            }
+            else
+            {
+                MaLiLib.LOGGER.error("loadFromFile(): Failed to parse config file '{}' as a JSON element.", configFile.toAbsolutePath());
             }
         }
+        /*
+        else
+        {
+            MaLiLib.LOGGER.error("loadFromFile(): Failed to load config file '{}'.", configFile.toAbsolutePath());
+        }
+         */
     }
 
     public static void saveToFile()
     {
-        File dir = FileUtils.getConfigDirectory();
+        Path dir = FileUtils.getConfigDirectoryAsPath();
 
-        if ((dir.exists() && dir.isDirectory()) || dir.mkdirs())
+        if (!Files.exists(dir))
+        {
+            FileUtils.createDirectoriesIfMissing(dir);
+            //MaLiLib.debugLog("saveToFile(): Creating directory '{}'.", dir.toAbsolutePath());
+        }
+
+        if (Files.isDirectory(dir))
         {
             JsonObject root = new JsonObject();
 
@@ -187,8 +232,25 @@ public class MaLiLibConfigs implements IConfigHandler
                 ConfigUtils.writeConfigBase(root, "Experimental", Experimental.OPTIONS);
             }
 
-            JsonUtils.writeJsonToFile(root, new File(dir, CONFIG_FILE_NAME));
+            JsonUtils.writeJsonToFileAsPath(root, dir.resolve(CONFIG_FILE_NAME));
+
+            /*
+            if (JsonUtils.writeJsonToFileAsPath(root, config))
+            {
+                MaLiLib.debugLog("saveToFile(): Successfully saved config file '{}'.", config.toAbsolutePath());
+            }
+            else
+            {
+                MaLiLib.LOGGER.error("saveToFile(): Failed to save config file '{}'.", config.toAbsolutePath());
+            }
+             */
         }
+        /*
+        else
+        {
+            MaLiLib.LOGGER.error("saveToFile(): Config Folder '{}' does not exist!", dir.toAbsolutePath());
+        }
+         */
     }
 
     @Override

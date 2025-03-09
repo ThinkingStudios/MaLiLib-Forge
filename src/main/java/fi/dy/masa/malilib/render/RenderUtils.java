@@ -45,6 +45,8 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.random.LocalRandom;
 import net.minecraft.village.VillagerData;
 import net.minecraft.village.VillagerProfession;
+
+import fi.dy.masa.malilib.MaLiLibConfigs;
 import fi.dy.masa.malilib.config.HudAlignment;
 import fi.dy.masa.malilib.gui.GuiBase;
 import fi.dy.masa.malilib.util.*;
@@ -188,7 +190,7 @@ public class RenderUtils
         }
         catch (Exception ignored) { }
 
-        RenderSystem.disableBlend();
+        //RenderSystem.disableBlend();
     }
 
     /**
@@ -316,7 +318,7 @@ public class RenderUtils
             matrixStack.pop();
             RenderSystem.applyModelViewMatrix();
 
-            //RenderSystem.enableDepthTest();
+            //RenderSystem.disableDepthTest();
             //enableDiffuseLightingGui3D();
         }
     }
@@ -408,9 +410,18 @@ public class RenderUtils
         }
     }
 
-    public static int renderText(int xOff, int yOff, double scale, int textColor, int bgColor,
-            HudAlignment alignment, boolean useBackground, boolean useShadow, List<String> lines,
-            DrawContext drawContext)
+    public static int renderText(int xOff, int yOff, double scale, int textColor, int bgColor, HudAlignment alignment,
+                                 boolean useBackground, boolean useShadow,
+                                 List<String> lines, DrawContext drawContext)
+    {
+        return renderText(xOff, yOff, scale, textColor, bgColor, alignment,
+                          useBackground, useShadow, MaLiLibConfigs.Generic.ENABLE_STATUS_EFFECTS_SHIFT.getBooleanValue(),
+                          lines, drawContext);
+    }
+
+    public static int renderText(int xOff, int yOff, double scale, int textColor, int bgColor, HudAlignment alignment,
+                                 boolean useBackground, boolean useShadow, boolean useStatusShift,
+                                 List<String> lines, DrawContext drawContext)
     {
         TextRenderer fontRenderer = mc().textRenderer;
         final int scaledWidth = GuiUtils.getScaledWindowWidth();
@@ -445,7 +456,11 @@ public class RenderUtils
         double posY = yOff + bgMargin;
 
         posY = getHudPosY((int) posY, yOff, contentHeight, scale, alignment);
-        posY += getHudOffsetForPotions(alignment, scale, mc().player);
+
+        if (useStatusShift)
+        {
+            posY += getHudOffsetForPotions(alignment, scale, mc().player);
+        }
 
         for (String line : lines)
         {
@@ -839,7 +854,7 @@ public class RenderUtils
 
         if (disableDepth)
         {
-            RenderSystem.depthMask(false);
+            //RenderSystem.depthMask(false);
             RenderSystem.disableDepthTest();
         }
 
@@ -866,27 +881,30 @@ public class RenderUtils
         }
 
         Matrix4f modelMatrix = new Matrix4f();
-        BufferAllocator byteBufferBuilder = new BufferAllocator(RenderLayer.DEFAULT_BUFFER_SIZE);
         modelMatrix.identity();
+
+        BufferAllocator allocator = new BufferAllocator(RenderLayer.DEFAULT_BUFFER_SIZE);
 
         for (String line : text)
         {
             if (disableDepth)
             {
-                RenderSystem.depthMask(false);
+                //RenderSystem.depthMask(false);
                 RenderSystem.disableDepthTest();
-                VertexConsumerProvider.Immediate immediate = VertexConsumerProvider.immediate(byteBufferBuilder);
+                VertexConsumerProvider.Immediate immediate = VertexConsumerProvider.immediate(allocator);
                 textRenderer.draw(line, -strLenHalf, textY, 0x20000000 | (textColor & 0xFFFFFF), false, modelMatrix, immediate, TextRenderer.TextLayerType.SEE_THROUGH, 0, 15728880);
                 immediate.draw();
                 RenderSystem.enableDepthTest();
-                RenderSystem.depthMask(true);
+                //RenderSystem.depthMask(true);
             }
 
-            VertexConsumerProvider.Immediate immediate = VertexConsumerProvider.immediate(byteBufferBuilder);
+            VertexConsumerProvider.Immediate immediate = VertexConsumerProvider.immediate(allocator);
             textRenderer.draw(line, -strLenHalf, textY, textColor, false, modelMatrix, immediate, TextRenderer.TextLayerType.SEE_THROUGH, 0, 15728880);
             immediate.draw();
             textY += textRenderer.fontHeight;
         }
+
+        allocator.close();
 
         if (disableDepth == false)
         {
@@ -896,7 +914,7 @@ public class RenderUtils
 
         color(1f, 1f, 1f, 1f);
         RenderSystem.enableCull();
-        RenderSystem.disableBlend();
+        //RenderSystem.disableBlend();
         global4fStack.popMatrix();
     }
 
@@ -1177,7 +1195,8 @@ public class RenderUtils
                 x1 += 8;
                 y1 += 8;
                 z = 310;
-                VertexConsumerProvider.Immediate consumer = VertexConsumerProvider.immediate(new BufferAllocator(RenderLayer.DEFAULT_BUFFER_SIZE));
+                BufferAllocator allocator = new BufferAllocator(RenderLayer.DEFAULT_BUFFER_SIZE);
+                VertexConsumerProvider.Immediate consumer = VertexConsumerProvider.immediate(allocator);
                 double scale = (double) (dimensions - 16) / 128.0D;
 
                 // TODO -- MapRenderer still uses MatrixStack
@@ -1188,6 +1207,7 @@ public class RenderUtils
                 mc().gameRenderer.getMapRenderer().draw(matrixStack, consumer, mapId, mapState, false, 0xF000F0);
                 consumer.draw();
                 matrixStack.pop();
+                allocator.close();
             }
         }
     }
@@ -1338,6 +1358,10 @@ public class RenderUtils
     {
         if (InventoryUtils.hasNbtItems(itemsTag))
         {
+            if (mc().world == null)
+            {
+                return;
+            }
             DefaultedList<ItemStack> items = InventoryUtils.getNbtItems(itemsTag, -1, mc().world.getRegistryManager());
 
             if (items.size() == 0)

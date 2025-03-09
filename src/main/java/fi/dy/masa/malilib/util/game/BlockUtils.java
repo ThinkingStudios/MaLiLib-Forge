@@ -18,11 +18,14 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.DynamicRegistryManager;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.Properties;
 import net.minecraft.state.property.*;
 import net.minecraft.util.math.Direction;
 
+import fi.dy.masa.malilib.MaLiLib;
+import fi.dy.masa.malilib.data.MaLiLibTag;
 import fi.dy.masa.malilib.util.StringUtils;
 import fi.dy.masa.malilib.util.data.ResourceLocation;
 import fi.dy.masa.malilib.util.game.wrap.NbtWrap;
@@ -491,14 +494,73 @@ public class BlockUtils
     /**
      * Write a Block Entity's Data to an ItemStack (Removed from Vanilla, why?)
      *
-     * @param stack
-     * @param be
-     * @param registry
+     * @param stack ()
+     * @param be ()
+     * @param registry ()
      */
     public static void setStackNbt(@Nonnull ItemStack stack, @Nonnull BlockEntity be, @Nonnull DynamicRegistryManager registry)
     {
         NbtCompound nbt = be.createComponentlessNbt(registry);
         BlockItem.setBlockEntityData(stack, be.getType(), nbt);
         stack.applyComponentsFrom(be.createComponentMap());
+    }
+
+    /**
+     * Return if the two block states contains blocks in the same BlockTags listed under REPLACEABLE_GROUPS
+     *
+     * @param left ()
+     * @param right ()
+     * @return ()
+     */
+    public static boolean isInSameGroup(BlockState left, BlockState right)
+    {
+        for (TagKey<Block> tagKey : MaLiLibTag.Blocks.REPLACEABLE_GROUPS)
+        {
+            if (left.isIn(tagKey) && right.isIn(tagKey))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Match the properties list only of two block states, ignoring the block type
+     *
+     * @param left ()
+     * @param right ()
+     * @return ()
+     */
+    public static boolean matchPropertiesOnly(BlockState left, BlockState right)
+    {
+        return compareProperties(left, right) && compareProperties(right, left);
+    }
+
+    public static <T extends Comparable<T>> boolean compareProperties(BlockState state, BlockState otherState)
+    {
+        Collection<Property<?>> props = state.getProperties();
+
+        for (Property<?> entry : props)
+        {
+            @SuppressWarnings("unchecked")
+            Property<T> p = (Property<T>) entry;
+
+            if (otherState.contains(p))
+            {
+                T value = state.get(p);
+
+                if (!value.equals(otherState.get(p)))
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 }
