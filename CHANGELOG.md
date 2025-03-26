@@ -1,2 +1,2 @@
 ## Changelog
-- fix broken png
+- fix broken tag
