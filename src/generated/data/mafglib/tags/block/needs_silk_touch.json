@@ -1,9 +1,9 @@
 {
   "values": [
-    "#malilib:glass_blocks",
-    "#malilib:glass_panes",
-    "#malilib:coral_fans_fix",
-    "#malilib:leaves_fix",
+    "#mafglib:glass_blocks",
+    "#mafglib:glass_panes",
+    "#mafglib:coral_fans_fix",
+    "#mafglib:leaves_fix",
     "minecraft:ender_chest"
   ]
 }

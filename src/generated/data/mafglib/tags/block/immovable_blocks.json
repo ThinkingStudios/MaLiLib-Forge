@@ -1,7 +1,7 @@
 {
   "values": [
-    "#malilib:all_signs_fix",
-    "#malilib:all_banners_fix",
+    "#mafglib:all_signs_fix",
+    "#mafglib:all_banners_fix",
     "minecraft:barrier",
     "minecraft:barrel",
     "minecraft:beacon",
