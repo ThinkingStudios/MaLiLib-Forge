@@ -20,11 +20,11 @@ sourceSets {
 /*
 loom {
     runs {
-        clientData {
+        data {
             data()
             programArgs "--all", "--mod", "mafglib"
             programArgs "--output", generatedResources.absolutePath
-            //programArgs "--includeClient"
+            //programArgs '--existing', file("src/main/resources").absolutePath
         }
     }
 }
@@ -54,11 +54,6 @@ dependencies {
         if (module == "fabric-networking-api-v1") {
             modApi(include("org.sinytra.forgified-fabric-api:$module:4.3.1+cfe47bf240")) { transitive = false }
         }
-    }
-
-    if (System.getenv("CI") != null) {
-        // For 1.21
-        modLocalRuntime "com.github.jab125.architectury-data-generation-fix:architectury-data-generation-fix-fabric:21.0.1"
     }
 
     implementation libs.jsr305

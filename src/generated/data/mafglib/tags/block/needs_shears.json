@@ -1,7 +1,7 @@
 {
   "values": [
-    "#malilib:leaves_fix",
-    "#malilib:wool_blocks_fix",
+    "#mafglib:leaves_fix",
+    "#mafglib:wool_blocks_fix",
     "minecraft:cave_vines",
     "minecraft:cave_vines_plant",
     "minecraft:cobweb",
