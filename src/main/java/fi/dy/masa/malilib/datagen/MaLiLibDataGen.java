@@ -11,6 +11,6 @@ public class MaLiLibDataGen
         var lookupProvider = event.getLookupProvider();
 
         event.addProvider(new BlockTagDataGenerator(output, lookupProvider));
-        //event.createProvider(ItemTagGenerator::new);
+        //event.createProvider(new ItemTagDataGenerator(output, lookupProvider));
     }
 }
