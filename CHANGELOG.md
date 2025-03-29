@@ -1,2 +1,2 @@
 ## Changelog
-- fix broken tag
+- rework entrypoint, now we use neoforge's ExtensionPoint api
