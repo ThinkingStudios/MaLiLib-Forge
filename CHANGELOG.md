@@ -1,2 +1,2 @@
 ## Changelog
-- update NeoForge version to 21.4.123
+- rework entrypoint, now we use neoforge's ExtensionPoint api

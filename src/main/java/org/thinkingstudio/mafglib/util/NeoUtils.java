@@ -14,7 +14,7 @@ import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 
 import java.util.function.Function;
 
-@Deprecated(forRemoval = true)
+@Deprecated(forRemoval = true, since = "1.21.5")
 public class NeoUtils {
     private static NeoUtils INSTANCE;
 

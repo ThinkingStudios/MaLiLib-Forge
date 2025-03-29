@@ -6,12 +6,13 @@ import fi.dy.masa.malilib.util.data.ModInfo;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import fi.dy.masa.malilib.event.InitializationHandler;
+import org.thinkingstudio.mafglib.loader.entrypoints.ModInitializer;
 
-public class MaLiLib
+public class MaLiLib implements ModInitializer
 {
     public static final Logger LOGGER = LogManager.getLogger(MaLiLibReference.MOD_ID);
 
-    public static void onInitialize() {
+    public void onInitialize() {
         InitializationHandler.getInstance().registerInitializationHandler(new MaLiLibInitHandler());
         Registry.CONFIG_SCREEN.registerConfigScreenFactory(
                 new ModInfo(MaLiLibReference.MOD_ID, MaLiLibReference.MOD_NAME, MaLiLibConfigGui::new)
