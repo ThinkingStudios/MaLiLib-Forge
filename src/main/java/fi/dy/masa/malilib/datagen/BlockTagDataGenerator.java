@@ -6,9 +6,9 @@ import fi.dy.masa.malilib.MaLiLibReference;
 import net.minecraft.block.Blocks;
 import net.minecraft.data.DataOutput;
 import net.minecraft.registry.RegistryWrapper;
-import net.neoforged.neoforge.common.data.BlockTagsProvider;
 
 import fi.dy.masa.malilib.data.MaLiLibTag;
+import net.neoforged.neoforge.common.data.BlockTagsProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
 public class BlockTagDataGenerator extends BlockTagsProvider

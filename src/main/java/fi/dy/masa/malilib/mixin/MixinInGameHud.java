@@ -1,6 +1,5 @@
 package fi.dy.masa.malilib.mixin;
 
-import net.minecraft.client.gui.LayeredDrawer;
 import net.neoforged.neoforge.client.gui.GuiLayerManager;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 import org.spongepowered.asm.mixin.Final;
