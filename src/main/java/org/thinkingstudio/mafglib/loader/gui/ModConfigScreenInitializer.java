@@ -1,5 +1,7 @@
 package org.thinkingstudio.mafglib.loader.gui;
 
-public interface ModConfigScreenInitializer {
+import net.neoforged.fml.IExtensionPoint;
+
+public interface ModConfigScreenInitializer extends IExtensionPoint {
     ModConfigScreenFactory getModConfigScreenFactory();
 }
