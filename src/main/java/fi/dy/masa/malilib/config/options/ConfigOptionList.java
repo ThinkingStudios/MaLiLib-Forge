@@ -2,6 +2,7 @@ package fi.dy.masa.malilib.config.options;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
+
 import fi.dy.masa.malilib.MaLiLib;
 import fi.dy.masa.malilib.config.ConfigType;
 import fi.dy.masa.malilib.config.IConfigOptionList;
@@ -11,6 +12,11 @@ import fi.dy.masa.malilib.util.StringUtils;
 
 public class ConfigOptionList extends ConfigBase<ConfigOptionList> implements IConfigOptionList, IStringRepresentable
 {
+//    public static final Codec<ConfigOptionList> CODEC = RecordCodecBuilder.create(
+//            inst -> inst.group(
+//                    Codec.PASSTHROUGH.dispatchStable()
+//            ).apply(inst, ConfigColorList::new)
+//    );
     private final IConfigOptionListEntry defaultValue;
     private IConfigOptionListEntry value;
 
@@ -74,7 +80,7 @@ public class ConfigOptionList extends ConfigBase<ConfigOptionList> implements IC
         {
             return this.value.fromString(newValue) != this.defaultValue;
         }
-        catch (Exception e)
+        catch (Exception ignored)
         {
         }
 

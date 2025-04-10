@@ -1,10 +1,9 @@
 package fi.dy.masa.malilib.gui.widgets;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import javax.annotation.Nullable;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.util.Identifier;
 
@@ -45,6 +44,9 @@ public class WidgetKeybindSettings extends WidgetBase
     {
         if (mouseButton == 0)
         {
+            //RenderUtils.forceDraw(this.drawContext);
+            //RenderUtils.depthTest(false);
+
             if (this.dialogHandler != null)
             {
                 this.dialogHandler.openDialog(new GuiKeybindSettings(this.keybind, this.keybindName, this.dialogHandler, GuiUtils.getCurrentScreen()));
@@ -70,8 +72,9 @@ public class WidgetKeybindSettings extends WidgetBase
     @Override
     public void render(int mouseX, int mouseY, boolean selected, DrawContext drawContext)
     {
+        super.render(mouseX, mouseY, selected, drawContext);
         RenderUtils.color(1f, 1f, 1f, 1f);
-        this.bindTexture(TEXTURE);
+        //this.bindTexture(TEXTURE, drawContext);
 
         int w = 18;
         int v1 = this.settings.getActivateOn().ordinal() * w;
@@ -84,10 +87,10 @@ public class WidgetKeybindSettings extends WidgetBase
         int y = this.y;
 
         int edgeColor = this.keybind.areSettingsModified() ? 0xFFFFBB33 : 0xFFFFFFFF;
-        RenderSystem.enableDepthTest();
+        //RenderUtils.depthTest(true);
         RenderUtils.drawRect(x    , y + 0, 20, 20, edgeColor);
         RenderUtils.drawRect(x + 1, y + 1, 18, 18, 0xFF000000);
-        RenderSystem.disableDepthTest();
+        //RenderUtils.depthTest(false);
 
         RenderUtils.forceDraw(drawContext);
 
@@ -97,24 +100,19 @@ public class WidgetKeybindSettings extends WidgetBase
 
         RenderUtils.color(1f, 1f, 1f, 1f);
 
-        //RenderUtils.drawTexturedRect(x, y,  0, v1, w, w, z);
-        //RenderUtils.drawTexturedRect(x, y, 18, v2, w, w, z);
-        //RenderUtils.drawTexturedRect(x, y, 36, v3, w, w, z);
-        //RenderUtils.drawTexturedRect(x, y, 54, v4, w, w, z);
-        //RenderUtils.drawTexturedRect(x, y, 72, v5, w, w, z);
-
-        RenderSystem.enableDepthTest();
+        //RenderUtils.depthTest(true);
         RenderUtils.drawTexturedRectAndDraw(TEXTURE, x, y,  0,  v1, w, w, z, drawContext);
         RenderUtils.drawTexturedRectAndDraw(TEXTURE, x, y,  18, v2, w, w, z, drawContext);
         RenderUtils.drawTexturedRectAndDraw(TEXTURE, x, y,  36, v3, w, w, z, drawContext);
         RenderUtils.drawTexturedRectAndDraw(TEXTURE, x, y,  54, v4, w, w, z, drawContext);
         RenderUtils.drawTexturedRectAndDraw(TEXTURE, x, y,  72, v5, w, w, z, drawContext);
-        RenderSystem.disableDepthTest();
+        //RenderUtils.depthTest(false);
     }
 
     @Override
     public void postRenderHovered(int mouseX, int mouseY, boolean selected, DrawContext drawContext)
     {
+        super.postRenderHovered(mouseX, mouseY, selected, drawContext);
         List<String> text = new ArrayList<>();
         String name, val;
         String strYes = StringUtils.translate("malilib.gui.label.yes");

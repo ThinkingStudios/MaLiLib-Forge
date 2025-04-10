@@ -1,24 +1,27 @@
 package fi.dy.masa.malilib.gui;
 
-import java.awt.Color;
+import java.awt.*;
 import javax.annotation.Nullable;
-import com.mojang.blaze3d.systems.RenderSystem;
 
+import com.mojang.blaze3d.buffers.BufferUsage;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.render.*;
+import net.minecraft.client.render.BufferBuilder;
+import net.minecraft.client.render.BuiltBuffer;
 import net.minecraft.util.math.MathHelper;
 
-import fi.dy.masa.malilib.config.IConfigInteger;
+import fi.dy.masa.malilib.config.IConfigColor;
 import fi.dy.masa.malilib.gui.interfaces.IDialogHandler;
 import fi.dy.masa.malilib.gui.interfaces.ITextFieldListener;
+import fi.dy.masa.malilib.render.MaLiLibPipelines;
+import fi.dy.masa.malilib.render.RenderContext;
 import fi.dy.masa.malilib.render.RenderUtils;
 import fi.dy.masa.malilib.util.KeyCodes;
 import fi.dy.masa.malilib.util.StringUtils;
 
 public class GuiColorEditorHSV extends GuiDialogBase
 {
-    protected final IConfigInteger config;
+    protected final IConfigColor config;
     @Nullable protected final IDialogHandler dialogHandler;
     @Nullable protected Element clickedElement;
     @Nullable protected Element currentTextInputElement;
@@ -50,7 +53,7 @@ public class GuiColorEditorHSV extends GuiDialogBase
     protected float relB;
     protected float relA;
 
-    public GuiColorEditorHSV(IConfigInteger config, @Nullable IDialogHandler dialogHandler, Screen parent)
+    public GuiColorEditorHSV(IConfigColor config, @Nullable IDialogHandler dialogHandler, Screen parent)
     {
         this.config = config;
         this.dialogHandler = dialogHandler;
@@ -170,13 +173,14 @@ public class GuiColorEditorHSV extends GuiDialogBase
             }
         }
 
+        //RenderUtils.forceDraw(drawContext);
         this.drawColorSelector();
     }
 
     @Override
     protected void drawScreenBackground(DrawContext drawContext, int mouseX, int mouseY)
     {
-        super.drawTexturedBG(drawContext, this.dialogLeft, this.dialogTop, this.dialogWidth, this.dialogHeight, true);
+        //super.drawTexturedBG(drawContext, this.dialogLeft, this.dialogTop, this.dialogWidth, this.dialogHeight, true);
         RenderUtils.drawOutlinedBox(this.dialogLeft, this.dialogTop, this.dialogWidth, this.dialogHeight, 0xFF000000, COLOR_HORIZONTAL_BAR);
     }
 
@@ -466,6 +470,8 @@ public class GuiColorEditorHSV extends GuiDialogBase
 
     protected void drawColorSelector()
     {
+        if (this.client == null) return;
+
         int x = this.xH - 1;
         int y = this.yH - 1;
         int w = this.widthSlider + 2;
@@ -477,62 +483,86 @@ public class GuiColorEditorHSV extends GuiDialogBase
         int cw = this.sizeHS;
         int ch = 16;
 
-        RenderUtils.drawOutline(x, y, w, h, 0xC0FFFFFF, z); // H
+        RenderUtils.drawOutline(x, y, w, h, 0xC0FFFFFF); // H
         y += yd;
-        RenderUtils.drawOutline(x, y, w, h, 0xC0FFFFFF, z); // S
+        RenderUtils.drawOutline(x, y, w, h, 0xC0FFFFFF); // S
         y += yd;
-        RenderUtils.drawOutline(x, y, w, h, 0xC0FFFFFF, z); // V
+        RenderUtils.drawOutline(x, y, w, h, 0xC0FFFFFF); // V
         y += yd;
-        RenderUtils.drawOutline(x, y, w, h, 0xC0FFFFFF, z); // R
+        RenderUtils.drawOutline(x, y, w, h, 0xC0FFFFFF); // R
         y += yd;
-        RenderUtils.drawOutline(x, y, w, h, 0xC0FFFFFF, z); // G
+        RenderUtils.drawOutline(x, y, w, h, 0xC0FFFFFF); // G
         y += yd;
-        RenderUtils.drawOutline(x, y, w, h, 0xC0FFFFFF, z); // B
+        RenderUtils.drawOutline(x, y, w, h, 0xC0FFFFFF); // B
         y += yd;
-        RenderUtils.drawOutline(x, y, w, h, 0xC0FFFFFF, z); // A
+        RenderUtils.drawOutline(x, y, w, h, 0xC0FFFFFF); // A
 
         x = this.xHS;
         y = this.yHS;
         w = this.sizeHS;
         h = this.sizeHS;
 
-        RenderUtils.drawOutline(x - 1, y - 1, w + 2, h + 2, 0xC0FFFFFF, z); // main color selector
-        RenderUtils.drawOutline(cx - 1, cy - 1, cw + 2, ch + 2, 0xC0FFFFFF, z); // current color indicator
-        RenderUtils.drawOutline(this.xHFullSV, y - 1, this.widthHFullSV, this.sizeHS + 2, 0xC0FFFFFF, z); // Hue vertical/full value
+        RenderUtils.drawOutline(x - 1, y - 1, w + 2, h + 2, 0xC0FFFFFF);                      // main color selector
+        RenderUtils.drawOutline(cx - 1, cy - 1, cw + 2, ch + 2, 0xC0FFFFFF);                  // current color indicator
+        RenderUtils.drawOutline(this.xHFullSV, y - 1, this.widthHFullSV, this.sizeHS + 2, 0xC0FFFFFF); // Hue vertical/full value
 
-        Tessellator tessellator = Tessellator.getInstance();
-        BufferBuilder buffer = tessellator.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_TEXTURE);
-        BuiltBuffer builtBuffer;
-
-        RenderUtils.setupBlend();
-
-        RenderUtils.color(1, 1, 1, 1);
-
-        //GlProgramManager.useProgram(SHADER_HUE.getProgram());
-        //GL20.glUniform1f(GL20.glGetUniformLocation(SHADER_HUE.getProgram(), "hue_value"), this.relH);
-
-        buffer.vertex(x    , y    , z).texture(1, 0);
-        buffer.vertex(x    , y + h, z).texture(0, 0);
-        buffer.vertex(x + w, y + h, z).texture(0, 1);
-        buffer.vertex(x + w, y    , z).texture(1, 1);
-
-        try
-        {
-            builtBuffer = buffer.end();
-            BufferRenderer.drawWithGlobalProgram(builtBuffer);
-            builtBuffer.close();
-        }
-        catch (Exception ignored) { }
-
-        // FIXME
-        //RenderSystem.setShader(GameRenderer::getPositionColorProgram);
-        buffer = tessellator.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
+        // Full SV Square --
+        // MaLiLibPipelines.POSITION_SIMPLE
+        RenderContext ctx = new RenderContext(() -> "ColorSelector A", MaLiLibPipelines.POSITION_COLOR_MASA_NO_DEPTH_NO_CULL, BufferUsage.STATIC_WRITE);
+        BufferBuilder buffer = ctx.getBuilder();
 
         int r = (int) (this.relR * 255f);
         int g = (int) (this.relG * 255f);
         int b = (int) (this.relB * 255f);
         int a = 255;
         int c = 255;
+
+//        RenderUtils.blend(true);
+//        int tempColor = RenderUtils.color(r, g, b, a);
+//        RenderUtils.color(1f, 1f, 1f, 1f);
+
+        /*
+        GlProgramManager.useProgram(SHADER_HUE.getProgram());
+        GL20.glUniform1f(GL20.glGetUniformLocation(SHADER_HUE.getProgram(), "hue_value"), this.relH);
+         */
+
+        final int[] colorPair = this.getColorPairForSelector();
+
+//        buffer.vertex(x    , y    , z).texture(1, 0);
+//        buffer.vertex(x    , y + h, z).texture(0, 0);
+//        buffer.vertex(x + w, y + h, z).texture(0, 1);
+//        buffer.vertex(x + w, y    , z).texture(1, 1);
+
+        buffer.vertex(x    , y    , z).color(colorPair[0]);
+        buffer.vertex(x    , y + h, z).color(colorPair[1]);
+        buffer.vertex(x + w, y + h, z).color(colorPair[2]);
+        buffer.vertex(x + w, y    , z).color(colorPair[3]);
+
+        try
+        {
+            BuiltBuffer meshData = buffer.endNullable();
+
+            if (meshData != null)
+            {
+                ctx.draw(meshData, false);
+                meshData.close();
+            }
+
+            ctx.reset();
+        }
+        catch (Exception ignored) { }
+
+        // Element Selectors --
+        // MaLiLibPipelines.POSITION_COLOR_SIMPLE
+        buffer = ctx.start(() -> "ColorSelector B", MaLiLibPipelines.POSITION_COLOR_MASA_NO_DEPTH_NO_CULL, BufferUsage.STATIC_WRITE);
+
+        /*
+        int r = (int) (this.relR * 255f);
+        int g = (int) (this.relG * 255f);
+        int b = (int) (this.relB * 255f);
+        int a = 255;
+        int c = 255;
+         */
 
         // Current color indicator
         buffer.vertex(cx     , cy     , z).color(r, g, b, a);
@@ -613,13 +643,27 @@ public class GuiColorEditorHSV extends GuiDialogBase
 
         try
         {
-            builtBuffer = buffer.end();
-            BufferRenderer.drawWithGlobalProgram(builtBuffer);
-            builtBuffer.close();
+            BuiltBuffer meshData = buffer.endNullable();
+
+            if (meshData != null)
+            {
+                ctx.draw(meshData, false);
+                meshData.close();
+            }
+
+            ctx.close();
         }
         catch (Exception ignored) { }
+    }
 
-        RenderSystem.disableBlend();
+    private int[] getColorPairForSelector()
+    {
+        int color1 = Color.HSBtoRGB(this.relH, 0f, 0f);
+        int color2 = Color.HSBtoRGB(this.relH, 1f, 0f);
+        int color3 = Color.HSBtoRGB(this.relH, 0f, 1f);
+        int color4 = Color.HSBtoRGB(this.relH, 1f, 1f);
+
+        return new int[]{ color1, color2, color3, color4 };
     }
 
     public static void renderGradientColorBar(int x, int y, float z, int width, int height, int colorStart, int colorEnd, BufferBuilder buffer)

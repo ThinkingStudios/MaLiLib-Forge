@@ -32,6 +32,9 @@ public class ConfigButtonLockedList extends ButtonGeneric
     {
         super.onMouseClickedImpl(mouseX, mouseY, mouseButton);
 
+        //RenderUtils.forceDraw(this.drawContext);
+        //RenderUtils.depthTest(false);
+
         if (this.dialogHandler != null)
         {
             this.dialogHandler.openDialog(new GuiLockedListEdit(this.config, this.configGui, this.dialogHandler, null));

@@ -3,6 +3,7 @@ package fi.dy.masa.malilib.gui.widgets;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.util.Identifier;
 
 import fi.dy.masa.malilib.gui.GuiBase;
@@ -13,6 +14,7 @@ public abstract class WidgetBase
     protected final MinecraftClient mc;
     protected final TextRenderer textRenderer;
     protected final int fontHeight;
+    protected DrawContext drawContext;
     protected int x;
     protected int y;
     protected int width;
@@ -154,9 +156,14 @@ public abstract class WidgetBase
         return this.isMouseOver(mouseX, mouseY);
     }
 
-    public void bindTexture(Identifier texture)
+    public VertexConsumer bindTexture(Identifier texture, DrawContext context)
     {
-        RenderUtils.bindTexture(texture);
+        return RenderUtils.bindGuiTexture(texture, context);
+    }
+
+    public VertexConsumer bindOverlayTexture(Identifier texture, DrawContext context)
+    {
+        return RenderUtils.bindGuiOverlayTexture(texture, context);
     }
 
     public int getStringWidth(String text)
@@ -167,37 +174,45 @@ public abstract class WidgetBase
     public void drawString(int x, int y, int color, String text, DrawContext drawContext)
     {
         drawContext.drawText(this.textRenderer, text, x, y, color, false);
-        //RenderUtils.forceDraw(drawContext);
+        RenderUtils.forceDraw(drawContext);
     }
 
     public void drawCenteredString(int x, int y, int color, String text, DrawContext drawContext)
     {
         drawContext.drawText(this.textRenderer, text, x - this.getStringWidth(text) / 2, y, color, false);
-        //RenderUtils.forceDraw(drawContext);
+        RenderUtils.forceDraw(drawContext);
     }
 
     public void drawStringWithShadow(int x, int y, int color, String text, DrawContext drawContext)
     {
         drawContext.drawTextWithShadow(this.textRenderer, text, x, y, color);
-        //RenderUtils.forceDraw(drawContext);
+        RenderUtils.forceDraw(drawContext);
     }
 
     public void drawCenteredStringWithShadow(int x, int y, int color, String text, DrawContext drawContext)
     {
         drawContext.drawCenteredTextWithShadow(this.textRenderer, text, x, y, color);
-        //RenderUtils.forceDraw(drawContext);
+        RenderUtils.forceDraw(drawContext);
     }
 
     public void drawBackgroundMask(DrawContext drawContext)
     {
-        RenderUtils.drawTexturedRect(GuiBase.BG_TEXTURE, this.x + 1, this.y + 1, 0, 0, this.width - 2, this.height - 2, drawContext);
+        RenderUtils.drawTexturedRectAndDraw(GuiBase.BG_TEXTURE, this.x + 1, this.y + 1, 0, 0, this.width - 2, this.height - 2, drawContext);
     }
 
     public void render(int mouseX, int mouseY, boolean selected, DrawContext drawContext)
     {
+        if (this.drawContext == null || !this.drawContext.equals(drawContext))
+        {
+            this.drawContext = drawContext;
+        }
     }
 
     public void postRenderHovered(int mouseX, int mouseY, boolean selected, DrawContext drawContext)
     {
+        if (this.drawContext == null || !this.drawContext.equals(drawContext))
+        {
+            this.drawContext = drawContext;
+        }
     }
 }

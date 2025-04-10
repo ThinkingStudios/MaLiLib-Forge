@@ -1,0 +1,46 @@
+{
+    "required": true,
+    "package": "fi.dy.masa.malilib.mixin",
+    "compatibilityLevel": "JAVA_21",
+    "minVersion": "0.8",
+    "mixins": [
+        "MixinMinecraftServer",
+        "entity.IMixinAbstractHorseEntity",
+        "entity.IMixinMerchantEntity",
+        "entity.IMixinPiglinEntity",
+        "entity.IMixinPlayerEntity",
+        "entity.MixinAbstractHorseEntity",
+        "entity.MixinPiglinEntity",
+        "entity.MixinSimpleInventory",
+        "item.MixinItemStack",
+        "test.MixinBundleItem",
+        "test.MixinSharedConstants"
+    ],
+    "client": [
+        "MixinIntegratedServer",
+        "MixinMinecraftClient",
+        "entity.IMixinDataQueryHandler",
+        "hud.MixinInGameHud",
+        "input.MixinKeyboard",
+        "input.MixinMouse",
+        "network.IMixinDataQueryHandler",
+        "network.MixinClientConfigurationNetworkHandler",
+        "network.MixinClientPlayNetworkHandler",
+        "render.IMixinAbstractTexture",
+        "render.IMixinBufferBuilder",
+        "render.IMixinDrawContext",
+        "render.MixinDebugRenderer",
+        "render.MixinDrawContext",
+        "render.MixinGlBackend",
+        "render.MixinRenderPipelines",
+        "render.MixinWorldRenderer",
+        "screen.IMixinHandledScreen",
+        "screen.MixinHandledScreen",
+        "screen.MixinInventoryScreen",
+        "test.MixinClientPlayInteractionManager"
+    ],
+    "server": [],
+    "injectors": {
+        "defaultRequire": 1
+    }
+}

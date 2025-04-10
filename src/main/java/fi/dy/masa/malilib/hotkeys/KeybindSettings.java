@@ -1,12 +1,33 @@
 package fi.dy.masa.malilib.hotkeys;
 
+import com.google.common.collect.ImmutableList;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.JsonOps;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import fi.dy.masa.malilib.MaLiLib;
 import fi.dy.masa.malilib.config.IConfigOptionListEntry;
 import fi.dy.masa.malilib.util.JsonUtils;
 import fi.dy.masa.malilib.util.StringUtils;
+import net.minecraft.util.StringIdentifiable;
+
+import javax.annotation.Nullable;
 
 public class KeybindSettings
 {
+    public static final Codec<KeybindSettings> CODEC = RecordCodecBuilder.create(
+            instance -> instance.group(
+                            Context.CODEC.fieldOf("context").forGetter(get -> get.context),
+                            KeyAction.CODEC.fieldOf("activateOn").forGetter(get -> get.activateOn),
+                            Codec.BOOL.fieldOf("allowExtraKeys").forGetter(get -> get.allowExtraKeys),
+                            Codec.BOOL.fieldOf("orderSensitive").forGetter(get -> get.orderSensitive),
+                            Codec.BOOL.fieldOf("exclusive").forGetter(get -> get.exclusive),
+                            Codec.BOOL.fieldOf("cancel").forGetter(get -> get.cancel),
+                            Codec.BOOL.optionalFieldOf("allowEmpty", false).forGetter(get -> get.allowEmpty)
+                    )
+                    .apply(instance, KeybindSettings::new)
+    );
     public static final KeybindSettings DEFAULT                     = new KeybindSettings(Context.INGAME, KeyAction.PRESS, false, true, false, true);
     public static final KeybindSettings EXCLUSIVE                   = new KeybindSettings(Context.INGAME, KeyAction.PRESS, false, true, true, true);
     public static final KeybindSettings RELEASE                     = new KeybindSettings(Context.INGAME, KeyAction.RELEASE, false, true, false, false);
@@ -106,6 +127,29 @@ public class KeybindSettings
         return obj;
     }
 
+    public JsonObject toJsonCodec()
+    {
+        return (JsonObject) CODEC
+                .encodeStart(JsonOps.INSTANCE, this)
+                .resultOrPartial((err) -> MaLiLib.LOGGER.warn("KeybindSettings#toJsonCodec(): Error {}", err))
+                .orElse(new JsonObject());
+    }
+
+    public static @Nullable KeybindSettings fromJsonCodec(JsonObject obj)
+    {
+        com.mojang.datafixers.util.Pair<KeybindSettings, JsonElement> pair = CODEC
+                .decode(JsonOps.INSTANCE, obj)
+                .resultOrPartial((err) -> MaLiLib.LOGGER.warn("KeybindSettings#fromJsonCodec(): Error {}", err))
+                .orElse(null);
+
+        if (pair != null && pair.getFirst() != null)
+        {
+            return pair.getFirst();
+        }
+
+        return null;
+    }
+
     public static KeybindSettings fromJson(JsonObject obj)
     {
         Context context = Context.INGAME;
@@ -173,19 +217,28 @@ public class KeybindSettings
         return true;
     }
 
-    public enum Context implements IConfigOptionListEntry
+    public enum Context implements IConfigOptionListEntry, StringIdentifiable
     {
         INGAME  ("ingame",  "malilib.label.key_context.ingame"),
         GUI     ("gui",     "malilib.label.key_context.gui"),
         ANY     ("any",     "malilib.label.key_context.any");
 
+        public static final StringIdentifiable.EnumCodec<Context> CODEC = StringIdentifiable.createCodec(Context::values);
+        public static final ImmutableList<Context> VALUES = ImmutableList.copyOf(values());
+
         private final String configString;
         private final String translationKey;
 
-        private Context(String configString, String translationKey)
+        Context(String configString, String translationKey)
         {
             this.configString = configString;
             this.translationKey = translationKey;
+        }
+
+        @Override
+        public String asString()
+        {
+            return this.configString;
         }
 
         @Override

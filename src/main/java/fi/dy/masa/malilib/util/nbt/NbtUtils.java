@@ -12,13 +12,14 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.minecraft.nbt.*;
+import net.minecraft.util.Uuids;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec2f;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
 
 import fi.dy.masa.malilib.MaLiLib;
 import fi.dy.masa.malilib.util.data.Constants;
-import fi.dy.masa.malilib.util.game.wrap.NbtWrap;
 
 /**
  * Post-ReWrite code
@@ -34,9 +35,9 @@ public class NbtUtils
 	@Nullable
 	public static UUID readUUID(@Nonnull NbtCompound tag, String keyM, String keyL)
 	{
-		if (NbtWrap.containsLong(tag, keyM) && NbtWrap.containsLong(tag, keyL))
+		if (tag.contains(keyM) && tag.contains(keyL))
 		{
-			return new UUID(NbtWrap.getLong(tag, keyM), NbtWrap.getLong(tag, keyL));
+			return new UUID(tag.getLong(keyM, 0L), tag.getLong(keyL, 0L));
 		}
 
 		return null;
@@ -49,22 +50,22 @@ public class NbtUtils
 
 	public static void writeUUID(@Nonnull NbtCompound tag, UUID uuid, String keyM, String keyL)
 	{
-		NbtWrap.putLong(tag, keyM, uuid.getMostSignificantBits());
-		NbtWrap.putLong(tag, keyL, uuid.getLeastSignificantBits());
+		tag.putLong(keyM, uuid.getMostSignificantBits());
+		tag.putLong(keyL, uuid.getLeastSignificantBits());
 	}
 
 	public static NbtCompound getOrCreateCompound(@Nonnull NbtCompound tagIn, String tagName)
 	{
 		NbtCompound nbt;
 
-		if (NbtWrap.containsCompound(tagIn, tagName))
+		if (tagIn.contains(tagName))
 		{
-			nbt = NbtWrap.getCompound(tagIn, tagName);
+			nbt = tagIn.getCompoundOrEmpty(tagName);
 		}
 		else
 		{
 			nbt = new NbtCompound();
-			NbtWrap.putTag(tagIn, tagName, nbt);
+			tagIn.put(tagName, nbt);
 		}
 
 		return nbt;
@@ -76,10 +77,52 @@ public class NbtUtils
 
 		for (T val : values)
 		{
-			NbtWrap.addTag(list, tagFactory.apply(val));
+			list.add(tagFactory.apply(val));
 		}
 
 		return list;
+	}
+
+	/**
+	 * Get the Entity's UUID from NBT.
+	 *
+	 * @param nbt ()
+	 * @return ()
+	 */
+	public static @Nullable UUID getUUIDCodec(@Nonnull NbtCompound nbt)
+	{
+		return getUUIDCodec(nbt, NbtKeys.UUID);
+	}
+
+	/**
+	 * Get the Entity's UUID from NBT.
+	 *
+	 * @param nbt ()
+	 * @param key ()
+	 * @return ()
+	 */
+	public static @Nullable UUID getUUIDCodec(@Nonnull NbtCompound nbt, String key)
+	{
+		if (nbt.contains(key))
+		{
+			return nbt.get(key, Uuids.INT_STREAM_CODEC).orElse(null);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Get the Entity's UUID from NBT.
+	 *
+	 * @param nbtIn ()
+	 * @param key ()
+	 * @param uuid ()
+	 * @return ()
+	 */
+	public static NbtCompound putUUIDCodec(@Nonnull NbtCompound nbtIn, @Nonnull UUID uuid, String key)
+	{
+		nbtIn.put(key, Uuids.INT_STREAM_CODEC, uuid);
+		return nbtIn;
 	}
 
 	public static @Nonnull NbtCompound createBlockPos(@Nonnull BlockPos pos)
@@ -124,10 +167,54 @@ public class NbtUtils
 
 	public static @Nonnull NbtCompound putVec3i(@Nonnull NbtCompound tag, @Nonnull Vec3i pos)
 	{
-		NbtWrap.putInt(tag, "x", pos.getX());
-		NbtWrap.putInt(tag, "y", pos.getY());
-		NbtWrap.putInt(tag, "z", pos.getZ());
+		tag.putInt("x", pos.getX());
+		tag.putInt("y", pos.getY());
+		tag.putInt("z", pos.getZ());
 		return tag;
+	}
+
+	public static @Nonnull NbtCompound putVec2fCodec(@Nonnull NbtCompound tag, @Nonnull Vec2f pos, String key)
+	{
+		tag.put(key, Vec2f.CODEC, pos);
+		return tag;
+	}
+
+	public static @Nonnull NbtCompound putVec3iCodec(@Nonnull NbtCompound tag, @Nonnull Vec3i pos, String key)
+	{
+		tag.put(key, Vec3i.CODEC, pos);
+		return tag;
+	}
+
+	public static @Nonnull NbtCompound putVec3dCodec(@Nonnull NbtCompound tag, @Nonnull Vec3d pos, String key)
+	{
+		tag.put(key, Vec3d.CODEC, pos);
+		return tag;
+	}
+
+	public static @Nonnull NbtCompound putPosCodec(@Nonnull NbtCompound tag, @Nonnull BlockPos pos, String key)
+	{
+		tag.put(key, BlockPos.CODEC, pos);
+		return tag;
+	}
+
+	public static Vec2f getVec2fCodec(@Nonnull NbtCompound tag, String key)
+	{
+		return tag.get(key, Vec2f.CODEC).orElse(Vec2f.ZERO);
+	}
+
+	public static Vec3i getVec3iCodec(@Nonnull NbtCompound tag, String key)
+	{
+		return tag.get(key, Vec3i.CODEC).orElse(Vec3i.ZERO);
+	}
+
+	public static Vec3d getVec3dCodec(@Nonnull NbtCompound tag, String key)
+	{
+		return tag.get(key, Vec3d.CODEC).orElse(Vec3d.ZERO);
+	}
+
+	public static BlockPos getPosCodec(@Nonnull NbtCompound tag, String key)
+	{
+		return tag.get(key, BlockPos.CODEC).orElse(BlockPos.ORIGIN);
 	}
 
 	public static @Nonnull NbtCompound writeBlockPosToTag(@Nonnull BlockPos pos, @Nonnull NbtCompound tag)
@@ -137,9 +224,9 @@ public class NbtUtils
 
 	public static @Nonnull NbtCompound writeBlockPos(@Nonnull BlockPos pos, @Nonnull NbtCompound tag)
 	{
-		NbtWrap.putInt(tag, "x", pos.getX());
-		NbtWrap.putInt(tag, "y", pos.getY());
-		NbtWrap.putInt(tag, "z", pos.getZ());
+		tag.putInt("x", pos.getX());
+		tag.putInt("y", pos.getY());
+		tag.putInt("z", pos.getZ());
 
 		return tag;
 	}
@@ -148,10 +235,10 @@ public class NbtUtils
 	{
 		NbtList tagList = new NbtList();
 
-		NbtWrap.addTag(tagList, NbtWrap.asIntTag(pos.getX()));
-		NbtWrap.addTag(tagList, NbtWrap.asIntTag(pos.getY()));
-		NbtWrap.addTag(tagList, NbtWrap.asIntTag(pos.getZ()));
-		NbtWrap.putTag(tag, tagName, tagList);
+		tagList.add(NbtInt.of(pos.getX()));
+		tagList.add(NbtInt.of(pos.getY()));
+		tagList.add(NbtInt.of(pos.getZ()));
+		tag.put(tagName, tagList);
 
 		return tag;
 	}
@@ -170,7 +257,7 @@ public class NbtUtils
 	{
 		int[] arr = new int[]{pos.getX(), pos.getY(), pos.getZ()};
 
-		NbtWrap.putIntArray(tag, tagName, arr);
+		tag.putIntArray(tagName, arr);
 
 		return tag;
 	}
@@ -179,11 +266,11 @@ public class NbtUtils
 	public static BlockPos readBlockPos(@Nullable NbtCompound tag)
 	{
 		if (tag != null &&
-			NbtWrap.containsInt(tag, "x") &&
-			NbtWrap.containsInt(tag, "y") &&
-			NbtWrap.containsInt(tag, "z"))
+			tag.contains("x") &&
+			tag.contains("y") &&
+			tag.contains("z"))
 		{
-			return new BlockPos(NbtWrap.getInt(tag, "x"), NbtWrap.getInt(tag, "y"), NbtWrap.getInt(tag, "z"));
+			return new BlockPos(tag.getInt("x", 0), tag.getInt("y", 0), tag.getInt("z", 0));
 		}
 
 		return null;
@@ -199,11 +286,11 @@ public class NbtUtils
 	public static Vec3i readVec3iFromTag(@Nullable NbtCompound tag)
 	{
 		if (tag != null &&
-			NbtWrap.containsInt(tag, "x") &&
-			NbtWrap.containsInt(tag, "y") &&
-			NbtWrap.containsInt(tag, "z"))
+			tag.contains("x") &&
+			tag.contains("y") &&
+			tag.contains("z"))
 		{
-			return new Vec3i(NbtWrap.getInt(tag, "x"), NbtWrap.getInt(tag, "y"), NbtWrap.getInt(tag, "z"));
+			return new Vec3i(tag.getInt("x", 0), tag.getInt("y", 0), tag.getInt("z", 0));
 		}
 
 		return null;
@@ -212,13 +299,13 @@ public class NbtUtils
 	@Nullable
 	public static BlockPos readBlockPosFromListTag(@Nonnull NbtCompound tag, String tagName)
 	{
-		if (NbtWrap.containsList(tag, tagName))
+		if (tag.contains(tagName))
 		{
-			NbtList tagList = NbtWrap.getList(tag, tagName, Constants.NBT.TAG_INT);
+			NbtList tagList = tag.getListOrEmpty(tagName);
 
-			if (NbtWrap.getListSize(tagList) == 3)
+			if (tagList.size() == 3)
 			{
-				return new BlockPos(NbtWrap.getIntAt(tagList, 0), NbtWrap.getIntAt(tagList, 1), NbtWrap.getIntAt(tagList, 2));
+				return new BlockPos(tagList.getInt(0, 0), tagList.getInt(1, 0), tagList.getInt(2, 0));
 			}
 		}
 
@@ -234,9 +321,9 @@ public class NbtUtils
 	@Nullable
 	public static BlockPos readBlockPosFromArrayTag(@Nonnull NbtCompound tag, String tagName)
 	{
-		if (NbtWrap.containsIntArray(tag, tagName))
+		if (tag.contains(tagName))
 		{
-			int[] pos = NbtWrap.getIntArray(tag, tagName);
+			int[] pos = tag.getIntArray(tagName).orElse(new int[0]);
 
 			if (pos.length == 3)
 			{
@@ -256,9 +343,9 @@ public class NbtUtils
 	@Nullable
 	public static Vec3i readVec3iFromIntArrayTag(@Nonnull NbtCompound tag, String tagName)
 	{
-		if (NbtWrap.containsIntArray(tag, tagName))
+		if (tag.contains(tagName))
 		{
-			int[] pos = NbtWrap.getIntArray(tag, tagName);
+			int[] pos = tag.getIntArray(tagName).orElse(new int[0]);
 
 			if (pos.length == 3)
 			{
@@ -276,9 +363,9 @@ public class NbtUtils
 
 	public static @Nonnull NbtCompound removeBlockPosFromTag(@Nonnull NbtCompound tag)
 	{
-		NbtWrap.remove(tag, "x");
-		NbtWrap.remove(tag, "y");
-		NbtWrap.remove(tag, "z");
+		tag.remove("x");
+		tag.remove("y");
+		tag.remove("z");
 
 		return tag;
 	}
@@ -302,10 +389,10 @@ public class NbtUtils
 	{
 		NbtList posList = new NbtList();
 
-		NbtWrap.addTag(posList, NbtWrap.asDoubleTag(pos.x));
-		NbtWrap.addTag(posList, NbtWrap.asDoubleTag(pos.y));
-		NbtWrap.addTag(posList, NbtWrap.asDoubleTag(pos.z));
-		NbtWrap.putTag(tag, tagName, posList);
+		posList.add(NbtDouble.of(pos.x));
+		posList.add(NbtDouble.of(pos.y));
+		posList.add(NbtDouble.of(pos.z));
+		tag.put(tagName, posList);
 
 		return tag;
 	}
@@ -314,11 +401,11 @@ public class NbtUtils
 	public static Vec3d readVec3d(@Nullable NbtCompound tag)
 	{
 		if (tag != null &&
-			NbtWrap.containsDouble(tag, "dx") &&
-			NbtWrap.containsDouble(tag, "dy") &&
-			NbtWrap.containsDouble(tag, "dz"))
+			tag.contains("dx") &&
+			tag.contains("dy") &&
+			tag.contains("dz"))
 		{
-			return new Vec3d(NbtWrap.getDouble(tag, "dx"), NbtWrap.getDouble(tag, "dy"), NbtWrap.getDouble(tag, "dz"));
+			return new Vec3d(tag.getDouble("dx", 0d), tag.getDouble("dy", 0d), tag.getDouble("dz", 0d));
 		}
 
 		return null;
@@ -339,13 +426,13 @@ public class NbtUtils
 	@Nullable
 	public static Vec3d readVec3dFromListTag(@Nullable NbtCompound tag, String tagName)
 	{
-		if (tag != null && NbtWrap.containsList(tag, tagName))
+		if (tag != null && tag.contains(tagName))
 		{
-			NbtList tagList = NbtWrap.getList(tag, tagName, Constants.NBT.TAG_DOUBLE);
+			NbtList tagList = tag.getListOrEmpty(tagName);
 
-			if (NbtWrap.getListStoredType(tagList) == Constants.NBT.TAG_DOUBLE && NbtWrap.getListSize(tagList) == 3)
+			if (tagList.getType() == Constants.NBT.TAG_DOUBLE && tagList.size() == 3)
 			{
-				return new Vec3d(NbtWrap.getDoubleAt(tagList, 0), NbtWrap.getDoubleAt(tagList, 1), NbtWrap.getDoubleAt(tagList, 2));
+				return new Vec3d(tagList.getDouble(0, 0d), tagList.getDouble(1, 0d), tagList.getDouble(2, 0d));
 			}
 		}
 
@@ -361,14 +448,7 @@ public class NbtUtils
 	@Nullable
 	public static BlockPos readAttachedPosFromTag(@Nonnull NbtCompound tag)
 	{
-		if (tag.contains("TileX", Constants.NBT.TAG_INT) &&
-			tag.contains("TileY", Constants.NBT.TAG_INT) &&
-			tag.contains("TileZ", Constants.NBT.TAG_INT))
-		{
-			return new BlockPos(tag.getInt("TileX"), tag.getInt("TileY"), tag.getInt("TileZ"));
-		}
-
-		return null;
+		return readPrefixedPosFromTag(tag, "Tile");
 	}
 
 	/**
@@ -380,13 +460,49 @@ public class NbtUtils
 	 */
 	public static @Nonnull NbtCompound writeAttachedPosToTag(@Nonnull BlockPos pos, @Nonnull NbtCompound tag)
 	{
-		tag.putInt("TileX", pos.getX());
-		tag.putInt("TileY", pos.getY());
-		tag.putInt("TileZ", pos.getZ());
+		return writePrefixedPosToTag(pos, tag, "Tile");
+	}
+
+	/**
+	 * Read a prefixed BlockPos from NBT.
+	 *
+	 * @param tag ()
+	 * @param pre ()
+	 * @return ()
+	 */
+	@Nullable
+	public static BlockPos readPrefixedPosFromTag(@Nonnull NbtCompound tag, String pre)
+	{
+		if (tag.contains(pre+"X") &&
+			tag.contains(pre+"Y") &&
+			tag.contains(pre+"Z"))
+		{
+			return new BlockPos(tag.getInt(pre+"X", 0), tag.getInt(pre+"Y", 0), tag.getInt(pre+"Z", 0));
+		}
+
+		return null;
+	}
+
+	/**
+	 * Write a prefixed BlockPos to NBT.
+	 *
+	 * @param pos ()
+	 * @param tag ()
+	 * @param pre ()
+	 * @return ()
+	 */
+	public static @Nonnull NbtCompound writePrefixedPosToTag(@Nonnull BlockPos pos, @Nonnull NbtCompound tag, String pre)
+	{
+		tag.putInt(pre+"X", pos.getX());
+		tag.putInt(pre+"Y", pos.getY());
+		tag.putInt(pre+"Z", pos.getZ());
 
 		return tag;
 	}
 
+	/**
+	 * See {@link #readNbtFromFileAsPath}
+	 */
 	@Deprecated(forRemoval = true)
 	@Nullable
 	public static NbtCompound readNbtFromFile(@Nonnull File file)
@@ -400,6 +516,9 @@ public class NbtUtils
 		return readNbtFromFileAsPath(file, NbtSizeTracker.ofUnlimitedBytes());
 	}
 
+	/**
+	 * See {@link #readNbtFromFileAsPath}
+	 */
 	@Deprecated(forRemoval = true)
 	@Nullable
 	public static NbtCompound readNbtFromFile(@Nonnull File file, NbtSizeTracker tracker)

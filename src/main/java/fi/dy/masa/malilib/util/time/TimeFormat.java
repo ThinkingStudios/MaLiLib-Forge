@@ -3,6 +3,11 @@ package fi.dy.masa.malilib.util.time;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import com.google.common.collect.ImmutableList;
+import io.netty.buffer.ByteBuf;
+
+import net.minecraft.network.codec.PacketCodec;
+import net.minecraft.network.codec.PacketCodecs;
+import net.minecraft.util.StringIdentifiable;
 
 import fi.dy.masa.malilib.config.IConfigOptionListEntry;
 import fi.dy.masa.malilib.util.StringUtils;
@@ -11,7 +16,7 @@ import fi.dy.masa.malilib.util.time.formatter.TimeFmt;
 /**
  * Ported from CoreLib by Sakura Ryoko
  */
-public enum TimeFormat implements IConfigOptionListEntry
+public enum TimeFormat implements IConfigOptionListEntry, StringIdentifiable
 {
     REGULAR     ("regular",    TimeFmtType.REGULAR,     "malilib.gui.label.time_format.regular"),
     ISO_LOCAL   ("iso_local",  TimeFmtType.ISO_LOCAL,   "malilib.gui.label.time_format.iso_local"),
@@ -20,6 +25,8 @@ public enum TimeFormat implements IConfigOptionListEntry
     RFC1123     ("rfc1123",    TimeFmtType.RFC1123,     "malilib.gui.label.time_format.rfc1123"),
     ;
 
+    public static final StringIdentifiable.EnumCodec<TimeFormat> CODEC = StringIdentifiable.createCodec(TimeFormat::values);
+    public static final PacketCodec<ByteBuf, TimeFormat> PACKET_CODEC = PacketCodecs.STRING.xmap(TimeFormat::fromStringStatic, TimeFormat::asString);
     public static final ImmutableList<TimeFormat> VALUES = ImmutableList.copyOf(values());
 
     private final String configString;
@@ -31,6 +38,12 @@ public enum TimeFormat implements IConfigOptionListEntry
         this.configString = name;
         this.type = type;
         this.translationKey = translationKey;
+    }
+
+    @Override
+    public String asString()
+    {
+        return this.configString;
     }
 
     @Override

@@ -7,13 +7,15 @@ import net.minecraft.block.Block;
 import net.minecraft.data.DataOutput;
 import net.minecraft.data.tag.ItemTagProvider;
 import net.minecraft.data.tag.TagProvider;
+import net.minecraft.item.Item;
 import net.minecraft.registry.RegistryWrapper;
+
 
 public class ItemTagDataGenerator extends ItemTagProvider
 {
-    public ItemTagDataGenerator(DataOutput output, CompletableFuture<RegistryWrapper.WrapperLookup> completableFuture, CompletableFuture<TagProvider.TagLookup<Block>> blockTagLookupFuture)
+    public ItemTagDataGenerator(DataOutput output, CompletableFuture<RegistryWrapper.WrapperLookup> completableFuture, CompletableFuture<TagProvider.TagLookup<Item>> parentTagLookupFuture, CompletableFuture<TagProvider.TagLookup<Block>> blockTagLookupFuture)
     {
-        super(output, completableFuture, blockTagLookupFuture, MaLiLibReference.MOD_ID);
+        super(output, completableFuture, parentTagLookupFuture, blockTagLookupFuture, MaLiLibReference.MOD_ID);
     }
 
     @Override

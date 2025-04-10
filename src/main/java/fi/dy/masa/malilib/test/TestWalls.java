@@ -1,221 +1,293 @@
 package fi.dy.masa.malilib.test;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-import fi.dy.masa.malilib.MaLiLibConfigs;
-import fi.dy.masa.malilib.render.RenderUtils;
-import fi.dy.masa.malilib.util.Color4f;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gl.*;
-import net.minecraft.client.render.*;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.profiler.Profiler;
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.ApiStatus;
 import org.joml.Matrix4f;
 import org.joml.Matrix4fStack;
 
+import com.mojang.blaze3d.buffers.BufferUsage;
+import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gl.RenderPipelines;
+import net.minecraft.client.render.BufferBuilder;
+import net.minecraft.client.render.BuiltBuffer;
+import net.minecraft.client.render.Camera;
+import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.entity.Entity;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Box;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.profiler.Profiler;
+
+import fi.dy.masa.malilib.MaLiLib;
+import fi.dy.masa.malilib.MaLiLibConfigs;
+import fi.dy.masa.malilib.render.MaLiLibPipelines;
+import fi.dy.masa.malilib.render.RenderContext;
+import fi.dy.masa.malilib.render.RenderUtils;
+import fi.dy.masa.malilib.util.data.Color4f;
+
 @ApiStatus.Experimental
 public class TestWalls implements AutoCloseable
 {
-    protected static final Tessellator TESSELLATOR_1 = new Tessellator(2097152);
-    protected static final Tessellator TESSELLATOR_2 = new Tessellator(2097152);
-    protected static BufferBuilder BUFFER_1;
-    protected static BufferBuilder BUFFER_2;
-    protected static VertexBuffer VERTEX_1;
-    protected static VertexBuffer VERTEX_2;
-    protected static ShaderProgramKey SHADER_1 = ShaderProgramKeys.POSITION_COLOR;
-    protected static ShaderProgramKey SHADER_2 = ShaderProgramKeys.POSITION_COLOR;
-    protected static boolean renderThrough = false;
-    protected static boolean useCulling = false;
-    protected static float glLineWidth = 1f;
+    public static final TestWalls INSTANCE = new TestWalls();
 
-    protected static BlockPos lastPos = BlockPos.ORIGIN;
-    private static Vec3d updateCameraPos = Vec3d.ZERO;
-    private static boolean hasData = false;
+    protected boolean renderThrough;
+    protected boolean useCulling;
+    protected float glLineWidth;
 
-    public static Vec3d getUpdatePosition()
+    private List<Box> boxes;
+    private BlockPos center;
+    protected BlockPos lastUpdatePos;
+    private Vec3d updateCameraPos;
+    private boolean hasData;
+    private final boolean shouldResort;
+    private final boolean needsUpdate;
+    private final int updateDistance = 48;
+
+    public TestWalls()
+    {
+        this.renderThrough = false;
+        this.useCulling = false;
+        this.glLineWidth = 3.0f;
+        this.lastUpdatePos = null;
+        this.updateCameraPos = Vec3d.ZERO;
+        this.hasData = false;
+        this.shouldResort = false;
+        this.needsUpdate = true;
+        this.boxes = new ArrayList<>();
+        this.center = null;
+    }
+
+    public Vec3d getUpdatePosition()
     {
         return updateCameraPos;
     }
 
-    public static void setUpdatePosition(Vec3d cameraPosition)
+    public void setUpdatePosition(Vec3d cameraPosition)
     {
-        updateCameraPos = cameraPosition;
+        this.updateCameraPos = cameraPosition;
     }
 
-    public static boolean needsUpdate(BlockPos pos)
+    public boolean needsUpdate(Entity cameraEntity, MinecraftClient mc)
     {
-        if (lastPos.equals(BlockPos.ORIGIN))
-        {
-            lastPos = pos;
-            return true;
-        }
-        else if (!pos.equals(BlockPos.ORIGIN) &&
-                !pos.equals(lastPos))
-        {
-            lastPos = pos;
-            return true;
-        }
-
-        return false;
+        return this.needsUpdate || this.lastUpdatePos == null ||
+                Math.abs(cameraEntity.getX() - this.lastUpdatePos.getX()) > this.updateDistance ||
+                Math.abs(cameraEntity.getZ() - this.lastUpdatePos.getZ()) > this.updateDistance ||
+                Math.abs(cameraEntity.getY() - this.lastUpdatePos.getY()) > this.updateDistance;
     }
 
-    public static void update(Camera camera, MinecraftClient mc)
+    public void update(Camera camera, Entity entity, MinecraftClient mc)
     {
-        Color4f color = MaLiLibConfigs.Test.TEST_CONFIG_COLOR.getColor();
-
         if (mc.world == null || mc.player == null)
         {
             return;
         }
-        BlockPos pos = camera.getBlockPos();
+
+        int radius = MaLiLibConfigs.Test.TEST_CONFIG_INTEGER.getIntegerValue();
         Vec3d vec = camera.getPos();
-        int radius = 5;
+        BlockPos pos = entity.getBlockPos();
+        BlockPos testPos = pos.add(2, 0, 2);
+        Pair<BlockPos, BlockPos> corners = TestUtils.getSpawnChunkCorners(testPos, radius, mc.world);
+        this.boxes = TestUtils.calculateBoxes(corners.getLeft(), corners.getRight());
 
-        if (VERTEX_1 == null || VERTEX_1.isClosed())
+        if (!this.boxes.isEmpty())
         {
-            VERTEX_1 = new VertexBuffer(GlUsage.STATIC_WRITE);
+            this.center = testPos;
+            this.hasData = true;
         }
-        if (VERTEX_2 == null || VERTEX_2.isClosed())
+        else
         {
-            VERTEX_2 = new VertexBuffer(GlUsage.STATIC_WRITE);
+            this.center = null;
+            this.hasData = false;
         }
-
-        BUFFER_1 = TESSELLATOR_1.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
-        BUFFER_2 = TESSELLATOR_2.begin(VertexFormat.DrawMode.DEBUG_LINES, VertexFormats.POSITION_COLOR);
-
-        //RenderUtils.drawBlockBoundingBoxOutlinesBatchedLines(pos, vec, color, 0.001, BUFFER_2);
-        //TestUtils.drawBlockBoundingBoxSidesBatchedQuads(pos, vec, color, 0.001, BUFFER_1);
-
-        Pair<BlockPos, BlockPos> corners;
-        corners = TestUtils.getSpawnChunkCorners(pos, radius, mc.world);
-        TestUtils.renderWallsWithLines(corners.getLeft(), corners.getRight(), vec, 16, 16, true, color, BUFFER_1, BUFFER_2);
-
-        uploadData(BUFFER_1, VERTEX_1);
-        uploadData(BUFFER_2, VERTEX_2);
 
         setUpdatePosition(vec);
     }
 
-    private static void uploadData(BufferBuilder bufferBuilder, VertexBuffer vertexBuffer)
+    public void render(Camera camera, Matrix4f matrix4f, Matrix4f projMatrix, MinecraftClient mc, Profiler profiler)
     {
-        BuiltBuffer builtBuffer;
+        profiler.push("render_test_walls");
 
-        if (vertexBuffer.isClosed())
+        if (this.hasData && !this.boxes.isEmpty() && this.center != null)
         {
-            return;
+            this.renderQuads(camera, mc, profiler);
+            this.renderOutlines(camera, mc, profiler);
+            this.boxes.clear();
+            this.center = null;
+            this.hasData = false;
         }
-        try
-        {
-            builtBuffer = bufferBuilder.endNullable();
-
-            if (builtBuffer != null)
-            {
-                hasData = true;
-                vertexBuffer.bind();
-                vertexBuffer.upload(builtBuffer);
-                VertexBuffer.unbind();
-                builtBuffer.close();
-            }
-        }
-        catch (Exception ignored) { }
-    }
-
-    protected static void preRender()
-    {
-        RenderSystem.lineWidth(glLineWidth);
-
-        if (renderThrough)
-        {
-            RenderSystem.disableDepthTest();
-            //RenderSystem.depthMask(false);
-        }
-
-        if (useCulling)
-        {
-            RenderSystem.enableCull();
-        }
-        else
-        {
-            RenderSystem.disableCull();
-        }
-    }
-
-    protected static void postRender()
-    {
-        if (renderThrough)
-        {
-            RenderSystem.enableDepthTest();
-            //RenderSystem.depthMask(true);
-        }
-
-        RenderSystem.enableCull();
-    }
-
-    public static void draw(Vec3d cameraPos, Matrix4f matrix4f, Matrix4f projMatrix, MinecraftClient mc, Profiler profiler)
-    {
-        profiler.push(() -> "TestWalls#draw()");
-
-        RenderSystem.disableCull();
-        RenderSystem.enableDepthTest();
-        RenderSystem.depthMask(false);
-        RenderSystem.polygonOffset(-3f, -3f);
-        RenderSystem.enablePolygonOffset();
-
-        RenderUtils.setupBlend();
-        RenderUtils.color(1f, 1f, 1f, 1f);
-
-        Matrix4fStack matrix4fstack = RenderSystem.getModelViewStack();
-
-        Vec3d updatePos = getUpdatePosition();
-
-        matrix4fstack.pushMatrix();
-        matrix4fstack.translate((float) (updatePos.x - cameraPos.x), (float) (updatePos.y - cameraPos.y), (float) (updatePos.z - cameraPos.z));
-        drawData(matrix4f, projMatrix);
-        matrix4fstack.popMatrix();
-
-        RenderSystem.polygonOffset(0f, 0f);
-        RenderSystem.disablePolygonOffset();
-        RenderUtils.color(1f, 1f, 1f, 1f);
-        RenderSystem.disableBlend();
-        RenderSystem.enableDepthTest();
-        RenderSystem.enableCull();
-        RenderSystem.depthMask(true);
 
         profiler.pop();
     }
 
-    private static void drawData(Matrix4f matrix4f, Matrix4f projMatrix)
+    private void renderQuads(Camera camera, MinecraftClient mc, Profiler profiler)
     {
-        if (hasData)
+        if (mc.world == null || mc.player == null ||
+            !this.hasData || this.boxes.isEmpty())
         {
-            preRender();
-            drawInternal(matrix4f, projMatrix, VERTEX_1, SHADER_1);
-            drawInternal(matrix4f, projMatrix, VERTEX_2, SHADER_2);
-            postRender();
+            return;
         }
+
+        profiler.push("quads");
+        Color4f quadsColor = MaLiLibConfigs.Test.TEST_CONFIG_COLOR.getColor();
+        Vec3d cameraPos = camera.getPos();
+
+        // MaLiLibPipelines.POSITION_COLOR_TRANSLUCENT_NO_DEPTH_NO_CULL
+        RenderContext ctx = new RenderContext(() -> "TestWalls Quads", MaLiLibPipelines.MINIHUD_SHAPE_OFFSET, BufferUsage.STATIC_WRITE);
+        BufferBuilder builder = ctx.getBuilder();
+        Matrix4fStack matrix4fstack = RenderSystem.getModelViewStack();
+//        MatrixStack matrices = new MatrixStack();
+        Vec3d updatePos = this.getUpdatePosition();
+
+        this.preRender();
+        matrix4fstack.pushMatrix();
+        matrix4fstack.translate((float) (updatePos.x - cameraPos.x), (float) (updatePos.y - cameraPos.y), (float) (updatePos.z - cameraPos.z));
+
+//        matrices.push();
+//        MatrixStack.Entry e = matrices.peek();
+
+        RenderUtils.drawBlockBoundingBoxSidesBatchedQuads(this.center, cameraPos, quadsColor, 0.001, builder);
+
+        for (Box entry : this.boxes)
+        {
+            TestUtils.renderWallQuads(entry, cameraPos, quadsColor, builder);
+        }
+
+//        matrices.pop();
+
+        try
+        {
+//            ctx.offset(new float[]{-3f, 0f, -3f});
+            BuiltBuffer meshData = builder.endNullable();
+
+            if (meshData != null)
+            {
+                if (this.shouldResort)
+                {
+                    ctx.upload(meshData, true);
+                    ctx.startResorting(meshData, ctx.createVertexSorter(camera));
+                }
+                else
+                {
+                    ctx.upload(meshData, false);
+                }
+
+                ctx.drawPost();
+                meshData.close();
+            }
+
+            ctx.close();
+        }
+        catch (Exception err)
+        {
+            MaLiLib.LOGGER.error("TestWalls#renderQuads(): Exception; {}", err.getMessage());
+        }
+
+        this.postRender();
+        matrix4fstack.popMatrix();
+        profiler.pop();
     }
 
-    private static void drawInternal(Matrix4f matrix4f, Matrix4f projMatrix, VertexBuffer vertexBuffer, ShaderProgramKey shaderKey)
+    private void renderOutlines(Camera camera, MinecraftClient mc, Profiler profiler)
     {
-        if (hasData)
+        if (mc.world == null || mc.player == null)
         {
-            ShaderProgram shader = RenderSystem.setShader(shaderKey);
-            vertexBuffer.bind();
-            vertexBuffer.draw(matrix4f, projMatrix, shader);
-            VertexBuffer.unbind();
+            return;
         }
+
+        profiler.push("outlines");
+        Color4f linesColor = Color4f.WHITE;
+        Vec3d cameraPos = camera.getPos();
+
+        // RenderPipelines.LINES
+        RenderContext ctx = new RenderContext(() -> "TestWalls Lines", RenderPipelines.LINES, BufferUsage.STATIC_WRITE);
+        BufferBuilder builder = ctx.getBuilder();
+        Matrix4fStack matrix4fstack = RenderSystem.getModelViewStack();
+        MatrixStack matrices = new MatrixStack();
+        Vec3d updatePos = this.getUpdatePosition();
+
+//        this.preRender();
+        matrix4fstack.pushMatrix();
+        matrix4fstack.translate((float) (updatePos.x - cameraPos.x), (float) (updatePos.y - cameraPos.y), (float) (updatePos.z - cameraPos.z));
+        matrices.push();
+
+        MatrixStack.Entry e = matrices.peek();
+        RenderUtils.drawBlockBoundingBoxOutlinesBatchedLines(this.center, cameraPos, linesColor, 0.001, builder, e);
+
+        for (Box entry : this.boxes)
+        {
+            TestUtils.renderWallOutlines(entry, 16, 16, true, cameraPos, linesColor, builder, e);
+        }
+
+        matrices.pop();
+        matrix4fstack.popMatrix();
+
+        try
+        {
+            BuiltBuffer meshData = builder.endNullable();
+
+            if (meshData != null)
+            {
+                ctx.lineWidth(this.glLineWidth);
+                ctx.draw(meshData, false, true);
+                meshData.close();
+            }
+
+            ctx.close();
+        }
+        catch (Exception err)
+        {
+            MaLiLib.LOGGER.error("TestWalls#renderOutlines(): Exception; {}", err.getMessage());
+        }
+
+//        this.postRender();
+        profiler.pop();
     }
 
-    public static void clear()
+    protected void preRender()
     {
-        lastPos = BlockPos.ORIGIN;
-        VERTEX_1.close();
-        VERTEX_2.close();
-        TESSELLATOR_1.clear();
-        TESSELLATOR_2.clear();
-        hasData = false;
+//        RenderUtils.polygonOffset(-3f, -3f);
+//        RenderUtils.polygonOffset(true);
+//        RenderUtils.blend(true);
+//        RenderSystem.lineWidth(this.glLineWidth);
+
+//        if (this.renderThrough)
+//        {
+//            RenderUtils.depthTest(false);
+//        }
+//        else
+//        {
+//            RenderUtils.depthMask(true);
+//        }
+
+//        RenderUtils.culling(this.useCulling);
+    }
+
+    protected void postRender()
+    {
+//        if (this.renderThrough)
+//        {
+//            RenderUtils.depthTest(true);
+//        }
+//        else
+//        {
+//            RenderUtils.depthMask(false);
+//        }
+
+//        RenderUtils.culling(!this.useCulling);
+//        RenderUtils.polygonOffset(0f, 0f);
+//        RenderUtils.polygonOffset(false);
+//        RenderUtils.color(1f, 1f, 1f, 1f);
+//        RenderUtils.blend(false);
+    }
+
+    public void clear()
+    {
+        this.lastUpdatePos = BlockPos.ORIGIN;
+        this.hasData = false;
+        this.boxes.clear();
     }
 
     @Override

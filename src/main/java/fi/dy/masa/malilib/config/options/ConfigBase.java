@@ -16,9 +16,9 @@ public abstract class ConfigBase<T extends IConfigBase> implements IConfigBase, 
 {
     private final ConfigType type;
     private final String name;
-    private String prettyName;
-    private String comment;
-    private String translatedName;
+    protected String prettyName;
+    protected String comment;
+    protected String translatedName;
     private String translationPrefix = "";
     @Nullable
     private IValueChangeCallback<T> callback;

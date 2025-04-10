@@ -3,6 +3,8 @@ package fi.dy.masa.malilib.util.time;
 import javax.annotation.Nullable;
 import com.google.common.collect.ImmutableList;
 
+import net.minecraft.util.StringIdentifiable;
+
 import fi.dy.masa.malilib.config.IConfigOptionListEntry;
 import fi.dy.masa.malilib.util.StringUtils;
 import fi.dy.masa.malilib.util.time.formatter.DurationFmt;
@@ -10,7 +12,7 @@ import fi.dy.masa.malilib.util.time.formatter.DurationFmt;
 /**
  * Ported from CoreLib by Sakura Ryoko
  */
-public enum DurationFormat implements IConfigOptionListEntry
+public enum DurationFormat implements IConfigOptionListEntry, StringIdentifiable
 {
     REGULAR      ("regular",      DurationFmtType.REGULAR,      "malilib.gui.label.duration_format.regular"),
     PRETTY       ("pretty",       DurationFmtType.PRETTY,       "malilib.gui.label.duration_format.pretty"),
@@ -18,10 +20,11 @@ public enum DurationFormat implements IConfigOptionListEntry
     FORMATTED    ("formatted",    DurationFmtType.FORMATTED,    "malilib.gui.label.duration_format.formatted"),
     ;
 
+    public static final StringIdentifiable.EnumCodec<DurationFormat> CODEC = StringIdentifiable.createCodec(DurationFormat::values);
     public static final ImmutableList<DurationFormat> VALUES = ImmutableList.copyOf(values());
 
-    final String configString;
-    final DurationFmtType<?> type;
+    private final String configString;
+    private final DurationFmtType<?> type;
     private final String translationKey;
 
     DurationFormat(String name, DurationFmtType<?> type, String translationKey)
@@ -29,6 +32,12 @@ public enum DurationFormat implements IConfigOptionListEntry
         this.configString = name;
         this.type = type;
         this.translationKey = translationKey;
+    }
+
+    @Override
+    public String asString()
+    {
+        return this.configString;
     }
 
     @Override

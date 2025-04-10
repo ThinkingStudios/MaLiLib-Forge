@@ -1,21 +1,38 @@
 package fi.dy.masa.malilib.hotkeys;
 
+import com.google.common.collect.ImmutableList;
+import io.netty.buffer.ByteBuf;
+
+import net.minecraft.network.codec.PacketCodec;
+import net.minecraft.network.codec.PacketCodecs;
+import net.minecraft.util.StringIdentifiable;
+
 import fi.dy.masa.malilib.config.IConfigOptionListEntry;
 import fi.dy.masa.malilib.util.StringUtils;
 
-public enum KeyAction implements IConfigOptionListEntry
+public enum KeyAction implements IConfigOptionListEntry, StringIdentifiable
 {
     PRESS   ("press",   "malilib.label.key_action.press"),
     RELEASE ("release", "malilib.label.key_action.release"),
     BOTH    ("both",    "malilib.label.key_action.both");
 
+    public static final StringIdentifiable.EnumCodec<KeyAction> CODEC = StringIdentifiable.createCodec(KeyAction::values);
+    public static final PacketCodec<ByteBuf, KeyAction> PACKET_CODEC = PacketCodecs.STRING.xmap(KeyAction::fromStringStatic, KeyAction::asString);
+    public static final ImmutableList<KeyAction> VALUES = ImmutableList.copyOf(values());
+
     private final String configString;
     private final String translationKey;
 
-    private KeyAction(String configString, String translationKey)
+    KeyAction(String configString, String translationKey)
     {
         this.configString = configString;
         this.translationKey = translationKey;
+    }
+
+    @Override
+    public String asString()
+    {
+        return this.configString;
     }
 
     @Override

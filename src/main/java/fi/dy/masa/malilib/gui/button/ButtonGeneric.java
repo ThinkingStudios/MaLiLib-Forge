@@ -3,7 +3,6 @@ package fi.dy.masa.malilib.gui.button;
 import javax.annotation.Nullable;
 import org.apache.commons.lang3.StringUtils;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.RenderLayer;
 
@@ -56,7 +55,6 @@ public class ButtonGeneric extends ButtonBase
     public ButtonGeneric(int x, int y, IGuiIcon icon, String... hoverStrings)
     {
         this(x, y, icon.getWidth(), icon.getHeight(), "", icon, hoverStrings);
-
         this.setRenderDefaultBackground(false);
     }
 
@@ -94,6 +92,8 @@ public class ButtonGeneric extends ButtonBase
     @Override
     public void render(int mouseX, int mouseY, boolean selected, DrawContext drawContext)
     {
+        super.render(mouseX, mouseY, selected, drawContext);
+
         if (this.visible)
         {
             this.hovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
@@ -112,11 +112,9 @@ public class ButtonGeneric extends ButtonBase
                 int y = this.y + (this.height - this.icon.getHeight()) / 2;
                 int u = this.icon.getU() + this.getTextureOffset(this.hovered) * this.icon.getWidth(); // FIXME: What happened here.
 
-                this.bindTexture(this.icon.getTexture());
-                RenderSystem.enableDepthTest();
-                RenderUtils.drawTexturedRect(this.icon.getTexture(), x, y, u, this.icon.getV(), this.icon.getWidth(), this.icon.getHeight(), drawContext);
-                RenderSystem.disableDepthTest();
-                //RenderUtils.forceDraw(drawContext);
+                //RenderUtils.depthTest(true);
+                RenderUtils.drawTexturedRectAndDraw(this.icon.getTexture(), x, y, u, this.icon.getV(), this.icon.getWidth(), this.icon.getHeight(), drawContext);
+                //RenderUtils.depthTest(false);
             }
 
             if (StringUtils.isBlank(this.displayString) == false)

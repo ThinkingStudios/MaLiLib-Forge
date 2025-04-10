@@ -168,12 +168,14 @@ public abstract class WidgetContainer extends WidgetBase
     @Override
     public void render(int mouseX, int mouseY, boolean selected, DrawContext drawContext)
     {
+        super.render(mouseX, mouseY, selected, drawContext);
         this.drawSubWidgets(mouseX, mouseY, drawContext);
     }
 
     @Override
     public void postRenderHovered(int mouseX, int mouseY, boolean selected, DrawContext drawContext)
     {
+        super.postRenderHovered(mouseX, mouseY, selected, drawContext);
         this.drawHoveredSubWidget(mouseX, mouseY, drawContext);
     }
 

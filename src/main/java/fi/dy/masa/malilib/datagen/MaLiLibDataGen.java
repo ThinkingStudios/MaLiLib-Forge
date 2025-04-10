@@ -1,18 +1,19 @@
 package fi.dy.masa.malilib.datagen;
 
+import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
-import org.thinkingstudio.mafglib.loader.entrypoints.DataGeneratorEntrypoint;
 
-public class MaLiLibDataGen implements DataGeneratorEntrypoint
+public class MaLiLibDataGen
 {
-    @Override
-    public void onInitializeDataGenerator(GatherDataEvent.Client event)
+    public static void onInitializeDataGenerator(IEventBus modEventBus)
     {
-        var generator = event.getGenerator();
-        var output = generator.getPackOutput();
-        var lookupProvider = event.getLookupProvider();
+        modEventBus.addListener(GatherDataEvent.Client.class, event -> {
+            var generator = event.getGenerator();
+            var output = generator.getPackOutput();
+            var lookupProvider = event.getLookupProvider();
 
-        event.addProvider(new BlockTagDataGenerator(output, lookupProvider));
-        //event.createProvider(new ItemTagDataGenerator(output, lookupProvider));
+            event.addProvider(new BlockTagDataGenerator(output, lookupProvider));
+            //event.createProvider(new ItemTagDataGenerator(output, lookupProvider));
+        });
     }
 }

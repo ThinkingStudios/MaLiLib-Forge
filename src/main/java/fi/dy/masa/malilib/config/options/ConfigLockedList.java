@@ -17,6 +17,7 @@ import fi.dy.masa.malilib.util.StringUtils;
 
 public class ConfigLockedList extends ConfigBase<ConfigLockedList> implements IConfigLockedList
 {
+//    public static final Codec<?> CODEC = null;
     IConfigLockedListType handler;
     ImmutableList<IConfigLockedListEntry> defaultList;
     List<IConfigLockedListEntry> values = new ArrayList<>();

@@ -1,7 +1,5 @@
 package fi.dy.masa.malilib.gui.widgets;
 
-import java.io.File;
-
 import net.minecraft.client.gui.DrawContext;
 
 import fi.dy.masa.malilib.gui.interfaces.IDirectoryNavigator;
@@ -40,7 +38,7 @@ public class WidgetDirectoryEntry extends WidgetListEntryBase<DirectoryEntry>
     {
         if (this.entry.getType() == DirectoryEntryType.DIRECTORY)
         {
-            this.navigator.switchToDirectory(new File(this.entry.getDirectory(), this.entry.getName()));
+            this.navigator.switchToDirectory(this.entry.getDirectory().resolve(this.entry.getName()));
         }
         else
         {
@@ -53,6 +51,8 @@ public class WidgetDirectoryEntry extends WidgetListEntryBase<DirectoryEntry>
     @Override
     public void render(int mouseX, int mouseY, boolean selected, DrawContext drawContext)
     {
+        super.render(mouseX, mouseY, selected, drawContext);
+
         // Draw a lighter background for the hovered and the selected entry
         if (selected || this.isMouseOver(mouseX, mouseY))
         {
@@ -86,7 +86,7 @@ public class WidgetDirectoryEntry extends WidgetListEntryBase<DirectoryEntry>
         if (icon != null)
         {
             RenderUtils.color(1f, 1f, 1f, 1f);
-            this.bindTexture(icon.getTexture());
+            this.bindTexture(icon.getTexture(), drawContext);
             icon.renderAt(this.x, this.y + (this.height - icon.getHeight()) / 2, this.zLevel + 10, false, false, drawContext);
         }
 

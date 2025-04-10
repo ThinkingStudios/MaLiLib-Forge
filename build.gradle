@@ -17,19 +17,23 @@ sourceSets {
 }
 
 loom {
+    accessWidenerPath = file("src/main/resources/malilib.accesswidener")
+
     runs {
         clientData {
             clientData()
             programArgs "--all", "--mod", "mafglib"
             programArgs "--output", generatedResources.absolutePath
+            programArgs "--existing", file("src/main/resources").absolutePath
         }
     }
 }
 
 repositories {
-    maven { url "https://jitpack.io" }
-    maven { url "https://maven.neoforged.net/releases/" }
-    maven { url "https://dl.cloudsmith.io/public/thinkingstudio/forgifiedfabricapi/maven/" }
+    maven { url = 'https://api.modrinth.com/maven' }
+    maven { url = "https://jitpack.io" }
+    maven { url = "https://maven.neoforged.net/releases/" }
+    maven { url = "https://dl.cloudsmith.io/public/thinkingstudio/forgifiedfabricapi/maven/" }
 }
 
 dependencies {
@@ -43,13 +47,15 @@ dependencies {
     for (String module in ffapi_modules.split(",")) {
         // Fabric API Base
         if (module == "fabric-api-base") {
-            modApi(include("org.sinytra.forgified-fabric-api:$module:0.4.42+d1308ded19")) { transitive = false }
+            modApi(include("org.sinytra.forgified-fabric-api:$module:0.4.42+d1308ded49")) { transitive = false }
         }
         // Fabric Networking API V1
         if (module == "fabric-networking-api-v1") {
-            modApi(include("org.sinytra.forgified-fabric-api:$module:4.3.2+cfe47bf204")) { transitive = false }
+            modApi(include("org.sinytra.forgified-fabric-api:$module:4.3.2+cfe47bf249")) { transitive = false }
         }
     }
+
+    modCompileOnly libs.iris
 
     implementation libs.jsr305
 }
@@ -72,6 +78,10 @@ java {
     targetCompatibility = JavaVersion.VERSION_21
 
     withSourcesJar()
+}
+
+remapJar {
+    atAccessWideners.add("malilib.accesswidener")
 }
 
 // configure the maven publication

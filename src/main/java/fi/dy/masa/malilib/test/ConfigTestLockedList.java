@@ -1,8 +1,13 @@
 package fi.dy.masa.malilib.test;
 
+import java.util.List;
 import javax.annotation.Nullable;
 import com.google.common.collect.ImmutableList;
 import org.jetbrains.annotations.ApiStatus;
+
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.util.StringIdentifiable;
 
 import fi.dy.masa.malilib.MaLiLibReference;
 import fi.dy.masa.malilib.config.IConfigLockedListEntry;
@@ -14,6 +19,22 @@ public class ConfigTestLockedList implements IConfigLockedListType
 {
     public static final ConfigTestLockedList INSTANCE = new ConfigTestLockedList();
     public ImmutableList<Entry> VALUES = ImmutableList.copyOf(Entry.values());
+    public static final Codec<ConfigTestLockedList> CODEC = RecordCodecBuilder.create(
+            inst -> inst.group(
+                    Entry.CODEC.listOf().fieldOf("values").forGetter(get -> get.VALUES)
+            ).apply(inst, ConfigTestLockedList::new)
+    );
+
+    private ConfigTestLockedList() { }
+
+    private ConfigTestLockedList(List<Entry> list)
+    {
+        ImmutableList.Builder<IConfigLockedListEntry> builder = ImmutableList.builder();
+
+        list.forEach(builder::add);
+
+        VALUES = ImmutableList.<Entry>builder().build();
+    }
 
     @Override
     public ImmutableList<IConfigLockedListEntry> getDefaultEntries()
@@ -32,12 +53,15 @@ public class ConfigTestLockedList implements IConfigLockedListType
         return Entry.fromString(element);
     }
 
-    public enum Entry implements IConfigLockedListEntry
+    public enum Entry implements IConfigLockedListEntry, StringIdentifiable
     {
         TEST1 ("test1", "test1"),
         TEST2 ("test2", "test2"),
         TEST3 ("test3", "test3"),
         TEST4 ("test4", "test4");
+
+        public static final StringIdentifiable.EnumCodec<Entry> CODEC = StringIdentifiable.createCodec(Entry::values);
+        public static final ImmutableList<Entry> VALUES = ImmutableList.copyOf(values());
 
         private final String configKey;
         private final String translationKey;
@@ -45,9 +69,15 @@ public class ConfigTestLockedList implements IConfigLockedListType
         Entry(String configKey, String translationKey)
         {
             this.configKey = configKey;
-            this.translationKey = MaLiLibReference.MOD_ID+".gui.label.locked_test."+translationKey;
+            this.translationKey = MaLiLibReference.ID+".gui.label.locked_test."+translationKey;
         }
 
+//        @Override
+//        public Codec<Entry> codec()
+//        {
+//            return CODEC;
+//        }
+//
         @Override
         public String getStringValue()
         {
@@ -80,6 +110,12 @@ public class ConfigTestLockedList implements IConfigLockedListType
             }
 
             return null;
+        }
+
+        @Override
+        public String asString()
+        {
+            return this.configKey;
         }
     }
 }

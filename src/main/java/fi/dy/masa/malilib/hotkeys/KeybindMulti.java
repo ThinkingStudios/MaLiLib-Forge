@@ -1,15 +1,17 @@
 package fi.dy.masa.malilib.hotkeys;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import javax.annotation.Nullable;
+import org.jetbrains.annotations.ApiStatus;
 import org.lwjgl.glfw.GLFW;
+
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.PrimitiveCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
+
 import fi.dy.masa.malilib.MaLiLib;
 import fi.dy.masa.malilib.MaLiLibConfigs;
 import fi.dy.masa.malilib.gui.Message;
@@ -21,6 +23,13 @@ import fi.dy.masa.malilib.util.KeyCodes;
 
 public class KeybindMulti implements IKeybind
 {
+    public static final Codec<KeybindMulti> CODEC = RecordCodecBuilder.create(
+            inst -> inst.group(
+                    PrimitiveCodec.STRING.fieldOf("defaultStorageString").forGetter(get -> get.defaultStorageString),
+                    KeybindSettings.CODEC.fieldOf("defaultSettings").forGetter(get -> get.defaultSettings),
+                    KeybindSettings.CODEC.fieldOf("settings").forGetter(get -> get.settings)
+            ).apply(inst, KeybindMulti::new)
+    );
     private static final ArrayList<Integer> PRESSED_KEYS = new ArrayList<>();
     private static int triggeredCount;
 
@@ -39,6 +48,19 @@ public class KeybindMulti implements IKeybind
         this.defaultStorageString = defaultStorageString;
         this.defaultSettings = settings;
         this.settings = settings;
+    }
+
+    private KeybindMulti(String defaultStorageString, KeybindSettings defaultSettings, KeybindSettings settings)
+    {
+        this.defaultStorageString = defaultStorageString;
+        this.defaultSettings = defaultSettings;
+        this.settings = settings;
+    }
+
+    @Override
+    public Codec<KeybindMulti> codec()
+    {
+        return CODEC;
     }
 
     @Override
@@ -82,9 +104,7 @@ public class KeybindMulti implements IKeybind
         return this.pressed || (this.settings.getAllowEmpty() && this.keyCodes.isEmpty());
     }
 
-    /**
-     * NOT PUBLIC API - DO NOT CALL FROM MOD CODE!!!
-     */
+    @ApiStatus.Internal
     @Override
     public boolean updateIsPressed()
     {
@@ -435,9 +455,7 @@ public class KeybindMulti implements IKeybind
         return keyCode >= 0 && GLFW.glfwGetMouseButton(window, keyCode) == GLFW.GLFW_PRESS;
     }
 
-    /**
-     * NOT PUBLIC API - DO NOT CALL FROM MOD CODE!!!
-     */
+    @ApiStatus.Internal
     public static void onKeyInputPre(int keyCode, int scanCode, int modifiers, int action)
     {
         if (keyCode != -1)
@@ -469,9 +487,7 @@ public class KeybindMulti implements IKeybind
         }
     }
 
-    /**
-     * NOT PUBLIC API - DO NOT CALL FROM MOD CODE!!!
-     */
+    @ApiStatus.Internal
     public static void reCheckPressedKeys()
     {
         Iterator<Integer> iter = PRESSED_KEYS.iterator();

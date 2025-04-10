@@ -1,9 +1,5 @@
 package fi.dy.masa.malilib.gui.widgets;
 
-import java.util.List;
-
-import net.minecraft.client.gui.DrawContext;
-
 import fi.dy.masa.malilib.config.IConfigColorList;
 import fi.dy.masa.malilib.config.gui.ConfigOptionChangeListenerTextField;
 import fi.dy.masa.malilib.gui.GuiTextFieldGeneric;
@@ -13,8 +9,11 @@ import fi.dy.masa.malilib.gui.button.ButtonGeneric;
 import fi.dy.masa.malilib.gui.button.IButtonActionListener;
 import fi.dy.masa.malilib.gui.interfaces.IGuiIcon;
 import fi.dy.masa.malilib.render.RenderUtils;
-import fi.dy.masa.malilib.util.Color4f;
 import fi.dy.masa.malilib.util.StringUtils;
+import fi.dy.masa.malilib.util.data.Color4f;
+import net.minecraft.client.gui.DrawContext;
+
+import java.util.List;
 
 public class WidgetColorListEditEntry extends WidgetConfigOptionBase<Color4f>
 {
@@ -30,8 +29,8 @@ public class WidgetColorListEditEntry extends WidgetConfigOptionBase<Color4f>
         this.listIndex = listIndex;
         this.isOdd = isOdd;
         this.defaultValue = defaultValue;
-        this.lastAppliedValue = initialValue.toHexString();
-        this.initialStringValue = initialValue.toHexString();
+        this.lastAppliedValue = initialValue.toString();
+        this.initialStringValue = initialValue.toString();
         this.parent = parent;
 
         int textFieldX = x + 20;
@@ -44,7 +43,7 @@ public class WidgetColorListEditEntry extends WidgetConfigOptionBase<Color4f>
         if (!this.isDummy())
         {
             this.addLabel(x + 2, y + 6, 20, 12, 0xC0C0C0C0, String.format("%3d:", listIndex + 1));
-            bx = this.addTextField(textFieldX, y + 1, resetX, textFieldWidth, 20, initialValue.toHexString());
+            bx = this.addTextField(textFieldX, y + 1, resetX, textFieldWidth, 20, initialValue.toString());
 
             this.addWidget(new WidgetColorIndicator(textFieldX + textFieldWidth + 2, y + 1, 19, 19, initialValue, this::applyNewValueToConfig));
 
@@ -208,6 +207,7 @@ public class WidgetColorListEditEntry extends WidgetConfigOptionBase<Color4f>
     @Override
     public void render(int mouseX, int mouseY, boolean selected, DrawContext drawContext)
     {
+        super.render(mouseX, mouseY, selected, drawContext);
         RenderUtils.color(1f, 1f, 1f, 1f);
 
         if (this.isOdd)
@@ -260,7 +260,8 @@ public class WidgetColorListEditEntry extends WidgetConfigOptionBase<Color4f>
         {
             this.parent.textField.getTextField().setText(this.parent.defaultValue.toString());
             this.parent.parent.applyPendingModifications();
-            this.buttonReset.setEnabled(!this.parent.textField.getTextField().getText().equals(this.parent.defaultValue));
+            this.buttonReset.setEnabled(!this.parent.textField.getTextField().getText().equals(this.parent.defaultValue.toString()));
+            this.parent.parent.refreshEntries();
         }
     }
 

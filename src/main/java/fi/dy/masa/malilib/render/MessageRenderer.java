@@ -92,12 +92,12 @@ public class MessageRenderer
         return this.nextMessageType;
     }
 
-    public void addMessage(int displayTimeMs, String messageKey, Object... args)
+    public void addMessage(long displayTimeMs, String messageKey, Object... args)
     {
         this.addMessage(this.nextMessageType, displayTimeMs, messageKey, args);
     }
 
-    public void addMessage(MessageType type, int displayTimeMs, String messageKey, Object... args)
+    public void addMessage(MessageType type, long displayTimeMs, String messageKey, Object... args)
     {
         this.messages.add(new Message(type, displayTimeMs, this.messageBoxWidth - 20, messageKey, args));
     }
@@ -144,7 +144,7 @@ public class MessageRenderer
 
             if (this.useBorder)
             {
-                RenderUtils.drawOutline(x, y, boxWidth, boxHeight, this.borderColor, this.zLevel);
+                RenderUtils.drawOutline(x, y, boxWidth, boxHeight, this.borderColor, this.zLevel, false);
             }
 
             x += 10;

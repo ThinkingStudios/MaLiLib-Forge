@@ -2,13 +2,13 @@ package fi.dy.masa.malilib.datagen;
 
 import java.util.concurrent.CompletableFuture;
 
-import fi.dy.masa.malilib.MaLiLibReference;
 import net.minecraft.block.Blocks;
 import net.minecraft.data.DataOutput;
 import net.minecraft.registry.RegistryWrapper;
-
-import fi.dy.masa.malilib.data.MaLiLibTag;
 import net.neoforged.neoforge.common.data.BlockTagsProvider;
+
+import fi.dy.masa.malilib.MaLiLibReference;
+import fi.dy.masa.malilib.data.MaLiLibTag;
 
 public class BlockTagDataGenerator extends BlockTagsProvider
 {
@@ -263,9 +263,19 @@ public class BlockTagDataGenerator extends BlockTagsProvider
                 .addTag(MaLiLibTag.Blocks.GLASS_PANES)
                 .addTag(MaLiLibTag.Blocks.CORAL_FANS_FIX)
                 .addTag(MaLiLibTag.Blocks.LEAVES_FIX)
+                .addTag(MaLiLibTag.Blocks.SCULK_BLOCKS)
+                .add(Blocks.BEEHIVE)
+                .add(Blocks.BEE_NEST)
+                .add(Blocks.BOOKSHELF)
+                .add(Blocks.BLUE_ICE)
+                .add(Blocks.BUSH)
+                .add(Blocks.CAMPFIRE)
+                .add(Blocks.CHISELED_BOOKSHELF)
                 .add(Blocks.ENDER_CHEST)
-                // todo 1.21.5+
-                //.add(Blocks.BUSH)
+                .add(Blocks.ICE)
+                .add(Blocks.PACKED_ICE)
+                .add(Blocks.SOUL_CAMPFIRE)
+                .add(Blocks.TURTLE_EGG)
         ;
 
         getOrCreateTagBuilder(MaLiLibTag.Blocks.NEEDS_SHEARS)
@@ -282,12 +292,10 @@ public class BlockTagDataGenerator extends BlockTagsProvider
                 .add(Blocks.NETHER_SPROUTS)
                 .add(Blocks.PALE_HANGING_MOSS)
                 .add(Blocks.SHORT_GRASS)
-                // todo 1.21.5+
-                //.add(Blocks.SHORT_DRY_GRASS)
+                .add(Blocks.SHORT_DRY_GRASS)
                 .add(Blocks.SEAGRASS)
                 .add(Blocks.TALL_GRASS)
-                // todo 1.21.5+
-                //.add(Blocks.TALL_DRY_GRASS)
+                .add(Blocks.TALL_DRY_GRASS)
                 .add(Blocks.TALL_SEAGRASS)
                 .add(Blocks.TRIPWIRE)
                 .add(Blocks.TWISTING_VINES)
@@ -364,6 +372,15 @@ public class BlockTagDataGenerator extends BlockTagsProvider
                 .add(Blocks.TRAPPED_CHEST)
                 .add(Blocks.TRIAL_SPAWNER)
                 .add(Blocks.VAULT)
+        ;
+
+        getOrCreateTagBuilder(MaLiLibTag.Blocks.SCULK_BLOCKS)
+                .add(Blocks.CALIBRATED_SCULK_SENSOR)
+                .add(Blocks.SCULK)
+                .add(Blocks.SCULK_CATALYST)
+                .add(Blocks.SCULK_SENSOR)
+                .add(Blocks.SCULK_SHRIEKER)
+                .add(Blocks.SCULK_VEIN)
         ;
     }
 }

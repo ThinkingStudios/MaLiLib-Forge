@@ -2,31 +2,31 @@ package fi.dy.masa.malilib.gui.widgets;
 
 import java.util.function.IntConsumer;
 import com.google.common.collect.ImmutableList;
+
 import net.minecraft.client.gui.DrawContext;
-import fi.dy.masa.malilib.config.IConfigInteger;
-import fi.dy.masa.malilib.config.options.ConfigInteger;
+
+import fi.dy.masa.malilib.config.IConfigColor;
+import fi.dy.masa.malilib.config.options.ConfigColor;
 import fi.dy.masa.malilib.gui.GuiBase;
 import fi.dy.masa.malilib.gui.GuiColorEditorHSV;
 import fi.dy.masa.malilib.render.RenderUtils;
-import fi.dy.masa.malilib.util.Color4f;
 import fi.dy.masa.malilib.util.GuiUtils;
 import fi.dy.masa.malilib.util.StringUtils;
-
-import com.mojang.blaze3d.systems.RenderSystem;
+import fi.dy.masa.malilib.util.data.Color4f;
 
 public class WidgetColorIndicator extends WidgetBase
 {
-    protected final IConfigInteger config;
+    protected final IConfigColor config;
     protected final ImmutableList<String> hoverText;
 
     public WidgetColorIndicator(int x, int y, int width, int height, Color4f color, IntConsumer consumer)
     {
-        this(x, y, width, height, new ConfigInteger("", color.intValue, ""));
+        this(x, y, width, height, new ConfigColor("color_indicator_widget", color));
 
-        ((ConfigInteger) this.config).setValueChangeCallback((cfg) -> consumer.accept(cfg.getIntegerValue()) );
+        ((ConfigColor) this.config).setValueChangeCallback((cfg) -> consumer.accept(cfg.getIntegerValue()) );
     }
 
-    public WidgetColorIndicator(int x, int y, int width, int height, IConfigInteger config)
+    public WidgetColorIndicator(int x, int y, int width, int height, IConfigColor config)
     {
         super(x, y, width, height);
 
@@ -37,6 +37,8 @@ public class WidgetColorIndicator extends WidgetBase
     @Override
     protected boolean onMouseClickedImpl(int mouseX, int mouseY, int mouseButton)
     {
+        //RenderUtils.forceDraw(this.drawContext);
+        //RenderUtils.depthTest(false);
         GuiColorEditorHSV gui = new GuiColorEditorHSV(this.config, null, GuiUtils.getCurrentScreen());
         GuiBase.openGui(gui);
         return true;
@@ -45,22 +47,24 @@ public class WidgetColorIndicator extends WidgetBase
     @Override
     public void postRenderHovered(int mouseX, int mouseY, boolean selected, DrawContext drawContext)
     {
+        super.postRenderHovered(mouseX, mouseY, selected, drawContext);
         RenderUtils.drawHoverText(mouseX, mouseY, this.hoverText, drawContext);
     }
 
     @Override
     public void render(int mouseX, int mouseY, boolean selected, DrawContext drawContext)
     {
+        super.render(mouseX, mouseY, selected, drawContext);
         int x = this.getX();
         int y = this.getY();
         int z = this.zLevel;
         int width = this.getWidth();
         int height = this.getHeight();
 
-        RenderSystem.enableDepthTest();
+        //RenderUtils.depthTest(true);
         RenderUtils.drawRect(x    , y    , width    , height    , 0xFFFFFFFF, z);
         RenderUtils.drawRect(x + 1, y + 1, width - 2, height - 2, 0xFF000000, z);
         RenderUtils.drawRect(x + 2, y + 2, width - 4, height - 4, 0xFF000000 | this.config.getIntegerValue(), z);
-        RenderSystem.disableDepthTest();
+        //RenderUtils.depthTest(false);
     }
 }

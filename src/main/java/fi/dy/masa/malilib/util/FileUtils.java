@@ -25,7 +25,7 @@ public class FileUtils
     public static final Predicate<Path> JSON_FILEFILTER = (f) -> Files.isRegularFile(f) && f.getFileName().toString().endsWith(".json");
 
     /**
-     * Please stop using the File object
+     * Please stop using the File object, use {@link #getConfigDirectoryAsPath()}
      * @return ()
      */
     @Deprecated(forRemoval = true)
@@ -35,7 +35,7 @@ public class FileUtils
     }
 
     /**
-     * Please stop using the File object
+     * Please stop using the File object, use {@link #getMinecraftDirectoryAsPath()}
      * @return ()
      */
     @Deprecated(forRemoval = true)
@@ -325,6 +325,17 @@ public class FileUtils
         return file;
     }
 
+    public static Path getRealPathIfPossible(Path file)
+    {
+        try
+        {
+            file = file.toRealPath();
+        }
+        catch (Exception ignored) { }
+
+        return file;
+    }
+
     public static String getJoinedTrailingPathElements(File file, File rootPath, int maxStringLength, String separator)
     {
         String path = "";
@@ -377,7 +388,8 @@ public class FileUtils
 
         while (file != null)
         {
-            String name = file.getFileName().toString();
+            // Sometimes getFileName() is null ?
+            String name = file.getFileName() != null ? file.getFileName().toString() : file.toString();
 
             if ((path.length() == 0) == false)
             {
@@ -407,13 +419,6 @@ public class FileUtils
         return path.toString();
     }
 
-    @Deprecated(forRemoval = true)
-    public static String generateSafeFileName(String name)
-    {
-        return FileNameUtils.generateSafeFileName(name);
-    }
-
-    @Deprecated(forRemoval = true)
     public static String getNameWithoutExtension(String name)
     {
         int i = name.lastIndexOf(".");

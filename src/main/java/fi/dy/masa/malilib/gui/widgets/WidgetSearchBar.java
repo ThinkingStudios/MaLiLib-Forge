@@ -7,8 +7,8 @@ import fi.dy.masa.malilib.gui.GuiTextFieldGeneric;
 import fi.dy.masa.malilib.gui.LeftRight;
 import fi.dy.masa.malilib.gui.interfaces.IGuiIcon;
 import fi.dy.masa.malilib.render.RenderUtils;
-import fi.dy.masa.malilib.util.KeyCodes;
 import fi.dy.masa.malilib.util.data.Constants;
+import fi.dy.masa.malilib.util.KeyCodes;
 
 public class WidgetSearchBar extends WidgetBase
 {
@@ -123,6 +123,7 @@ public class WidgetSearchBar extends WidgetBase
     @Override
     public void render(int mouseX, int mouseY, boolean selected, DrawContext drawContext)
     {
+        super.render(mouseX, mouseY, selected, drawContext);
         RenderUtils.color(1f, 1f, 1f, 1f);
         this.iconSearch.render(false, this.iconSearch.isMouseOver(mouseX, mouseY), drawContext);
 

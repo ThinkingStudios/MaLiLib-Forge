@@ -46,6 +46,8 @@ public class WidgetSlider extends WidgetBase
     @Override
     public void render(int mouseX, int mouseY, boolean selected, DrawContext drawContext)
     {
+        super.render(mouseX, mouseY, selected, drawContext);
+
         if (this.dragging && mouseX != this.lastMouseX)
         {
             this.callback.setValueRelative(this.getRelativePosition(mouseX));
