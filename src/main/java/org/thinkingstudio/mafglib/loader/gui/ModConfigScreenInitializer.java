@@ -1,6 +1,6 @@
 package org.thinkingstudio.mafglib.loader.gui;
 
-@Deprecated
+@Deprecated(forRemoval = true, since = "1.21.5")
 public interface ModConfigScreenInitializer {
     ModConfigScreenFactory getModConfigScreenFactory();
 }
