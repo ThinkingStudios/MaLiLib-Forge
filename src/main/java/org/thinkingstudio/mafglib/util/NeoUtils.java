@@ -7,14 +7,12 @@ import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.loading.FMLLoader;
 import net.neoforged.fml.loading.moddiscovery.ModInfo;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
-import net.neoforged.neoforgespi.language.IModInfo;
-import net.neoforged.neoforgespi.locating.IModFile;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 
 import java.util.function.Function;
 
-@Deprecated(forRemoval = true)
+@Deprecated(forRemoval = true, since = "1.21.5")
 public class NeoUtils {
     private static NeoUtils INSTANCE;
 

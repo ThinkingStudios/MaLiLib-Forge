@@ -11,16 +11,15 @@ import net.neoforged.fml.loading.FMLPaths;
 import net.neoforged.fml.loading.moddiscovery.ModInfo;
 
 import java.nio.file.Path;
-import java.util.List;
 import java.util.function.Consumer;
 
 public final class FoxifiedLoader {
-    @Deprecated
+    @Deprecated(forRemoval = true, since = "1.21.5")
     public static <T extends Event> void registerEvent(IEventBus eventBus, Class<T> eventType, Consumer<T> consumer) {
         eventBus.addListener(EventPriority.HIGHEST, eventType, consumer);
     }
 
-    @Deprecated
+    @Deprecated(forRemoval = true, since = "1.21.5")
     public static <T extends IExtensionPoint> void registerExtensionPoint(ModContainer modContainer, Class<T> point, T extension) {
         modContainer.registerExtensionPoint(point, extension);
     }
