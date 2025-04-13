@@ -14,7 +14,10 @@ import fi.dy.masa.malilib.MaLiLib;
 /**
  * This class has been directly taken from Schematica by Lunatrius & contributors
  * https://github.com/Lunatrius/Schematica/blob/master/src/main/java/com/github/lunatrius/schematica/client/renderer/shader/ShaderProgram.java
+ * -
+ * This class is probably no longer required.
  */
+@Deprecated(forRemoval = true)
 public class ShaderProgram
 {
     private final MinecraftClient mc;

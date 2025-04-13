@@ -51,17 +51,20 @@ import net.minecraft.village.VillagerProfession;
 
 import fi.dy.masa.malilib.MaLiLib;
 import fi.dy.masa.malilib.MaLiLibConfigs;
+import fi.dy.masa.malilib.MaLiLibReference;
 import fi.dy.masa.malilib.compat.lwgl.GpuCompat;
 import fi.dy.masa.malilib.config.HudAlignment;
 import fi.dy.masa.malilib.gui.GuiBase;
 import fi.dy.masa.malilib.mixin.render.IMixinDrawContext;
 import fi.dy.masa.malilib.util.*;
 import fi.dy.masa.malilib.util.data.Color4f;
+import fi.dy.masa.malilib.util.log.AnsiLogger;
 import fi.dy.masa.malilib.util.nbt.NbtBlockUtils;
 import fi.dy.masa.malilib.util.position.PositionUtils;
 
 public class RenderUtils
 {
+    private static final AnsiLogger LOGGER = new AnsiLogger(RenderUtils.class);
     public static final Identifier TEXTURE_MAP_BACKGROUND = Identifier.ofVanilla("textures/map/map_background.png");
     public static final Identifier TEXTURE_MAP_BACKGROUND_CHECKERBOARD = Identifier.ofVanilla("textures/map/map_background_checkerboard.png");
 
@@ -222,6 +225,7 @@ public class RenderUtils
 
     /**
      * Executes the draw() operation on the DrawContext.
+     * This is meant to fix various GUI Rendering problems when things don't draw when they should.
      *
      * @param drawContext
      */
@@ -361,7 +365,6 @@ public class RenderUtils
 //        blend(true);
 
         // POSITION_COLOR_SIMPLE
-//        RenderContext ctx = new RenderContext(MaLiLibPipelines.POSITION_COLOR_MASA_NO_DEPTH_NO_CULL, BufferUsage.STATIC_WRITE);
         RenderContext ctx = new RenderContext(depthMask ? MaLiLibPipelines.POSITION_COLOR_MASA_DEPTH_MASK : MaLiLibPipelines.POSITION_COLOR_MASA_NO_DEPTH_NO_CULL, BufferUsage.STATIC_WRITE);
         BufferBuilder buffer = ctx.getBuilder();
 
@@ -1408,7 +1411,7 @@ public class RenderUtils
             {
                 ctx.color(wireColor);
                 ctx.lineWidth(1.6f);
-                ctx.draw(meshData, true);
+                ctx.draw(meshData, false, true);
                 meshData.close();
             }
 
@@ -1471,7 +1474,7 @@ public class RenderUtils
             {
                 ctx.color(wireColor);
                 ctx.lineWidth(1.6f);
-                ctx.draw(meshData, true);
+                ctx.draw(meshData, false, true);
                 meshData.close();
             }
 
@@ -1552,7 +1555,7 @@ public class RenderUtils
             if (meshData != null)
             {
                 ctx.lineWidth(1.6f);
-                ctx.draw(meshData, true);
+                ctx.draw(meshData, false, true);
                 meshData.close();
             }
 
@@ -2311,7 +2314,7 @@ public class RenderUtils
             if (meshData != null)
             {
                 ctx.lineWidth(lineWidth);
-                ctx.draw(meshData, true);
+                ctx.draw(meshData, false, true);
                 meshData.close();
             }
 
@@ -2454,7 +2457,7 @@ public class RenderUtils
             if (meshData != null)
             {
                 ctx.lineWidth(lineWidth);
-                ctx.draw(meshData, true);
+                ctx.draw(meshData, false, true);
                 meshData.close();
             }
 
@@ -2470,7 +2473,7 @@ public class RenderUtils
     public static void renderAreaOutline(BlockPos pos1, BlockPos pos2, float lineWidth,
                                          Color4f colorX, Color4f colorY, Color4f colorZ)
     {
-        RenderSystem.lineWidth(lineWidth);
+//        RenderSystem.lineWidth(lineWidth);
 
         Vec3d cameraPos = camPos();
         final double dx = cameraPos.x;
@@ -2484,13 +2487,12 @@ public class RenderUtils
         double maxY = Math.max(pos1.getY(), pos2.getY()) - dy + 1;
         double maxZ = Math.max(pos1.getZ(), pos2.getZ()) - dz + 1;
 
-        drawBoundingBoxEdges((float) minX, (float) minY, (float) minZ, (float) maxX, (float) maxY, (float) maxZ, colorX, colorY, colorZ);
+        drawBoundingBoxEdges((float) minX, (float) minY, (float) minZ, (float) maxX, (float) maxY, (float) maxZ, colorX, colorY, colorZ, lineWidth);
     }
 
     private static void drawBoundingBoxEdges(float minX, float minY, float minZ, float maxX, float maxY, float maxZ,
-                                             Color4f colorX, Color4f colorY, Color4f colorZ)
+                                             Color4f colorX, Color4f colorY, Color4f colorZ, float lineWidth)
     {
-        // RenderPipelines.LINES
         // MaLiLibPipelines.LINES_NO_DEPTH_NO_CULL
         RenderContext ctx = new RenderContext(RenderPipelines.LINES, BufferUsage.STATIC_WRITE);
         BufferBuilder buffer = ctx.getBuilder();
@@ -2509,7 +2511,8 @@ public class RenderUtils
 
             if (meshData != null)
             {
-                ctx.draw(meshData, false);
+                ctx.lineWidth(lineWidth);
+                ctx.draw(meshData, false, true);
                 meshData.close();
             }
 
@@ -2671,7 +2674,6 @@ public class RenderUtils
 
 //        RenderSystem.lineWidth(lineWidth);
 
-        // RenderPipelines.LINES
         // MaLiLibPipelines.LINES_NO_DEPTH_NO_CULL
         RenderContext ctx = new RenderContext(RenderPipelines.LINES, BufferUsage.STATIC_WRITE);
         BufferBuilder buffer = ctx.getBuilder();
@@ -2798,7 +2800,7 @@ public class RenderUtils
             if (meshData != null)
             {
                 ctx.lineWidth(lineWidth);
-                ctx.draw(meshData, true);
+                ctx.draw(meshData, false, true);
                 meshData.close();
             }
 

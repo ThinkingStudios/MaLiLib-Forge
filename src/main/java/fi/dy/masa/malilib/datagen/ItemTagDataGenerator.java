@@ -2,7 +2,6 @@ package fi.dy.masa.malilib.datagen;
 
 import java.util.concurrent.CompletableFuture;
 
-import fi.dy.masa.malilib.MaLiLibReference;
 import net.minecraft.block.Block;
 import net.minecraft.data.DataOutput;
 import net.minecraft.data.tag.ItemTagProvider;
@@ -10,6 +9,7 @@ import net.minecraft.data.tag.TagProvider;
 import net.minecraft.item.Item;
 import net.minecraft.registry.RegistryWrapper;
 
+import fi.dy.masa.malilib.MaLiLibReference;
 
 public class ItemTagDataGenerator extends ItemTagProvider
 {

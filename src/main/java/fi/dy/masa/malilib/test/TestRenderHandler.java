@@ -231,7 +231,7 @@ public class TestRenderHandler implements IRenderer
             MutableText title = Text.empty().append(StringUtils.translateAsText(MaLiLibReference.MOD_ID+".gui.tooltip.test.title"));
             list.addFirst(title);
              */
-            list.accept(StringUtils.translateAsText(MaLiLibReference.ID+".gui.tooltip.test.first"));
+            list.accept(StringUtils.translateAsText(MaLiLibReference.MOD_ID+".gui.tooltip.test.first"));
         }
     }
 
@@ -240,7 +240,7 @@ public class TestRenderHandler implements IRenderer
     {
         if (MaLiLibConfigs.Test.TEST_CONFIG_BOOLEAN.getBooleanValue())
         {
-            list.accept(StringUtils.translateAsText(MaLiLibReference.ID+".gui.tooltip.test.middle"));
+            list.accept(StringUtils.translateAsText(MaLiLibReference.MOD_ID+".gui.tooltip.test.middle"));
         }
     }
 
@@ -249,7 +249,7 @@ public class TestRenderHandler implements IRenderer
     {
         if (MaLiLibConfigs.Test.TEST_CONFIG_BOOLEAN.getBooleanValue())
         {
-            list.accept(StringUtils.translateAsText(MaLiLibReference.ID+".gui.tooltip.test.last"));
+            list.accept(StringUtils.translateAsText(MaLiLibReference.MOD_ID+".gui.tooltip.test.last"));
         }
     }
 

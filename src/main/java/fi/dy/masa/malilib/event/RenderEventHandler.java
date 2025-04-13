@@ -441,30 +441,30 @@ public class RenderEventHandler implements IRenderDispatcher
         {
             FramePass pass = frameGraphBuilder.createPass(MaLiLibReference.MOD_ID+"_world_last");
 
-            if (fbSet.entityOutlineFramebuffer != null)
-            {
-                fbSet.entityOutlineFramebuffer = pass.transfer(fbSet.entityOutlineFramebuffer);
-                pass.dependsOn(fbSet.mainFramebuffer);
-            }
-            else
-            {
+//            if (fbSet.entityOutlineFramebuffer != null)
+//            {
+//                fbSet.entityOutlineFramebuffer = pass.transfer(fbSet.entityOutlineFramebuffer);
+//                pass.dependsOn(fbSet.mainFramebuffer);
+//            }
+//            else
+//            {
                 fbSet.mainFramebuffer = pass.transfer(fbSet.mainFramebuffer);
-            }
+//            }
 
             Handle<Framebuffer> handleMain = fbSet.mainFramebuffer;
-            Handle<Framebuffer> handleOutlines = fbSet.entityOutlineFramebuffer;
+//            Handle<Framebuffer> handleOutlines = fbSet.entityOutlineFramebuffer;
 
             pass.setRenderer(() ->
             {
                 Fog fog = RenderSystem.getShaderFog();
                 RenderSystem.setShaderFog(Fog.DUMMY);
 
-                if (handleOutlines != null)
-                {
-                    handleOutlines.get().copyDepthFrom(handleMain.get());
-                }
-
-                Framebuffer fb = handleOutlines != null ? handleOutlines.get() : handleMain.get();
+//                if (handleOutlines != null)
+//                {
+//                    handleOutlines.get().copyDepthFrom(handleMain.get());
+//                }
+//
+//                Framebuffer fb = handleOutlines != null ? handleOutlines.get() : handleMain.get();
                 //handleMain.get().beginWrite(false);
                 //RenderUtils.fbStartDrawing();
 
@@ -472,7 +472,7 @@ public class RenderEventHandler implements IRenderDispatcher
                 {
                     profiler.push(renderer.getProfilerSectionSupplier());
                     // This really should be used either or, and never both in the same mod.
-                    renderer.onRenderWorldLastAdvanced(fb, posMatrix, projMatrix, frustum, camera, fog, buffers, profiler);
+                    renderer.onRenderWorldLastAdvanced(handleMain.get(), posMatrix, projMatrix, frustum, camera, fog, buffers, profiler);
                     renderer.onRenderWorldLast(posMatrix, projMatrix);
                     profiler.pop();
                 }

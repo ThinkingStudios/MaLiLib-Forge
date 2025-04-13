@@ -51,13 +51,16 @@ import net.minecraft.village.TradeOfferList;
 import net.minecraft.world.World;
 
 import fi.dy.masa.malilib.MaLiLib;
+import fi.dy.masa.malilib.MaLiLibReference;
 import fi.dy.masa.malilib.mixin.entity.IMixinPlayerEntity;
+import fi.dy.masa.malilib.util.log.AnsiLogger;
 import fi.dy.masa.malilib.util.nbt.NbtEntityUtils;
 import fi.dy.masa.malilib.util.nbt.NbtKeys;
 import fi.dy.masa.malilib.util.data.Constants;
 
 public class InventoryUtils
 {
+    private static final AnsiLogger LOGGER = new AnsiLogger(InventoryUtils.class);
     public static final Pattern PATTERN_ITEM_BASE = Pattern.compile("^(?<name>(?:[a-z0-9\\._-]+:)[a-z0-9\\._-]+)$");
 
     /**
@@ -929,6 +932,7 @@ public class InventoryUtils
                 }
 
                 items.add(entry.copy());
+//                LOGGER.debug("getStoredItems()[{}] entry [{}], items [{}]", i, entry.toString(), items.get(i).toString());
             }
 
             return items;
@@ -1167,6 +1171,7 @@ public class InventoryUtils
         for (int slot = 0; slot < items.size(); ++slot)
         {
             inv.setStack(slot, items.get(slot).copy());
+//            LOGGER.debug("getAsInventory()[{}] inv [{}], items [{}]", slot, inv.getStack(slot).toString(), items.get(slot).toString());
         }
 
         return inv;

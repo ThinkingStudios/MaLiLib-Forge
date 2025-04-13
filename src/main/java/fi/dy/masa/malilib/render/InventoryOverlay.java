@@ -49,12 +49,15 @@ import fi.dy.masa.malilib.util.MathUtils;
 import fi.dy.masa.malilib.util.WorldUtils;
 import fi.dy.masa.malilib.util.game.IEntityOwnedInventory;
 import fi.dy.masa.malilib.util.game.wrap.GameWrap;
+import fi.dy.masa.malilib.util.log.AnsiLogger;
 import fi.dy.masa.malilib.util.nbt.NbtBlockUtils;
 import fi.dy.masa.malilib.util.nbt.NbtEntityUtils;
 import fi.dy.masa.malilib.util.nbt.NbtKeys;
 
 public class InventoryOverlay
 {
+    private static final AnsiLogger LOGGER = new AnsiLogger(InventoryOverlay.class);
+
     public static final Identifier TEXTURE_BREWING_STAND    = Identifier.ofVanilla("textures/gui/container/brewing_stand.png");
     public static final Identifier TEXTURE_CRAFTER          = Identifier.ofVanilla("textures/gui/container/crafter.png");
     public static final Identifier TEXTURE_DISPENSER        = Identifier.ofVanilla("textures/gui/container/dispenser.png");
@@ -935,7 +938,7 @@ public class InventoryOverlay
                     }
                     else if (!stack.isEmpty())
                     {
-                        //System.out.printf("renderInventoryStacks: slot[%d/%d]: [%s]\n", slot, slots, stack);
+//                        LOGGER.debug("renderInventoryStacks: slot[{}/{}]: [{}]", slot, slots, stack.toString());
                         renderStackAt(stack, x, y, 1, mc, drawContext, mouseX, mouseY);
                     }
 
@@ -1070,8 +1073,8 @@ public class InventoryOverlay
         drawContext.drawItem(stack.copy(), 0, 0);
 
         RenderUtils.color(1f, 1f, 1f, 1f);
-        drawContext.drawStackOverlay(mc.textRenderer, stack.copyWithCount(stack.getCount()), 0, 0);
-        //RenderUtils.forceDraw(drawContext);
+        drawContext.drawStackOverlay(mc.textRenderer, stack.copy(), 0, 0);
+        RenderUtils.forceDraw(drawContext);     // Do not remove, this fixes the "last stack size" bug
 
         RenderUtils.color(1f, 1f, 1f, 1f);
         matrixStack.pop();
@@ -1213,11 +1216,11 @@ public class InventoryOverlay
     {
         if (stack.isEmpty())
         {
-            System.out.printf("dumpStack(): [%s]\n", ItemStack.EMPTY.toString());
+            LOGGER.info("dumpStack(): [{}]", ItemStack.EMPTY.toString());
             return;
         }
 
-        System.out.printf("dumpStack(): [%s]\n", stack.toNbt(WorldUtils.getBestWorld(GameWrap.getClient()).getRegistryManager()).toString());
+        LOGGER.info("dumpStack(): [{}}]", stack.toNbt(WorldUtils.getBestWorld(GameWrap.getClient()).getRegistryManager()).toString());
 
         if (list != null && !list.isEmpty())
         {
@@ -1225,7 +1228,7 @@ public class InventoryOverlay
 
             for (Text entry : list)
             {
-                System.out.printf("ToolTip[%d]: %s\n", i, entry.getString());
+                LOGGER.info("ToolTip[{}]: {}", i, entry.getString());
                 i++;
             }
         }

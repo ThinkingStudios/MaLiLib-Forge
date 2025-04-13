@@ -88,7 +88,7 @@ public class MaLiLibTag
 
     private static Identifier buildIdentifier(String name)
     {
-        return Identifier.of(MaLiLibReference.ID, name);
+        return Identifier.of(MaLiLibReference.MOD_ID, name);
     }
 
     public static void register()

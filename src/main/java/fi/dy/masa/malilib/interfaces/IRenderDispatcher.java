@@ -1,18 +1,16 @@
 package fi.dy.masa.malilib.interfaces;
 
-import org.joml.Matrix4f;
-
 public interface IRenderDispatcher
 {
     /**
-     * Registers a renderer which will have its {@link IRenderer#onRenderGameOverlayPost}
+     * Registers a renderer which will have its {@link IRenderer.onRenderGameOverlayPost}
      * method called after the vanilla rendering is done
      * @param renderer
      */
     void registerGameOverlayRenderer(IRenderer renderer);
 
     /**
-     * Registers a renderer which will have its {@link IRenderer#onRenderTooltipLast}
+     * Registers a renderer which will have its {@link IRenderer.onRenderTooltipLast}
      * method called after the vanilla tooltip text has been rendered.
      * @param renderer
      */
@@ -33,7 +31,7 @@ public interface IRenderDispatcher
 //    void registerWorldLayerPassRenderer(IRenderer renderer);
 
     /**
-     * Registers a renderer which will have its {@link IRenderer#onRenderWorldPostDebugRender}
+     * Registers a renderer which will have its {@link IRenderer.onRenderWorldPostDebugRender}
      * method called after the vanilla Debug rendering is done
      * @param renderer
      */
@@ -47,14 +45,14 @@ public interface IRenderDispatcher
 //    void registerWorldPreParticleRenderer(IRenderer renderer);
 
     /**
-     * Registers a renderer which will have its {@link IRenderer#onRenderWorldPreWeather}
+     * Registers a renderer which will have its {@link IRenderer.onRenderWorldPreWeather}
      * method called before the vanilla Weather rendering is done
      * @param renderer
      */
     void registerWorldPreWeatherRenderer(IRenderer renderer);
 
     /**
-     * Registers a renderer which will have its {@link IRenderer#onRenderWorldLast}
+     * Registers a renderer which will have its {@link IRenderer.onRenderWorldPost}
      * method called after the vanilla rendering is done
      * @param renderer
      */
