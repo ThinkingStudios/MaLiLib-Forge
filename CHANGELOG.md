@@ -1,2 +1,2 @@
 ## Changelog
-- sync `sakura-ryoko/malilib` 1.21.5-0.24.0-sakura.8
+- update NeoForge `21.5.35-beta` -> `21.5.42-beta`
