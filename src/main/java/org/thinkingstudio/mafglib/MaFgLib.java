@@ -13,7 +13,6 @@ import net.neoforged.fml.loading.FMLLoader;
 
 import org.thinkingstudio.mafglib.loader.entrypoints.ConfigScreenEntrypoint;
 import org.thinkingstudio.mafglib.loader.entrypoints.EntrypointHandler;
-import org.thinkingstudio.mafglib.loader.entrypoints.ModInitializer;
 
 @Mod(value = MaLiLibReference.MOD_ID, dist = Dist.CLIENT)
 public class MaFgLib {
@@ -21,7 +20,7 @@ public class MaFgLib {
         if (FMLLoader.getDist().isClient()) {
             EntrypointHandler.init(modEventBus);
             modContainer.registerExtensionPoint(ConfigScreenEntrypoint.class, new ModMenuImpl());
-            modContainer.registerExtensionPoint(ModInitializer.class, new MaLiLib());
+            MaLiLib.onInitialize();
             MaLiLibDataGen.onInitializeDataGenerator(modEventBus);
         }
     }

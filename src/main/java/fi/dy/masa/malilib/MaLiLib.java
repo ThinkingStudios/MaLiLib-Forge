@@ -8,14 +8,11 @@ import fi.dy.masa.malilib.event.InitializationHandler;
 import fi.dy.masa.malilib.registry.Registry;
 import fi.dy.masa.malilib.util.data.ModInfo;
 
-import org.thinkingstudio.mafglib.loader.entrypoints.ModInitializer;
-
-public class MaLiLib implements ModInitializer
+public class MaLiLib
 {
     public static final Logger LOGGER = LogManager.getLogger(MaLiLibReference.MOD_ID);
 
-    @Override
-    public void onInitialize() {
+    public static void onInitialize() {
         InitializationHandler.getInstance().registerInitializationHandler(new MaLiLibInitHandler());
         Registry.CONFIG_SCREEN.registerConfigScreenFactory(
                 new ModInfo(MaLiLibReference.MOD_ID, MaLiLibReference.MOD_NAME, MaLiLibConfigGui::new)
