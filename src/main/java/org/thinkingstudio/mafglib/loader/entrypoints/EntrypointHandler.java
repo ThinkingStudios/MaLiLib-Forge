@@ -12,8 +12,6 @@ public class EntrypointHandler {
     public static void init(IEventBus modEventBus) {
         modEventBus.addListener(FMLLoadCompleteEvent.class, event -> {
             ModList.get().forEachModContainer((modId, container) -> {
-                Optional<ModInitializer> modInitializer = container.getCustomExtension(ModInitializer.class);
-                modInitializer.ifPresent(ModInitializer::onInitialize);
                 if (FMLLoader.getDist().isClient()) {
                     Optional<ConfigScreenEntrypoint> configScreen = container.getCustomExtension(ConfigScreenEntrypoint.class);
                     configScreen.ifPresent(entrypoint -> {
