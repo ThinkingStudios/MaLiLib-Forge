@@ -7,7 +7,6 @@ import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.BufferBuilder;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
@@ -142,17 +141,17 @@ public class TestUtils
         bufferQuads.vertex((float) (box.maxX - cx), (float) (box.maxY - cy), (float) (box.maxZ - cz)).color(color.r, color.g, color.b, color.a);
     }
 
-    public static void renderWallQuads(Box box, Vec3d cameraPos, Color4f color, BufferBuilder bufferQuads, MatrixStack.Entry e)
-    {
-        double cx = cameraPos.x;
-        double cy = cameraPos.y;
-        double cz = cameraPos.z;
-
-        bufferQuads.vertex(e, (float) (box.minX - cx), (float) (box.maxY - cy), (float) (box.minZ - cz)).color(color.r, color.g, color.b, color.a);
-        bufferQuads.vertex(e, (float) (box.minX - cx), (float) (box.minY - cy), (float) (box.minZ - cz)).color(color.r, color.g, color.b, color.a);
-        bufferQuads.vertex(e, (float) (box.maxX - cx), (float) (box.minY - cy), (float) (box.maxZ - cz)).color(color.r, color.g, color.b, color.a);
-        bufferQuads.vertex(e, (float) (box.maxX - cx), (float) (box.maxY - cy), (float) (box.maxZ - cz)).color(color.r, color.g, color.b, color.a);
-    }
+//    public static void renderWallQuads(Box box, Vec3d cameraPos, Color4f color, BufferBuilder bufferQuads, MatrixStack.Entry e)
+//    {
+//        double cx = cameraPos.x;
+//        double cy = cameraPos.y;
+//        double cz = cameraPos.z;
+//
+//        bufferQuads.vertex(e, (float) (box.minX - cx), (float) (box.maxY - cy), (float) (box.minZ - cz)).color(color.r, color.g, color.b, color.a);
+//        bufferQuads.vertex(e, (float) (box.minX - cx), (float) (box.minY - cy), (float) (box.minZ - cz)).color(color.r, color.g, color.b, color.a);
+//        bufferQuads.vertex(e, (float) (box.maxX - cx), (float) (box.minY - cy), (float) (box.maxZ - cz)).color(color.r, color.g, color.b, color.a);
+//        bufferQuads.vertex(e, (float) (box.maxX - cx), (float) (box.maxY - cy), (float) (box.maxZ - cz)).color(color.r, color.g, color.b, color.a);
+//    }
 
     public static void renderWallOutlines(
             Box box,
@@ -160,8 +159,8 @@ public class TestUtils
             boolean alignLinesToModulo,
             Vec3d cameraPos,
             Color4f color,
-            BufferBuilder bufferLines,
-            MatrixStack.Entry e)
+//            BufferBuilder bufferLines, MatrixStack.Entry e)
+            BufferBuilder bufferLines)
     {
         double cx = cameraPos.x;
         double cy = cameraPos.y;
@@ -173,8 +172,11 @@ public class TestUtils
 
             while (lineY <= box.maxY)
             {
-                bufferLines.vertex(e, (float) (box.minX - cx), (float) (lineY - cy), (float) (box.minZ - cz)).color(color.r, color.g, color.b, 1.0F).normal(e, 0.0f, 0.0f, 0.0f);
-                bufferLines.vertex(e, (float) (box.maxX - cx), (float) (lineY - cy), (float) (box.maxZ - cz)).color(color.r, color.g, color.b, 1.0F).normal(e, 0.0f, 0.0f, 0.0f);
+                bufferLines.vertex((float) (box.minX - cx), (float) (lineY - cy), (float) (box.minZ - cz)).color(color.r, color.g, color.b, 1.0F);
+                bufferLines.vertex((float) (box.maxX - cx), (float) (lineY - cy), (float) (box.maxZ - cz)).color(color.r, color.g, color.b, 1.0F);
+
+//                bufferLines.vertex(e, (float) (box.minX - cx), (float) (lineY - cy), (float) (box.minZ - cz)).color(color.r, color.g, color.b, 1.0F).normal(e, 0.0f, 0.0f, 0.0f);
+//                bufferLines.vertex(e, (float) (box.maxX - cx), (float) (lineY - cy), (float) (box.maxZ - cz)).color(color.r, color.g, color.b, 1.0F).normal(e, 0.0f, 0.0f, 0.0f);
                 lineY += lineIntervalV;
             }
         }
@@ -187,8 +189,11 @@ public class TestUtils
 
                 while (lineZ <= box.maxZ)
                 {
-                    bufferLines.vertex(e, (float) (box.minX - cx), (float) (box.minY - cy), (float) (lineZ - cz)).color(color.r, color.g, color.b, 1.0F).normal(e, 0.0f, 0.0f, 0.0f);
-                    bufferLines.vertex(e, (float) (box.minX - cx), (float) (box.maxY - cy), (float) (lineZ - cz)).color(color.r, color.g, color.b, 1.0F).normal(e, 0.0f, 0.0f, 0.0f);
+                    bufferLines.vertex((float) (box.minX - cx), (float) (box.minY - cy), (float) (lineZ - cz)).color(color.r, color.g, color.b, 1.0F);
+                    bufferLines.vertex((float) (box.minX - cx), (float) (box.maxY - cy), (float) (lineZ - cz)).color(color.r, color.g, color.b, 1.0F);
+
+//                    bufferLines.vertex(e, (float) (box.minX - cx), (float) (box.minY - cy), (float) (lineZ - cz)).color(color.r, color.g, color.b, 1.0F).normal(e, 0.0f, 0.0f, 0.0f);
+//                    bufferLines.vertex(e, (float) (box.minX - cx), (float) (box.maxY - cy), (float) (lineZ - cz)).color(color.r, color.g, color.b, 1.0F).normal(e, 0.0f, 0.0f, 0.0f);
                     lineZ += lineIntervalH;
                 }
             }
@@ -198,8 +203,11 @@ public class TestUtils
 
                 while (lineX <= box.maxX)
                 {
-                    bufferLines.vertex(e, (float) (lineX - cx), (float) (box.minY - cy), (float) (box.minZ - cz)).color(color.r, color.g, color.b, 1.0F).normal(e, 0.0f, 0.0f, 0.0f);
-                    bufferLines.vertex(e, (float) (lineX - cx), (float) (box.maxY - cy), (float) (box.minZ - cz)).color(color.r, color.g, color.b, 1.0F).normal(e, 0.0f, 0.0f, 0.0f);
+                    bufferLines.vertex((float) (lineX - cx), (float) (box.minY - cy), (float) (box.minZ - cz)).color(color.r, color.g, color.b, 1.0F);
+                    bufferLines.vertex((float) (lineX - cx), (float) (box.maxY - cy), (float) (box.minZ - cz)).color(color.r, color.g, color.b, 1.0F);
+
+//                    bufferLines.vertex(e, (float) (lineX - cx), (float) (box.minY - cy), (float) (box.minZ - cz)).color(color.r, color.g, color.b, 1.0F).normal(e, 0.0f, 0.0f, 0.0f);
+//                    bufferLines.vertex(e, (float) (lineX - cx), (float) (box.maxY - cy), (float) (box.minZ - cz)).color(color.r, color.g, color.b, 1.0F).normal(e, 0.0f, 0.0f, 0.0f);
                     lineX += lineIntervalH;
                 }
             }

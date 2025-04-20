@@ -10,11 +10,9 @@ import org.joml.Matrix4fStack;
 import com.mojang.blaze3d.buffers.BufferUsage;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.BuiltBuffer;
 import net.minecraft.client.render.Camera;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
@@ -202,26 +200,28 @@ public class TestWalls implements AutoCloseable
         Vec3d cameraPos = camera.getPos();
 
         // RenderPipelines.LINES
-        RenderContext ctx = new RenderContext(() -> "TestWalls Lines", RenderPipelines.LINES, BufferUsage.STATIC_WRITE);
+        RenderContext ctx = new RenderContext(() -> "TestWalls Lines", MaLiLibPipelines.DEBUG_LINES_MASA_SIMPLE_LEQUAL_DEPTH, BufferUsage.STATIC_WRITE);
         BufferBuilder builder = ctx.getBuilder();
         Matrix4fStack matrix4fstack = RenderSystem.getModelViewStack();
-        MatrixStack matrices = new MatrixStack();
+//        MatrixStack matrices = new MatrixStack();
         Vec3d updatePos = this.getUpdatePosition();
 
 //        this.preRender();
         matrix4fstack.pushMatrix();
         matrix4fstack.translate((float) (updatePos.x - cameraPos.x), (float) (updatePos.y - cameraPos.y), (float) (updatePos.z - cameraPos.z));
-        matrices.push();
+//        matrices.push();
 
-        MatrixStack.Entry e = matrices.peek();
-        RenderUtils.drawBlockBoundingBoxOutlinesBatchedLines(this.center, cameraPos, linesColor, 0.001, builder, e);
+//        MatrixStack.Entry e = matrices.peek();
+        RenderUtils.drawBlockBoundingBoxOutlinesBatchedLines(this.center, cameraPos, linesColor, 0.001, builder);
+//        RenderUtils.drawBlockBoundingBoxOutlinesBatchedLines(this.center, cameraPos, linesColor, 0.001, builder, e);
 
         for (Box entry : this.boxes)
         {
-            TestUtils.renderWallOutlines(entry, 16, 16, true, cameraPos, linesColor, builder, e);
+            TestUtils.renderWallOutlines(entry, 16, 16, true, cameraPos, linesColor, builder);
+//            TestUtils.renderWallOutlines(entry, 16, 16, true, cameraPos, linesColor, builder, e);
         }
 
-        matrices.pop();
+//        matrices.pop();
         matrix4fstack.popMatrix();
 
         try

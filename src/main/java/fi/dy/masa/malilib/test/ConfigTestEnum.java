@@ -209,7 +209,7 @@ public enum ConfigTestEnum implements IHotkeyTogglable, IConfigNotifiable<IConfi
 
         if (comment != null && this.singlePlayer)
         {
-            return comment + "\n" + StringUtils.translate(MaLiLibReference.MOD_ID + ".label.config_comment.single_player_only");
+            return comment + "\n" + StringUtils.translate(MaLiLibReference.ID + ".label.config_comment.single_player_only");
         }
 
         return comment;

@@ -159,8 +159,8 @@ public class TestSelector implements IClientTickHandler
             {
                 RenderUtils.renderAreaOutlineNoCorners(pos1, pos2, lineWidthArea, this.colorX, this.colorY, this.colorZ);
                 RenderUtils.renderAreaSides(pos1, pos2, this.sideColor, posMatrix, false);
-                RenderUtils.renderBlockOutline(pos1, expand, lineWidthBlockBox, this.colorPos1);
-                RenderUtils.renderBlockOutline(pos2, expand, lineWidthBlockBox, this.colorPos2);
+                RenderUtils.renderBlockOutline(pos1, expand, lineWidthBlockBox, this.colorPos1, false);
+                RenderUtils.renderBlockOutline(pos2, expand, lineWidthBlockBox, this.colorPos2, false);
             }
             else
             {
@@ -172,12 +172,12 @@ public class TestSelector implements IClientTickHandler
         {
             if (pos1 != null)
             {
-                RenderUtils.renderBlockOutline(pos1, expand, lineWidthBlockBox, this.colorPos1);
+                RenderUtils.renderBlockOutline(pos1, expand, lineWidthBlockBox, this.colorPos1, false);
             }
 
             if (pos2 != null)
             {
-                RenderUtils.renderBlockOutline(pos2, expand, lineWidthBlockBox, this.colorPos2);
+                RenderUtils.renderBlockOutline(pos2, expand, lineWidthBlockBox, this.colorPos2, false);
             }
         }
 

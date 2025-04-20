@@ -23,6 +23,8 @@ public enum TimeFormat implements IConfigOptionListEntry, StringIdentifiable
     ISO_OFFSET  ("iso_offset", TimeFmtType.ISO_OFFSET,  "malilib.gui.label.time_format.iso_offset"),
     FORMATTED   ("formatted",  TimeFmtType.FORMATTED,   "malilib.gui.label.time_format.formatted"),
     RFC1123     ("rfc1123",    TimeFmtType.RFC1123,     "malilib.gui.label.time_format.rfc1123"),
+    TIME_ONLY   ("time_only",  TimeFmtType.TIME_ONLY,   "malilib.gui.label.time_format.time_only"),
+    DATE_ONLY   ("date_only",  TimeFmtType.DATE_ONLY,   "malilib.gui.label.time_format.date_only"),
     ;
 
     public static final StringIdentifiable.EnumCodec<TimeFormat> CODEC = StringIdentifiable.createCodec(TimeFormat::values);
