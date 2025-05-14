@@ -228,7 +228,7 @@ public class TestRenderHandler implements IRenderer
             // This can cause various problems unrelated to the tooltips; but it does work.
             /*
             MutableText itemName = list.getFirst().copy();
-            MutableText title = Text.empty().append(StringUtils.translateAsText(MaLiLibReference.MOD_ID+".gui.tooltip.test.title"));
+            MutableText title = Text.empty().append(StringUtils.translateAsText(MaLiLibReference.ID+".gui.tooltip.test.title"));
             list.addFirst(title);
              */
             list.accept(StringUtils.translateAsText(MaLiLibReference.ID+".gui.tooltip.test.first"));

@@ -21,7 +21,7 @@ public class MaFgLib {
             EntrypointHandler.init(modEventBus);
             modContainer.registerExtensionPoint(ConfigScreenEntrypoint.class, new ModMenuImpl());
             MaLiLib.onInitialize();
-            MaLiLibDataGen.onInitializeDataGenerator(modEventBus);
+            modEventBus.addListener(MaLiLibDataGen::onInitializeDataGenerator);
         }
     }
 }

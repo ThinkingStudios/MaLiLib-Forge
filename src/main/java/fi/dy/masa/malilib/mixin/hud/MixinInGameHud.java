@@ -27,7 +27,7 @@ public abstract class MixinInGameHud implements IGameHud
     @Inject(method = "<init>", at = @At("TAIL"))
     private void onInit(CallbackInfo info)
     {
-        this.layerManager.add(VanillaGuiLayers.SUBTITLE_OVERLAY, this::malilib_renderGameOverlayLastDrawer);
+        this.layerManager.add(VanillaGuiLayers.DEBUG_OVERLAY, this::malilib_renderGameOverlayLastDrawer);
     }
 
     @Inject(method = "render", at = @At("TAIL"))

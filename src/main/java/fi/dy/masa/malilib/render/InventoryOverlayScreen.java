@@ -66,7 +66,7 @@ public class InventoryOverlayScreen extends Screen implements Drawable
     public InventoryOverlayScreen(String modId, @Nullable InventoryOverlay.Context previewData, boolean shulkerBGColors, boolean villagerBGColors)
     {
         super(StringUtils.translateAsText(MaLiLibReference.ID + ".gui.title.inventory_overlay", modId));
-        //this.setTitle(StringUtils.translate(MaLiLibReference.MOD_ID + ".gui.title.inventory_overlay", modId));
+        //this.setTitle(StringUtils.translate(MaLiLibReference.ID + ".gui.title.inventory_overlay", modId));
         //this.setParent(mc.currentScreen);
         this.modId = modId;
         this.previewData = previewData;
