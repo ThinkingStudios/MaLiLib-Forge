@@ -1,4 +1,4 @@
-package fi.dy.masa.malilib.mixin;
+package fi.dy.masa.malilib.mixin.render;
 
 import com.llamalad7.mixinextras.sugar.Local;
 import org.joml.Matrix4f;
@@ -27,7 +27,7 @@ public abstract class MixinWorldRenderer
 
     @Inject(method = "render",
             at = @At(value = "INVOKE",
-                     target = "Lnet/minecraft/client/render/WorldRenderer;addWeatherPass(Lnet/minecraft/client/render/FrameGraphBuilder;Lnet/minecraft/util/math/Vec3d;FLnet/minecraft/client/render/Fog;Lorg/joml/Matrix4f;Lorg/joml/Matrix4f;Lnet/minecraft/client/render/Camera;)V",
+                     target = "Lnet/minecraft/client/render/WorldRenderer;addParticlesPass(Lnet/minecraft/client/render/FrameGraphBuilder;Lnet/minecraft/client/render/Camera;FLnet/minecraft/client/render/Fog;Lnet/minecraft/client/render/Frustum;Lorg/joml/Matrix4f;Lorg/joml/Matrix4f;)V",
                      shift = At.Shift.BEFORE))
     private void malilib_onRenderWorldPreWeather(ObjectAllocator allocator, RenderTickCounter tickCounter, boolean renderBlockOutline,
                                                  Camera camera, GameRenderer gameRenderer, Matrix4f positionMatrix, Matrix4f projectionMatrix, CallbackInfo ci,

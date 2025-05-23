@@ -17,7 +17,7 @@ Library mod for the (Neo)Forge port of masa's mods.
 '''
 
 [[mixins]]
-config = "mafglib.mixins.json"
+config = "mixins.malilib.json"
 
 [[dependencies.mafglib]]
 modId = "neoforge"
