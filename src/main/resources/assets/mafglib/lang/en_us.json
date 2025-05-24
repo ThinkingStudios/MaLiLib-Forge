@@ -1,3 +1,5 @@
 {
-    "fml.menu.mods.info.description.mafglib": "MaLiLib unofficial (Neo)Forge port.\nLibrary mod for the (Neo)Forge port of masa's mods."
+    "fml.menu.mods.info.description.mafglib": "MaLiLib unofficial (Neo)Forge port.\nLibrary mod for the (Neo)Forge port of masa's mods.",
+    "pack.mafglib.runtime": "MaFgLib Generated Resources",
+    "pack.mafglib.runtime.description": "Mod Runtime Generated Resources"
 }

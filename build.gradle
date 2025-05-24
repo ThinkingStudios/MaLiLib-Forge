@@ -8,28 +8,6 @@ base.archivesName = libs.versions.archives.name.get()
 version = "${libs.versions.version.get()}-mc${libs.versions.minecraft.version.get()}"
 group = libs.versions.maven.group.get()
 
-def generatedResources = file("src/generated")
-
-sourceSets {
-    main {
-        resources.srcDir generatedResources
-    }
-}
-
-// Architectury Loom's datagen is broken
-/*
-loom {
-    runs {
-        clientData {
-            data()
-            programArgs "--all", "--mod", "mafglib"
-            programArgs "--output", generatedResources.absolutePath
-            //programArgs "--includeClient"
-        }
-    }
-}
- */
-
 repositories {
     maven { url "https://jitpack.io" }
     maven { url "https://maven.neoforged.net/releases/" }

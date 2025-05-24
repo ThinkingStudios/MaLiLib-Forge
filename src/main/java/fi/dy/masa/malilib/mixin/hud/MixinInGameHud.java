@@ -1,7 +1,6 @@
-package fi.dy.masa.malilib.mixin;
+package fi.dy.masa.malilib.mixin.hud;
 
-import net.neoforged.neoforge.client.gui.GuiLayerManager;
-import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
+import net.minecraft.client.gui.LayeredDrawer;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -14,17 +13,19 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.client.render.RenderTickCounter;
 import fi.dy.masa.malilib.event.RenderEventHandler;
+import fi.dy.masa.malilib.util.game.IGameHud;
 
 @Mixin(InGameHud.class)
-public abstract class MixinInGameHud
+public abstract class MixinInGameHud implements IGameHud
 {
     @Shadow @Final private MinecraftClient client;
-    @Shadow @Final private GuiLayerManager layerManager;
+    @Shadow @Final private LayeredDrawer layeredDrawer;
+    @Shadow private int overlayRemaining;
 
     @Inject(method = "<init>", at = @At("TAIL"))
-    private void onInit(CallbackInfo info)
+    private void malilib_onInit(CallbackInfo info)
     {
-        this.layerManager.add(VanillaGuiLayers.SUBTITLE_OVERLAY, this::malilib_renderGameOverlayLastDrawer);
+        this.layeredDrawer.addLayer(this::malilib_renderGameOverlayLastDrawer);
     }
 
     @Inject(method = "render", at = @At(value = "RETURN"))
@@ -37,5 +38,11 @@ public abstract class MixinInGameHud
     private void malilib_renderGameOverlayLastDrawer(DrawContext context, RenderTickCounter tickCounter)
     {
         ((RenderEventHandler) RenderEventHandler.getInstance()).onRenderGameOverlayLastDrawer(context, this.client, tickCounter.getTickDelta(false));
+    }
+
+    @Override
+    public void malilib$setOverlayRemaining(int ticks)
+    {
+        this.overlayRemaining = ticks;
     }
 }

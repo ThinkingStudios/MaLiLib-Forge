@@ -19,7 +19,7 @@ public class MaFgLib {
         if (FMLLoader.getDist().isClient()) {
             modContainer.registerExtensionPoint(ConfigScreenEntrypoint.class, new ModMenuImpl());
             MaLiLib.onInitialize();
-            MaLiLibDataGen.onInitializeDataGenerator(modEventBus);
+            MaLiLibDataGen.onInitializeDataGenerator(modEventBus, modContainer);
         }
     }
 }
