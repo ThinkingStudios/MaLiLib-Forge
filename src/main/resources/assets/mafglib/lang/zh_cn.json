@@ -1,3 +1,5 @@
 {
-  "fml.menu.mods.info.description.mafglib": "MaLiLib 非官方 (Neo)Forge 移植。\n用于 masa mods 的 (Neo)Forge 移植的 library mod。"
+  "fml.menu.mods.info.description.mafglib": "MaLiLib 非官方 (Neo)Forge 移植。\n用于 masa mods 的 (Neo)Forge 移植的 library mod。",
+  "pack.mafglib.runtime": "MaFgLib运行时包",
+  "pack.mafglib.runtime.description": "模组运行时资源"
 }

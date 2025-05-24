@@ -11,7 +11,6 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.ShulkerBoxBlock;
-import net.minecraft.block.entity.ShulkerBoxBlockEntity;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gl.ShaderProgramKeys;
@@ -25,7 +24,6 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.component.ComponentMap;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.MapIdComponent;
-import net.minecraft.component.type.NbtComponent;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
@@ -48,15 +46,12 @@ import net.minecraft.village.VillagerProfession;
 import org.joml.Matrix4f;
 import org.joml.Matrix4fStack;
 
-import fi.dy.masa.malilib.MaLiLibConfigs;
 import fi.dy.masa.malilib.config.HudAlignment;
 import fi.dy.masa.malilib.gui.GuiBase;
-import fi.dy.masa.malilib.mixin.IMixinDrawContext;
+import fi.dy.masa.malilib.mixin.render.IMixinDrawContext;
 import fi.dy.masa.malilib.util.*;
 import fi.dy.masa.malilib.util.PositionUtils.HitPart;
 import fi.dy.masa.malilib.util.nbt.NbtBlockUtils;
-
-import static fi.dy.masa.malilib.render.InventoryOverlay.INV_PROPS_TEMP;
 
 public class RenderUtils
 {
@@ -534,7 +529,7 @@ public class RenderUtils
                                  List<String> lines, DrawContext drawContext)
     {
         return renderText(xOff, yOff, scale, textColor, bgColor, alignment,
-                          useBackground, useShadow, MaLiLibConfigs.Generic.ENABLE_STATUS_EFFECTS_SHIFT.getBooleanValue(),
+                          useBackground, useShadow, true,
                           lines, drawContext);
     }
 
@@ -1678,8 +1673,13 @@ public class RenderUtils
 
     public static void setVillagerBackgroundTintColor(VillagerData data, boolean useBgColors)
     {
-        VillagerProfession profession = data != null ? data.getProfession() : null;
-        setVillagerBackgroundTintColor(profession, useBgColors);
+        if (useBgColors)
+        {
+            VillagerProfession profession = data != null ? data.getProfession() : null;
+            setVillagerBackgroundTintColor(profession, useBgColors);
+        }
+
+        color(1f, 1f, 1f, 1f);
     }
 
     public static void setVillagerBackgroundTintColor(VillagerProfession profession, boolean useBgColors)
@@ -1701,6 +1701,8 @@ public class RenderUtils
 
     public static DyeColor getVillagerColor(VillagerProfession profession)
     {
+        if (profession == null) return null;
+
         if (profession.equals(VillagerProfession.NONE))
         {
             return DyeColor.BLUE;
