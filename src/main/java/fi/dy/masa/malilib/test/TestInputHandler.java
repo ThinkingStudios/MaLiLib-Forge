@@ -61,8 +61,8 @@ public class TestInputHandler implements IKeybindProvider
     @Override
     public void addHotkeys(IKeybindManager manager)
     {
-        manager.addHotkeysForCategory(MaLiLibReference.MOD_NAME, MaLiLibReference.MOD_ID + ".hotkeys.category.test_hotkeys", MaLiLibConfigs.Test.HOTKEY_LIST);
-        manager.addHotkeysForCategory(MaLiLibReference.MOD_NAME, MaLiLibReference.MOD_ID + ".hotkeys.category.test_enum_hotkeys", ImmutableList.copyOf(ConfigTestEnum.values()));
+        manager.addHotkeysForCategory(MaLiLibReference.MOD_NAME, MaLiLibReference.ID + ".hotkeys.category.test_hotkeys", MaLiLibConfigs.Test.HOTKEY_LIST);
+        manager.addHotkeysForCategory(MaLiLibReference.MOD_NAME, MaLiLibReference.ID + ".hotkeys.category.test_enum_hotkeys", ImmutableList.copyOf(ConfigTestEnum.values()));
     }
 
     public static class Callbacks implements IHotkeyCallback

@@ -1,4 +1,4 @@
-package org.thinkingstudio.mafglib.util;
+package org.thinkingstudio.mafglib.helper;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Stopwatch;
@@ -11,7 +11,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -19,8 +18,6 @@ import net.minecraft.SharedConstants;
 import net.minecraft.data.DataOutput;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.DataWriter;
-import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.registry.ServerDynamicRegistryType;
 import net.minecraft.resource.*;
 import net.minecraft.resource.ResourcePackProfile.Metadata;
 import net.minecraft.resource.ResourcePackProfile.PackFactory;
@@ -36,7 +33,12 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
 /**
- * code form <a href="https://github.com/DragonsPlusMinecraft/CreateDragonsPlus/blob/main/src/main/java/plus/dragons/createdragonsplus/data/runtime/RuntimePackResources.java">CreateDragonsPlus-RuntimePackResources</a>
+ * <p>
+ * RuntimePackHelper is a helper for creating runtime resource packs.
+ * Architectury Loom does not support runtime resource packs, so this is a workaround.
+ * </p>
+ *
+ * code from <a href="https://github.com/DragonsPlusMinecraft/CreateDragonsPlus/blob/main/src/main/java/plus/dragons/createdragonsplus/data/runtime/RuntimePackResources.java">CreateDragonsPlus-RuntimePackResources</a>
  * under <a href="https://github.com/DragonsPlusMinecraft/CreateDragonsPlus/blob/main/LICENSE.txt">LGPL-v3</a>
  */
 public final class RuntimePackHelper implements ResourcePack, ResourcePackProvider, PackFactory, DataWriter {
@@ -49,7 +51,6 @@ public final class RuntimePackHelper implements ResourcePack, ResourcePackProvid
     private final ResourcePackInfo info;
     private final DataOutput output;
     private final ExistingFileHelper existingFileHelper;
-    private final CompletableFuture<RegistryWrapper.WrapperLookup> wrapperLookup;
     private final Map<Path, InputSupplier<InputStream>> resources = new HashMap<>();
 
     private RuntimePackHelper(String name, ModContainer modContainer, ResourceType type, ResourcePackProfile.InsertionPosition position, Text title, Text description) {
@@ -67,7 +68,6 @@ public final class RuntimePackHelper implements ResourcePack, ResourcePackProvid
                 Optional.empty());
         this.output = new DataOutput(file.findResource(""));
         this.existingFileHelper = new ExistingFileHelper(Set.of(), Set.of(), false, null, null);
-        this.wrapperLookup = CompletableFuture.completedFuture(ServerDynamicRegistryType.createCombinedDynamicRegistries().getCombinedRegistryManager());
         var logoFile = modInfo.getLogoFile();
         var modResources = ResourcePackLoader.getPackFor(modInfo.getModId());
         if (logoFile.isPresent() && modResources.isPresent()) {
@@ -83,7 +83,7 @@ public final class RuntimePackHelper implements ResourcePack, ResourcePackProvid
         var modId = modContainer.getModId();
         var title = Text.translatable("pack." + modId + ".runtime");
         var description = Text.translatable("pack." + modId + ".runtime.description");
-        return new RuntimePackHelper("runtime", modContainer, type, ResourcePackProfile.InsertionPosition.TOP, title, description);
+        return createRuntimePack("runtime", modContainer, type, ResourcePackProfile.InsertionPosition.TOP, title, description);
     }
 
     public static RuntimePackHelper createRuntimePack(String name, ModContainer modContainer, ResourceType type, ResourcePackProfile.InsertionPosition position, Text title, Text description) {
