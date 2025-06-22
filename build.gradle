@@ -37,17 +37,6 @@ dependencies {
     implementation libs.jsr305
 }
 
-/*
-processResources {
-    inputs.property "version", project.version
-
-    filesMatching("META-INF/neoforge.mods.toml") {
-        expand "version": project.version
-    }
-}
-
- */
-
 var generateModMetadata = tasks.register("generateModMetadata", ProcessResources) {
     var replaceProperties = [
             minecraft_version_range: minecraft_version_range,
