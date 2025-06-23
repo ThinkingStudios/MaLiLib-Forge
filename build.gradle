@@ -30,19 +30,35 @@ dependencies {
         }
         // Fabric Networking API V1
         if (module == "fabric-networking-api-v1") {
-            modApi(include("org.sinytra.forgified-fabric-api:$module:4.3.0+cfe47bf219")) { transitive = false }
+            modApi(include("org.sinytra.forgified-fabric-api:$module:4.3.0+6db6dff919")) { transitive = false }
         }
     }
 
     implementation libs.jsr305
 }
 
-processResources {
-    inputs.property "version", project.version
+var generateModMetadata = tasks.register("generateModMetadata", ProcessResources) {
+    var replaceProperties = [
+            minecraft_version_range: minecraft_version_range,
+            neoforge_version_range : neoforge_version_range,
+            fml_version_range      : fml_version_range,
+            mod_id                 : mod_id,
+            mod_name               : libs.versions.archives.name.get(),
+            mod_license            : mod_license,
+            mod_version            : "${libs.versions.version.get()}+mc${libs.versions.minecraft.version.get()}",
+            mod_credits            : mod_credits,
+            mod_authors            : mod_authors,
+            mod_description        : mod_description,
+            mod_link               : mod_link
+    ]
+    inputs.properties replaceProperties
+    expand replaceProperties
+    from "src/main/templates"
+    into "build/generated/sources/modMetadata"
+}
 
-    filesMatching("META-INF/neoforge.mods.toml") {
-        expand "version": project.version
-    }
+sourceSets.main.resources {
+    srcDir generateModMetadata
 }
 
 tasks.withType(JavaCompile) {
@@ -82,7 +98,7 @@ publisher {
 
     setCurseID("${libs.versions.id.curseforge.get()}")
     setModrinthID("${libs.versions.id.modrinth.get()}")
-    setVersionType("release")
+    setVersionType("${libs.versions.release.type.get()}")
     setChangelog(file("CHANGELOG.md").getText("UTF-8"))
     setVersion("${project.version}")
     setDisplayName("${project.version}")

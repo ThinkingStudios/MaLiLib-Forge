@@ -1,4 +1,4 @@
-package org.thinkingstudio.mafglib.util;
+package org.thinkingstudio.mafglib.helper;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Stopwatch;
@@ -11,7 +11,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -19,8 +18,6 @@ import net.minecraft.SharedConstants;
 import net.minecraft.data.DataOutput;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.DataWriter;
-import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.registry.ServerDynamicRegistryType;
 import net.minecraft.resource.*;
 import net.minecraft.resource.ResourcePackProfile.Metadata;
 import net.minecraft.resource.ResourcePackProfile.PackFactory;

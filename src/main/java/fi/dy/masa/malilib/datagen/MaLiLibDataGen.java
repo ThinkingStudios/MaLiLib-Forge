@@ -6,7 +6,7 @@ import net.minecraft.resource.ResourceType;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.neoforge.event.AddPackFindersEvent;
-import org.thinkingstudio.mafglib.util.RuntimePackHelper;
+import org.thinkingstudio.mafglib.helper.RuntimePackHelper;
 
 import java.util.concurrent.CompletableFuture;
 

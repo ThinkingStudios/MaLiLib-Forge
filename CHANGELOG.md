@@ -1,5 +1,4 @@
-## Change
-- sync `sakura-ryoko/malilib` 1.21-0.21.8
-- tag namespace `mafglib` -> `malilib`
-- update NeoForge version to `21.1.172`
-- add `RuntimePackHelper`
+## Changelog
+- update NeoForge version to `21.1.183`
+- move `RuntimePackHelper` from `org.thinkingstudio.mafglib.util` to `org.thinkingstudio.mafglib.helper`
+- update ForgifiedFabricAPI (ThinkingStudio fork) version (Included FFAPI, don't have to download FFAPI)
