@@ -27,9 +27,9 @@ import fi.dy.masa.malilib.util.time.TimeFormat;
 
 public class MaLiLibConfigs implements IConfigHandler
 {
-    private static final String CONFIG_FILE_NAME = MaLiLibReference.MOD_ID + ".json";
+    private static final String CONFIG_FILE_NAME = MaLiLibReference.PORT_ID + ".json";
 
-    private static final String GENERIC_KEY = MaLiLibReference.ID+".config.generic";
+    private static final String GENERIC_KEY = MaLiLibReference.MOD_ID+".config.generic";
     public static class Generic
     {
         public static final ConfigHotkey            IGNORED_KEYS                = new ConfigHotkey            ("ignoredKeys",      "").apply(GENERIC_KEY);
@@ -60,7 +60,7 @@ public class MaLiLibConfigs implements IConfigHandler
         );
     }
 
-    private static final String DEBUG_KEY = MaLiLibReference.ID+".config.debug";
+    private static final String DEBUG_KEY = MaLiLibReference.MOD_ID+".config.debug";
     public static class Debug
     {
         public static final ConfigBoolean DEBUG_MESSAGES            = new ConfigBoolean("debugMessages",false).apply(DEBUG_KEY);
@@ -85,7 +85,7 @@ public class MaLiLibConfigs implements IConfigHandler
         );
     }
 
-    private static final String TEST_KEY = MaLiLibReference.ID+".config.test";
+    private static final String TEST_KEY = MaLiLibReference.MOD_ID+".config.test";
     private static final KeybindSettings OVERLAY_TOGGLE = KeybindSettings.create(KeybindSettings.Context.ANY, KeyAction.PRESS, true, true, false, true);
     //private static final KeybindSettings GUI_RELAXED = KeybindSettings.create(KeybindSettings.Context.GUI, KeyAction.PRESS, true, false, false, false);
     private static final KeybindSettings GUI_RELAXED_CANCEL = KeybindSettings.create(KeybindSettings.Context.GUI, KeyAction.PRESS, true, false, false, true);
@@ -147,7 +147,7 @@ public class MaLiLibConfigs implements IConfigHandler
     }
 
     // Stuff used by any Post-Rewrite Code
-    private static final String EXPERIMENTAL_KEY = MaLiLibReference.ID+".config.experimental";
+    private static final String EXPERIMENTAL_KEY = MaLiLibReference.MOD_ID+".config.experimental";
     public static class Experimental
     {
         // Generic

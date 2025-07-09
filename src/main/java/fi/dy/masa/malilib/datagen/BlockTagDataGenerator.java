@@ -15,7 +15,7 @@ public class BlockTagDataGenerator extends BlockTagsProvider
 {
     public BlockTagDataGenerator(DataOutput output, CompletableFuture<RegistryWrapper.WrapperLookup> registriesFuture, ExistingFileHelper existingFileHelper)
     {
-        super(output, registriesFuture, MaLiLibReference.MOD_ID, existingFileHelper);
+        super(output, registriesFuture, MaLiLibReference.PORT_ID, existingFileHelper);
     }
 
     @Override
