@@ -1,12 +1,11 @@
 package fi.dy.masa.malilib.gui;
 
 import javax.annotation.Nullable;
-import org.joml.Matrix4f;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.util.math.MathHelper;
+
 import fi.dy.masa.malilib.gui.interfaces.IGuiIcon;
 import fi.dy.masa.malilib.render.RenderUtils;
 
@@ -76,16 +75,11 @@ public class GuiScrollBar
         this.dragging = isDragging;
     }
 
-    public void render(int mouseX, int mouseY, float partialTicks, int xPosition, int yPosition, int width, int height, int totalHeight, DrawContext drawContext)
-    {
-        this.render(mouseX, mouseY, partialTicks, xPosition, yPosition, width, height, totalHeight, drawContext, false);
-    }
-
-    public void render(int mouseX, int mouseY, float partialTicks, int xPosition, int yPosition, int width, int height, int totalHeight, DrawContext drawContext, boolean depthMask)
+    public void render(DrawContext drawContext, int mouseX, int mouseY, float partialTicks, int xPosition, int yPosition, int width, int height, int totalHeight)
     {
         if (this.renderScrollbarBackground)
         {
-            RenderUtils.drawRect(xPosition, yPosition, width, height, this.backgroundColor, depthMask);
+            RenderUtils.drawRect(drawContext, xPosition, yPosition, width, height, this.backgroundColor);
         }
 
         if (totalHeight > 0)
@@ -98,20 +92,20 @@ public class GuiScrollBar
 
             if (this.barTexture != null && barHeight >= 4)
             {
-                RenderUtils.color(1f, 1f, 1f, 1f);
-                VertexConsumer buffer = RenderUtils.bindGuiOverlayTexture(this.barTexture.getTexture(), drawContext);
-                Matrix4f posMatrix = drawContext.getMatrices().peek().getPositionMatrix();
+//                RenderUtils.color(1f, 1f, 1f, 1f);
+//                VertexConsumer buffer = RenderUtils.bindGuiOverlayTexture(this.barTexture.getTexture(), drawContext);
+//                Matrix4f posMatrix = drawContext.getMatrices().peek().getPositionMatrix();
                 int u = this.barTexture.getU();
                 int v = this.barTexture.getV();
                 int w = this.barTexture.getWidth();
                 int h = this.barTexture.getHeight();
 
-                RenderUtils.drawTexturedRect(posMatrix, xPosition + 1, barPosition                , u, v        , w, barHeight - 2, buffer);
-                RenderUtils.drawTexturedRect(posMatrix, xPosition + 1, barPosition + barHeight - 2, u, v + h - 2, w, 2, buffer);
+                RenderUtils.drawTexturedRect(drawContext, this.barTexture.getTexture(), xPosition + 1, barPosition                , u, v        , w, barHeight - 2);
+                RenderUtils.drawTexturedRect(drawContext, this.barTexture.getTexture(), xPosition + 1, barPosition + barHeight - 2, u, v + h - 2, w, 2);
             }
             else
             {
-                RenderUtils.drawRect(xPosition + 1, barPosition, width - 2, barHeight, this.foregroundColor, depthMask);
+                RenderUtils.drawRect(drawContext, xPosition + 1, barPosition, width - 2, barHeight, this.foregroundColor);
             }
 
             //RenderUtils.forceDraw(drawContext);

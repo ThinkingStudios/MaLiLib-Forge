@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import javax.annotation.Nonnull;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.ApiStatus;
 import org.joml.Matrix4f;
@@ -16,7 +17,10 @@ import net.minecraft.block.entity.CrafterBlockEntity;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gl.Framebuffer;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.render.*;
+import net.minecraft.client.render.BufferBuilderStorage;
+import net.minecraft.client.render.Camera;
+import net.minecraft.client.render.Frustum;
+import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.Entity;
@@ -57,7 +61,9 @@ import fi.dy.masa.malilib.util.WorldUtils;
 import fi.dy.masa.malilib.util.data.Color4f;
 import fi.dy.masa.malilib.util.game.BlockUtils;
 import fi.dy.masa.malilib.util.nbt.NbtBlockUtils;
+import fi.dy.masa.malilib.util.nbt.NbtInventory;
 import fi.dy.masa.malilib.util.nbt.NbtKeys;
+import fi.dy.masa.malilib.util.time.TickUtils;
 
 @ApiStatus.Experimental
 public class TestRenderHandler implements IRenderer
@@ -75,7 +81,7 @@ public class TestRenderHandler implements IRenderer
     }
 
     @Override
-    public void onRenderGameOverlayLastDrawer(DrawContext drawContext, float partialTicks, Profiler profiler, MinecraftClient mc)
+    public void onRenderGameOverlayPostAdvanced(DrawContext drawContext, float partialTicks, Profiler profiler, MinecraftClient mc)
     {
         if (MaLiLibConfigs.Test.TEST_CONFIG_BOOLEAN.getBooleanValue())
         {
@@ -105,10 +111,51 @@ public class TestRenderHandler implements IRenderer
                 list.add("Test Line 3");
                 list.add("Test Line 4");
                 list.add("Test Line 5");
+                
+                if (TickUtils.getInstance().isValid())
+                {
+                    String result = getMeasuredTPS();
+                    list.addFirst(result);
+                    list.removeLast();
+                }
 
-                RenderUtils.renderText(4, 4, 0.5F, 0xFFE0E0E0, 0xA0505050, HudAlignment.TOP_LEFT, true, false, true, list, drawContext);
+                RenderUtils.renderText(drawContext, 4, 4, MaLiLibConfigs.Test.TEST_CONFIG_FLOAT.getFloatValue(), 0xFFE0E0E0, 0xA0505050, HudAlignment.TOP_LEFT, true, false, true, list);
             }
         }
+    }
+
+    private static @Nonnull String getMeasuredTPS()
+    {
+        final float tickRate = TickUtils.getTickRate();
+        final double clampedTps = TickUtils.getMeasuredTPS();
+        final double actualTps = TickUtils.getActualTPS();
+        final double avgMspt = TickUtils.getAvgMSPT();
+        final double avgTps = TickUtils.getAvgTPS();
+        final double mspt = TickUtils.getMeasuredMSPT();
+        final String rst = GuiBase.TXT_RST;
+        final String preTps = clampedTps >= tickRate ? GuiBase.TXT_GREEN : GuiBase.TXT_RED;
+        String preMspt;
+        boolean isEstimated = TickUtils.isEstimated();
+        boolean isSprinting = TickUtils.isSprinting();
+        String sprintStr = isSprinting ? "- "+GuiBase.TXT_LIGHT_PURPLE+GuiBase.TXT_BOLD+"Sprinting"+rst : "";
+
+        if      (mspt <= 40) { preMspt = GuiBase.TXT_GREEN; }
+        else if (mspt <= 45) { preMspt = GuiBase.TXT_YELLOW; }
+        else if (mspt <= 50) { preMspt = GuiBase.TXT_GOLD; }
+        else                 { preMspt = GuiBase.TXT_RED; }
+
+        return isEstimated ?
+               String.format("Server TPS: %s%.1f%s (MSPT [est]: %s%.1f%s) (R: %s%.1f%s, avMS: %.2f, avTPS: %.2f, [actTPS: %.2f]) %s",
+                             preTps, clampedTps, rst, preMspt, mspt, rst,
+                             GuiBase.TXT_AQUA, tickRate, rst,
+                             avgMspt, avgTps, actualTps,
+                             sprintStr) :
+               String.format("Server TPS: %s%.1f%s MSPT: %s%.1f%s (R: %s%.1f%s, avMS: %.2f, avTPS: %.2f, [actTPS: %.2f]) %s",
+                             preTps, clampedTps, rst, preMspt, mspt, rst,
+                             GuiBase.TXT_AQUA, tickRate, rst,
+                             avgMspt, avgTps, actualTps,
+                             sprintStr)
+                ;
     }
 
 //    @Override
@@ -187,7 +234,7 @@ public class TestRenderHandler implements IRenderer
 //    }
 
     @Override
-    public void onRenderWorldPreWeather(Framebuffer fb, Matrix4f posMatrix, Matrix4f projMatrix, Frustum frustum, Camera camera, Fog fog, BufferBuilderStorage buffers, Profiler profiler)
+    public void onRenderWorldPreWeather(Framebuffer fb, Matrix4f posMatrix, Matrix4f projMatrix, Frustum frustum, Camera camera, BufferBuilderStorage buffers, Profiler profiler)
     {
 //        if (MaLiLibConfigs.Test.TEST_CONFIG_BOOLEAN.getBooleanValue())
 //        {
@@ -210,7 +257,7 @@ public class TestRenderHandler implements IRenderer
     }
 
     @Override
-    public void onRenderWorldLastAdvanced(Framebuffer fb, Matrix4f posMatrix, Matrix4f projMatrix, Frustum frustum, Camera camera, Fog fog, BufferBuilderStorage buffers, Profiler profiler)
+    public void onRenderWorldLastAdvanced(Framebuffer fb, Matrix4f posMatrix, Matrix4f projMatrix, Frustum frustum, Camera camera, BufferBuilderStorage buffers, Profiler profiler)
     {
         if (MaLiLibConfigs.Test.TEST_CONFIG_BOOLEAN.getBooleanValue())
         {
@@ -289,7 +336,7 @@ public class TestRenderHandler implements IRenderer
             if (MaLiLibConfigs.Test.TEST_CONFIG_BOOLEAN.getBooleanValue() && GuiBase.isShiftDown())
             {
                 profiler.push(MaLiLibReference.MOD_ID + "_map_preview");
-                RenderUtils.renderMapPreview(stack, x, y, 160, false, drawContext);
+                RenderUtils.renderMapPreview(drawContext, stack, x, y, 160, false);
                 profiler.pop();
             }
         }
@@ -298,7 +345,7 @@ public class TestRenderHandler implements IRenderer
             if (MaLiLibConfigs.Test.TEST_CONFIG_BOOLEAN.getBooleanValue() && GuiBase.isShiftDown())
             {
                 profiler.push(MaLiLibReference.MOD_ID + "_shulker_preview");
-                RenderUtils.renderShulkerBoxPreview(stack, x, y, true, drawContext);
+                RenderUtils.renderShulkerBoxPreview(drawContext, stack, x, y, true);
                 profiler.pop();
             }
         }
@@ -307,7 +354,7 @@ public class TestRenderHandler implements IRenderer
             if (MaLiLibConfigs.Test.TEST_CONFIG_BOOLEAN.getBooleanValue() && GuiBase.isShiftDown())
             {
                 profiler.push(MaLiLibReference.MOD_ID + "_bundle_preview");
-                RenderUtils.renderBundlePreview(stack, x, y, MaLiLibConfigs.Test.TEST_BUNDLE_PREVIEW_WIDTH.getIntegerValue(), true, drawContext);
+                RenderUtils.renderBundlePreview(drawContext, stack, x, y, MaLiLibConfigs.Test.TEST_BUNDLE_PREVIEW_WIDTH.getIntegerValue(), true);
                 profiler.pop();
             }
         }
@@ -334,52 +381,28 @@ public class TestRenderHandler implements IRenderer
                     {
                         inv = InventoryUtils.getPlayerEnderItemsFromNbt(pair.getRight(), world.getRegistryManager());
                     }
+                    else if (pair != null && pair.getLeft() instanceof PlayerEntity pe && !pe.getEnderChestInventory().isEmpty())
+                    {
+                        inv = pe.getEnderChestInventory();
+                    }
                     else
                     {
+                        // Last Ditch effort
                         inv = player.getEnderChestInventory();
                     }
 
                     if (inv != null)
                     {
-                        NbtCompound nbt = new NbtCompound();
-                        NbtList list = inv.toNbtList(world.getRegistryManager());
+                        try (NbtInventory nbtInv = NbtInventory.fromInventory(inv))
+                        {
+                            NbtList list = nbtInv.toNbtList(world.getRegistryManager());
+                            NbtCompound nbt = new NbtCompound();
 
-                        nbt.put(NbtKeys.ENDER_ITEMS, list);
-                        RenderUtils.renderNbtItemsPreview(stack, nbt, x, y, false, drawContext);
+                            nbt.put(NbtKeys.ENDER_ITEMS, list);
+                            RenderUtils.renderNbtItemsPreview(drawContext, stack, nbt, x, y, false);
+                        }
+                        catch (Exception ignored) { }
                     }
-
-                    // TODO 1.21.6+
-//                    EnderChestInventory inv;
-//
-//                    if (pair != null && pair.getRight() != null && pair.getRight().contains(NbtKeys.ENDER_ITEMS))
-//                    {
-//                        inv = InventoryUtils.getPlayerEnderItemsFromNbt(pair.getRight(), world.getRegistryManager());
-//                    }
-//                    else if (pair != null && pair.getLeft() instanceof PlayerEntity pe && !pe.getEnderChestInventory().isEmpty())
-//                    {
-//                        inv = pe.getEnderChestInventory();
-//                    }
-//                    else
-//                    {
-//                        // Last Ditch effort
-//                        inv = player.getEnderChestInventory();
-//                    }
-//
-//                    if (inv != null)
-//                    {
-//                        NbtInventory nbtInv = NbtInventory.fromInventory(inv);
-//
-//                        if (nbtInv.isEmpty())
-//                        {
-//                            return;
-//                        }
-//
-//                        NbtCompound nbt = new NbtCompound();
-//                        NbtList list = nbtInv.toNbtList();
-//
-//                        nbt.put(NbtKeys.ENDER_ITEMS, list);
-//                        RenderUtils.renderNbtItemsPreview(drawContext, stack, nbt, x, y, false);
-//                    }
                 }
             }
         }
@@ -429,7 +452,7 @@ public class TestRenderHandler implements IRenderer
     }
 
     // OG / Tweakeroo method also
-    public static void renderInventoryOverlayOG(InventoryOverlay.Context context, DrawContext drawContext, MinecraftClient mc)
+    public static void renderInventoryOverlayOG(DrawContext drawContext, InventoryOverlay.Context context, MinecraftClient mc)
     {
         //MinecraftClient mc = MinecraftClient.getInstance();
         LivingEntity entityLivingBase = null;
@@ -525,28 +548,28 @@ public class TestRenderHandler implements IRenderer
                 horseInv.setStack(0, horseArmor != null && !horseArmor.isEmpty() ? horseArmor : ItemStack.EMPTY);
                 horseInv.setStack(1, inv.getStack(0));
 
-                InventoryOverlay.renderInventoryBackground(type, xInv, yInv, 1, 2, mc, drawContext);
+                InventoryOverlay.renderInventoryBackground(drawContext, type, xInv, yInv, 1, 2, mc);
                 if (type == InventoryOverlay.InventoryRenderType.LLAMA)
                 {
-                    InventoryOverlay.renderLlamaArmorBackgroundSlots(horseInv, xInv + props.slotOffsetX, yInv + props.slotOffsetY, drawContext);
+                    InventoryOverlay.renderLlamaArmorBackgroundSlots(drawContext, horseInv, xInv + props.slotOffsetX, yInv + props.slotOffsetY);
                 }
                 else
                 {
-                    InventoryOverlay.renderHorseArmorBackgroundSlots(horseInv, xInv + props.slotOffsetX, yInv + props.slotOffsetY, drawContext);
+                    InventoryOverlay.renderHorseArmorBackgroundSlots(drawContext, horseInv, xInv + props.slotOffsetX, yInv + props.slotOffsetY);
                 }
-                InventoryOverlay.renderInventoryStacks(type, horseInv, xInv + props.slotOffsetX, yInv + props.slotOffsetY, 1, 0, 2, mc, drawContext);
+                InventoryOverlay.renderInventoryStacks(drawContext, type, horseInv, xInv + props.slotOffsetX, yInv + props.slotOffsetY, 1, 0, 2, mc);
                 xInv += 32 + 4;
             }
 
             if (totalSlots > 0)
             {
-                InventoryOverlay.renderInventoryBackground(type, xInv, yInv, props.slotsPerRow, totalSlots, mc, drawContext);
+                InventoryOverlay.renderInventoryBackground(drawContext, type, xInv, yInv, props.slotsPerRow, totalSlots, mc);
                 // TODO 1.21.4+
                 if (type == InventoryOverlay.InventoryRenderType.BREWING_STAND)
                 {
-                    InventoryOverlay.renderBrewerBackgroundSlots(inv, xInv, yInv, drawContext);
+                    InventoryOverlay.renderBrewerBackgroundSlots(drawContext, inv, xInv, yInv);
                 }
-                InventoryOverlay.renderInventoryStacks(type, inv, xInv + props.slotOffsetX, yInv + props.slotOffsetY, props.slotsPerRow, firstSlot, totalSlots, lockedSlots, mc, drawContext);
+                InventoryOverlay.renderInventoryStacks(drawContext, type, inv, xInv + props.slotOffsetX, yInv + props.slotOffsetY, props.slotsPerRow, firstSlot, totalSlots, lockedSlots, mc);
             }
         }
 
@@ -571,15 +594,15 @@ public class TestRenderHandler implements IRenderer
             Inventory wolfInv = new SimpleInventory(2);
             ItemStack wolfArmor = ((WolfEntity) entityLivingBase).getBodyArmor();
             wolfInv.setStack(0, wolfArmor != null && !wolfArmor.isEmpty() ? wolfArmor : ItemStack.EMPTY);
-            InventoryOverlay.renderInventoryBackground(type, xInv, yInv, 1, 2, mc, drawContext);
-            InventoryOverlay.renderWolfArmorBackgroundSlots(wolfInv, xInv + props.slotOffsetX, yInv + props.slotOffsetY, drawContext);
-            InventoryOverlay.renderInventoryStacks(type, wolfInv, xInv + props.slotOffsetX, yInv + props.slotOffsetY, 1, 0, 2, mc, drawContext);
+            InventoryOverlay.renderInventoryBackground(drawContext, type, xInv, yInv, 1, 2, mc);
+            InventoryOverlay.renderWolfArmorBackgroundSlots(drawContext, wolfInv, xInv + props.slotOffsetX, yInv + props.slotOffsetY);
+            InventoryOverlay.renderInventoryStacks(drawContext, type, wolfInv, xInv + props.slotOffsetX, yInv + props.slotOffsetY, 1, 0, 2, mc);
         }
 
         if (entityLivingBase != null)
         {
-            InventoryOverlay.renderEquipmentOverlayBackground(x, y, entityLivingBase, drawContext);
-            InventoryOverlay.renderEquipmentStacks(entityLivingBase, x, y, mc, drawContext);
+            InventoryOverlay.renderEquipmentOverlayBackground(drawContext, x, y, entityLivingBase);
+            InventoryOverlay.renderEquipmentStacks(drawContext, entityLivingBase, x, y, mc);
         }
     }
 }

@@ -7,7 +7,10 @@ import org.joml.Matrix4f;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gl.Framebuffer;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.render.*;
+import net.minecraft.client.render.BufferBuilderStorage;
+import net.minecraft.client.render.Camera;
+import net.minecraft.client.render.Frustum;
+import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -20,7 +23,7 @@ public interface IRenderer
     /**
      * Called after the vanilla "drawer" overlays have been rendered
      */
-    default void onRenderGameOverlayLastDrawer(DrawContext drawContext, float partialTicks, Profiler profiler, MinecraftClient mc) {}
+//    default void onRenderGameOverlayLastDrawer(DrawContext drawContext, float partialTicks, Profiler profiler, MinecraftClient mc) {}
 
     /**
      * Called after the vanilla overlays have been rendered, with advanced Parameters such as ticks, drawer, profiler
@@ -58,12 +61,12 @@ public interface IRenderer
     /**
      * Called before vanilla Weather rendering
      */
-    default void onRenderWorldPreWeather(Framebuffer fb, Matrix4f posMatrix, Matrix4f projMatrix, Frustum frustum, Camera camera, Fog fog, BufferBuilderStorage buffers, Profiler profiler) {}
+    default void onRenderWorldPreWeather(Framebuffer fb, Matrix4f posMatrix, Matrix4f projMatrix, Frustum frustum, Camera camera, BufferBuilderStorage buffers, Profiler profiler) {}
 
     /**
      * Called after vanilla world rendering, with advanced Parameters, such as Frustum, Camera, and Fog
      */
-    default void onRenderWorldLastAdvanced(Framebuffer fb, Matrix4f posMatrix, Matrix4f projMatrix, Frustum frustum, Camera camera, Fog fog, BufferBuilderStorage buffers, Profiler profiler) {}
+    default void onRenderWorldLastAdvanced(Framebuffer fb, Matrix4f posMatrix, Matrix4f projMatrix, Frustum frustum, Camera camera, BufferBuilderStorage buffers, Profiler profiler) {}
 
     /**
      * Called after vanilla world rendering (Original)
@@ -102,4 +105,17 @@ public interface IRenderer
     {
         return () -> this.getClass().getName();
     }
+
+    /**
+     * Register your Special Gui Element (PIP) Renderer.
+     * Simply bind your sSpecial Gui Element State / Renderer to the Immutable Map Builder using this.
+     * -
+     * !!!WARNING!!!  This is called in the early Game Pre-Init() 'clinit' phase!
+     *
+     * @param guiRenderer ()
+     * @param immediate ()
+     * @param mc ()
+     * @param builder ()
+     */
+//    default void onRegisterSpecialGuiRenderer(GuiRenderer guiRenderer, VertexConsumerProvider.Immediate immediate, MinecraftClient mc, ImmutableMap.Builder<Class<? extends SpecialGuiElementRenderState>, SpecialGuiElementRenderer<?>> builder) { }
 }

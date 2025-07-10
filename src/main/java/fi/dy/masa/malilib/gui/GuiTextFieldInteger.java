@@ -2,6 +2,7 @@ package fi.dy.masa.malilib.gui;
 
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
+
 import net.minecraft.client.font.TextRenderer;
 
 public class GuiTextFieldInteger extends GuiTextFieldGeneric

@@ -1,5 +1,9 @@
 package fi.dy.masa.malilib.gui.widgets;
 
+import java.util.List;
+
+import net.minecraft.client.gui.DrawContext;
+
 import fi.dy.masa.malilib.config.IConfigColorList;
 import fi.dy.masa.malilib.config.gui.ConfigOptionChangeListenerTextField;
 import fi.dy.masa.malilib.gui.GuiTextFieldGeneric;
@@ -11,9 +15,6 @@ import fi.dy.masa.malilib.gui.interfaces.IGuiIcon;
 import fi.dy.masa.malilib.render.RenderUtils;
 import fi.dy.masa.malilib.util.StringUtils;
 import fi.dy.masa.malilib.util.data.Color4f;
-import net.minecraft.client.gui.DrawContext;
-
-import java.util.List;
 
 public class WidgetColorListEditEntry extends WidgetConfigOptionBase<Color4f>
 {
@@ -205,24 +206,24 @@ public class WidgetColorListEditEntry extends WidgetConfigOptionBase<Color4f>
     }
 
     @Override
-    public void render(int mouseX, int mouseY, boolean selected, DrawContext drawContext)
+    public void render(DrawContext drawContext, int mouseX, int mouseY, boolean selected)
     {
-        super.render(mouseX, mouseY, selected, drawContext);
-        RenderUtils.color(1f, 1f, 1f, 1f);
+        super.render(drawContext, mouseX, mouseY, selected);
+//        RenderUtils.color(1f, 1f, 1f, 1f);
 
         if (this.isOdd)
         {
-            RenderUtils.drawRect(this.x, this.y, this.width, this.height, 0x20FFFFFF);
+            RenderUtils.drawRect(drawContext, this.x, this.y, this.width, this.height, 0x20FFFFFF);
         }
         // Draw a slightly lighter background for even entries
         else
         {
-            RenderUtils.drawRect(this.x, this.y, this.width, this.height, 0x30FFFFFF);
+            RenderUtils.drawRect(drawContext, this.x, this.y, this.width, this.height, 0x30FFFFFF);
         }
 
-        this.drawSubWidgets(mouseX, mouseY, drawContext);
-        this.drawTextFields(mouseX, mouseY, drawContext);
-        super.render(mouseX, mouseY, selected, drawContext);
+        this.drawSubWidgets(drawContext, mouseX, mouseY);
+        this.drawTextFields(drawContext, mouseX, mouseY);
+        super.render(drawContext, mouseX, mouseY, selected);
     }
 
     public static class ChangeListenerTextField extends ConfigOptionChangeListenerTextField

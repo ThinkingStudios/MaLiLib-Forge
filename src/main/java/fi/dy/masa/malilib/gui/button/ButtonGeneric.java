@@ -3,8 +3,8 @@ package fi.dy.masa.malilib.gui.button;
 import javax.annotation.Nullable;
 import org.apache.commons.lang3.StringUtils;
 
+import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.render.RenderLayer;
 
 import fi.dy.masa.malilib.gui.LeftRight;
 import fi.dy.masa.malilib.gui.interfaces.IGuiIcon;
@@ -90,62 +90,79 @@ public class ButtonGeneric extends ButtonBase
     }
 
     @Override
-    public void render(int mouseX, int mouseY, boolean selected, DrawContext drawContext)
+    public void render(DrawContext drawContext, int mouseX, int mouseY, boolean selected)
     {
-        super.render(mouseX, mouseY, selected, drawContext);
+        super.render(drawContext, mouseX, mouseY, selected);
 
         if (this.visible)
         {
             this.hovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
 
-            RenderUtils.color(1f, 1f, 1f, 1f);
+//            RenderUtils.color(1f, 1f, 1f, 1f);
 
-            if (this.renderDefaultBackground)
+            this.drawBackground(drawContext);
+            this.drawIcon(drawContext);
+            this.drawText(drawContext);
+        }
+    }
+
+    private void drawBackground(DrawContext drawContext)
+    {
+        if (this.renderDefaultBackground)
+        {
+//                ((IMixinDrawContext) drawContext).malilib_getRenderState().goDownLayer();
+            drawContext.drawGuiTexture(RenderPipelines.GUI_TEXTURED, this.getTexture(this.hovered), this.x, this.y, this.width, this.height);
+//                ((IMixinDrawContext) drawContext).malilib_getRenderState().goUpLayer();
+        }
+    }
+
+    private void drawIcon(DrawContext drawContext)
+    {
+        if (this.icon != null)
+        {
+            int offset = this.renderDefaultBackground ? 4 : 0;
+            int x = this.alignment == LeftRight.LEFT ? this.x + offset : this.x + this.width - this.icon.getWidth() - offset;
+            int y = this.y + (this.height - this.icon.getHeight()) / 2;
+            int u = this.icon.getU() + this.getTextureOffset(this.hovered) * this.icon.getWidth(); // FIXME: What happened here.
+
+            //RenderUtils.depthTest(true);
+            RenderUtils.drawTexturedRect(drawContext, this.icon.getTexture(), x, y, u, this.icon.getV(), this.icon.getWidth(), this.icon.getHeight());
+            //RenderUtils.depthTest(false);
+        }
+    }
+
+    private void drawText(DrawContext drawContext)
+    {
+        if (StringUtils.isBlank(this.displayString) == false)
+        {
+            int y = this.y + (this.height - 8) / 2;
+            int color = 0xFFE0E0E0;
+
+            if (this.enabled == false)
             {
-                drawContext.drawGuiTexture(RenderLayer::getGuiTextured, this.getTexture(this.hovered), this.x, this.y, this.width, this.height);
+                color = 0xFFA0A0A0;
+            }
+            else if (this.hovered)
+            {
+                color = 0xFFFFFFFF;
             }
 
-            if (this.icon != null)
+            if (this.textCentered)
             {
-                int offset = this.renderDefaultBackground ? 4 : 0;
-                int x = this.alignment == LeftRight.LEFT ? this.x + offset : this.x + this.width - this.icon.getWidth() - offset;
-                int y = this.y + (this.height - this.icon.getHeight()) / 2;
-                int u = this.icon.getU() + this.getTextureOffset(this.hovered) * this.icon.getWidth(); // FIXME: What happened here.
+                int x = this.x + this.width / 2;
 
-                //RenderUtils.depthTest(true);
-                RenderUtils.drawTexturedRectAndDraw(this.icon.getTexture(), x, y, u, this.icon.getV(), this.icon.getWidth(), this.icon.getHeight(), drawContext);
-                //RenderUtils.depthTest(false);
+                this.drawCenteredStringWithShadow(drawContext, x, y, color, this.displayString);
             }
-
-            if (StringUtils.isBlank(this.displayString) == false)
+            else
             {
-                int y = this.y + (this.height - 8) / 2;
-                int color = 0xE0E0E0;
+                int x = this.x + 6;
 
-                if (this.enabled == false)
+                if (this.icon != null && this.alignment == LeftRight.LEFT)
                 {
-                    color = 0xA0A0A0;
-                }
-                else if (this.hovered)
-                {
-                    color = 0xFFFFA0;
+                    x += this.icon.getWidth() + 2;
                 }
 
-                if (this.textCentered)
-                {
-                    this.drawCenteredStringWithShadow(this.x + this.width / 2, y, color, this.displayString, drawContext);
-                }
-                else
-                {
-                    int x = this.x + 6;
-
-                    if (this.icon != null && this.alignment == LeftRight.LEFT)
-                    {
-                        x += this.icon.getWidth() + 2;
-                    }
-
-                    this.drawStringWithShadow(x, y, color, this.displayString, drawContext);
-                }
+                this.drawStringWithShadow(drawContext, x, y, color, this.displayString);
             }
         }
     }

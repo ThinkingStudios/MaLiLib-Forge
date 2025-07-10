@@ -45,6 +45,7 @@ import fi.dy.masa.malilib.util.WorldUtils;
 import fi.dy.masa.malilib.util.game.RayTraceUtils;
 import fi.dy.masa.malilib.util.nbt.NbtBlockUtils;
 import fi.dy.masa.malilib.util.nbt.NbtKeys;
+import fi.dy.masa.malilib.util.nbt.NbtView;
 
 @ApiStatus.Experimental
 public class TestInventoryOverlayHandler implements IInventoryOverlayHandler
@@ -127,12 +128,12 @@ public class TestInventoryOverlayHandler implements IInventoryOverlayHandler
             if (MaLiLibConfigs.Test.TEST_INVENTORY_OVERLAY_OG.getBooleanValue())
             {
                 // Tweakeroo style
-                TestRenderHandler.renderInventoryOverlayOG(this.getRenderContextNullable(), drawContext, mc);
+                TestRenderHandler.renderInventoryOverlayOG(drawContext, this.getRenderContextNullable(), mc);
             }
             else
             {
                 // MiniHUD Style
-                this.renderInventoryOverlay(this.getRenderContextNullable(), drawContext, mc,
+                this.renderInventoryOverlay(drawContext, this.getRenderContextNullable(), mc,
                                             true,
                                             true);
             }
@@ -150,7 +151,7 @@ public class TestInventoryOverlayHandler implements IInventoryOverlayHandler
         Entity cameraEntity = EntityUtils.getCameraEntity();
         this.context = null;
 
-        if (mc.player == null || world == null)
+        if (mc.player == null || world == null || mc.world == null)
         {
             return null;
         }
@@ -172,9 +173,10 @@ public class TestInventoryOverlayHandler implements IInventoryOverlayHandler
             return null;
         }
 
+//        HitResult trace = TestRayTraceUtils.getRayTraceFromEntity(world, cameraEntity, false);
         HitResult trace;
 
-        if (mc.player != cameraEntity)
+        if (cameraEntity != mc.player)
         {
             trace = RayTraceUtils.getRayTraceFromEntity(mc.world, cameraEntity, RaycastContext.FluidHandling.NONE);
         }
@@ -246,13 +248,14 @@ public class TestInventoryOverlayHandler implements IInventoryOverlayHandler
 
             MaLiLib.LOGGER.warn("getTargetInventory(): entityUUID [{}] vs targetedUUID [{}]", entity.getUuidAsString(), mc.targetedEntity != null ? mc.targetedEntity.getUuidAsString() : "<NULL>");
 
-            if (world instanceof ServerWorld sw)
+            if (world instanceof ServerWorld)
             {
-                entity = sw.getEntityById(entity.getId());
+                NbtView view = NbtView.getWriter(world.getRegistryManager());
+                entity = world.getEntityById(entity.getId());
 
-                if (entity != null && entity.saveSelfNbt(nbt))
+                if (entity != null && entity.saveSelfData(view.getWriter()))
                 {
-                    return this.getTargetInventoryFromEntity(entity, nbt);
+                    return this.getTargetInventoryFromEntity(world.getEntityById(entity.getId()), view.readNbt());
                 }
             }
             else
@@ -280,7 +283,6 @@ public class TestInventoryOverlayHandler implements IInventoryOverlayHandler
             {
                 nbt = be.createNbtWithIdentifyingData(world.getRegistryManager());
             }
-
             inv = InventoryUtils.getInventory(world, pos);
         }
         else
@@ -382,11 +384,6 @@ public class TestInventoryOverlayHandler implements IInventoryOverlayHandler
         {
             inv = ((InventoryOwner) entity).getInventory();
         }
-//        else if (entity instanceof PiglinEntity)
-//        {
-//            inv = ((IMixinPiglinEntity) entity).malilib_getInventory();
-//        }
-
         if (!nbt.isEmpty())
         {
             Inventory inv2;

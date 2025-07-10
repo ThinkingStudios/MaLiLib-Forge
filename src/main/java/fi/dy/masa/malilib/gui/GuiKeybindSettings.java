@@ -3,8 +3,10 @@ package fi.dy.masa.malilib.gui;
 import java.util.List;
 import javax.annotation.Nullable;
 import com.google.common.collect.ImmutableList;
+
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
+
 import fi.dy.masa.malilib.config.options.ConfigBase;
 import fi.dy.masa.malilib.config.options.ConfigBoolean;
 import fi.dy.masa.malilib.config.options.ConfigOptionList;
@@ -134,14 +136,16 @@ public class GuiKeybindSettings extends GuiDialogBase
             this.getParent().render(drawContext, mouseX, mouseY, partialTicks);
         }
 
+//        drawContext.goTopLayer();
         super.render(drawContext, mouseX, mouseY, partialTicks);
+//        drawContext.popLayer();
     }
 
     @Override
     protected void drawScreenBackground(DrawContext drawContext, int mouseX, int mouseY)
     {
-        //super.drawTexturedBG(drawContext, this.dialogLeft, this.dialogTop, this.dialogWidth, this.dialogHeight, true);
-        RenderUtils.drawOutlinedBox(this.dialogLeft, this.dialogTop, this.dialogWidth, this.dialogHeight, 0xFF000000, COLOR_HORIZONTAL_BAR);
+//        super.drawTexturedBG(drawContext, this.dialogLeft, this.dialogTop, this.dialogWidth, this.dialogHeight, true);
+        RenderUtils.drawOutlinedBox(drawContext, this.dialogLeft, this.dialogTop, this.dialogWidth, this.dialogHeight, 0xFF000000, COLOR_HORIZONTAL_BAR);
     }
 
     @Override

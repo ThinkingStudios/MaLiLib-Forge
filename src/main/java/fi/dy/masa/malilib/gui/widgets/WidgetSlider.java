@@ -1,12 +1,11 @@
 package fi.dy.masa.malilib.gui.widgets;
 
+import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.render.RenderLayer;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 
 import fi.dy.masa.malilib.gui.interfaces.ISliderCallback;
-import fi.dy.masa.malilib.render.RenderUtils;
 
 public class WidgetSlider extends WidgetBase
 {
@@ -44,9 +43,9 @@ public class WidgetSlider extends WidgetBase
     }
 
     @Override
-    public void render(int mouseX, int mouseY, boolean selected, DrawContext drawContext)
+    public void render(DrawContext drawContext, int mouseX, int mouseY, boolean selected)
     {
-        super.render(mouseX, mouseY, selected, drawContext);
+        super.render(drawContext, mouseX, mouseY, selected);
 
         if (this.dragging && mouseX != this.lastMouseX)
         {
@@ -54,20 +53,20 @@ public class WidgetSlider extends WidgetBase
             this.lastMouseX = mouseX;
         }
 
-        RenderUtils.color(1f, 1f, 1f, 1f);
+//        RenderUtils.color(1f, 1f, 1f, 1f);
 
-        drawContext.drawGuiTexture(RenderLayer::getGuiTextured, WidgetSlider.BUTTON_DISABLE_TEXTURE, this.x + 1, this.y, this.width - 3, 20);
+        drawContext.drawGuiTexture(RenderPipelines.GUI_TEXTURED, WidgetSlider.BUTTON_DISABLE_TEXTURE, this.x + 1, this.y, this.width - 3, 20);
 
         double relPos = this.callback.getValueRelative();
         int sw = this.sliderWidth;
         int usableWidth = this.width - 4 - sw;
         int s = sw / 2;
 
-        drawContext.drawGuiTexture(RenderLayer::getGuiTextured, WidgetSlider.BUTTON_TEXTURE, this.x + 2 + (int) (relPos * usableWidth), this.y, sw, 20);
+        drawContext.drawGuiTexture(RenderPipelines.GUI_TEXTURED, WidgetSlider.BUTTON_TEXTURE, this.x + 2 + (int) (relPos * usableWidth), this.y, sw, 20);
 
         String str = this.callback.getFormattedDisplayValue();
         int w = this.getStringWidth(str);
-        this.drawString(this.x + (this.width / 2) - w / 2, this.y + 6, 0xFFFFFFA0, str, drawContext);
+        this.drawString(drawContext, this.x + (this.width / 2) - w / 2, this.y + 6, 0xFFFFFFA0, str);
     }
 
     protected double getRelativePosition(int mouseX)

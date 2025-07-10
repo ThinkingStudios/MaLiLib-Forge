@@ -11,6 +11,7 @@ import net.minecraft.registry.DynamicRegistryManager;
 
 import fi.dy.masa.malilib.config.ConfigManager;
 import fi.dy.masa.malilib.interfaces.IWorldLoadListener;
+import fi.dy.masa.malilib.util.game.RecipeBookUtils;
 
 public class WorldLoadHandler implements IWorldLoadManager
 {
@@ -85,6 +86,7 @@ public class WorldLoadHandler implements IWorldLoadManager
         if (worldBefore != null && worldAfter == null)
         {
             ((ConfigManager) ConfigManager.getInstance()).saveAllConfigs();
+            RecipeBookUtils.clearMap();
             //SyncHandler.getInstance().onStopServices();
         }
         // (Re-)Load all the configs from file when entering a world

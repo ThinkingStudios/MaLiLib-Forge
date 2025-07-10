@@ -12,7 +12,11 @@
         "entity.MixinPiglinEntity",
         "entity.MixinSimpleInventory",
         "item.IMixinContainerComponent",
+        "recipe.IMixinIngredient",
         "item.MixinItemStack",
+        "nbt.IMixinNbtReadView",
+        "nbt.IMixinNbtWriteView",
+        "server.IMixinServerTickManager",
         "server.MixinMinecraftServer",
         "test.MixinBundleItem",
         "test.MixinSharedConstants"
@@ -22,12 +26,14 @@
         "hud.MixinInGameHud",
         "input.MixinKeyboard",
         "input.MixinMouse",
+        "recipe.IMixinClientRecipeBook",
         "network.IMixinDataQueryHandler",
         "network.MixinClientConfigurationNetworkHandler",
         "network.MixinClientPlayNetworkHandler",
         "render.IMixinAbstractTexture",
         "render.IMixinBufferBuilder",
         "render.IMixinDrawContext",
+        "render.IMixinGameRenderer",
         "render.MixinDebugRenderer",
         "render.MixinDrawContext",
         "render.MixinGlBackend",
@@ -43,5 +49,5 @@
     "server": [],
     "injectors": {
         "defaultRequire": 1
-    }
+  }
 }

@@ -8,8 +8,10 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.block.FluidBlock;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.block.entity.CrafterBlockEntity;
 import net.minecraft.block.enums.Orientation;
 import net.minecraft.fluid.Fluids;
@@ -22,12 +24,17 @@ import net.minecraft.registry.tag.TagKey;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.Properties;
 import net.minecraft.state.property.*;
+import net.minecraft.storage.NbtWriteView;
+import net.minecraft.storage.WriteView;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.world.World;
 
 import fi.dy.masa.malilib.data.MaLiLibTag;
 import fi.dy.masa.malilib.util.StringUtils;
 import fi.dy.masa.malilib.util.data.ResourceLocation;
 import fi.dy.masa.malilib.util.game.wrap.RegistryUtils;
+import fi.dy.masa.malilib.util.nbt.NbtView;
 
 /**
  * Post-ReWrite code
@@ -502,7 +509,9 @@ public class BlockUtils
     public static void setStackNbt(@Nonnull ItemStack stack, @Nonnull BlockEntity be, @Nonnull DynamicRegistryManager registry)
     {
         NbtCompound nbt = be.createComponentlessNbt(registry);
-        BlockItem.setBlockEntityData(stack, be.getType(), nbt);
+        NbtView view = NbtView.getWriter(registry);
+        view = view.writeNbt(nbt);
+        BlockItem.setBlockEntityData(stack, be.getType(), (NbtWriteView) view.getWriter());
         stack.applyComponentsFrom(be.createComponentMap());
     }
 
@@ -563,5 +572,21 @@ public class BlockUtils
         }
 
         return true;
+    }
+
+    @SuppressWarnings("deprecation")
+    public static boolean matchSolidFullCubes(BlockState left, BlockState right)
+    {
+        if (left.isSolid() && right.isSolid())
+        {
+            return left.isOpaqueFullCube() && right.isOpaqueFullCube();
+        }
+
+        return false;
+    }
+
+    public static boolean matchMapColors(World world, BlockPos pos, BlockState left, BlockState right)
+    {
+        return left.getMapColor(world, pos) == right.getMapColor(world, pos);
     }
 }

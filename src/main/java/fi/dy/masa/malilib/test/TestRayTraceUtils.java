@@ -17,7 +17,7 @@ import net.minecraft.world.RaycastContext;
 import net.minecraft.world.World;
 
 @ApiStatus.Experimental
-@Deprecated
+@Deprecated(forRemoval = true)
 public class TestRayTraceUtils
 {
     @Nonnull

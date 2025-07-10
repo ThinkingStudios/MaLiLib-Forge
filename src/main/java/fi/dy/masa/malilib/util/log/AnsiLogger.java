@@ -38,6 +38,10 @@ public class AnsiLogger implements IAnsiLogger
         this.ansiColor = toggle;
     }
 
+    public boolean isDebug() { return this.debug; }
+
+    public boolean isAnsiColor() { return this.ansiColor; }
+
     @Override
     public void info(String fmt, Object... args)
     {

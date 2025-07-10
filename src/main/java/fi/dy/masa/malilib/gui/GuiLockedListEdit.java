@@ -131,8 +131,9 @@ public class GuiLockedListEdit extends GuiListBase<String, WidgetLockedListEditE
     @Override
     protected void drawScreenBackground(DrawContext drawContext, int mouseX, int mouseY)
     {
-        //super.drawTexturedBG(drawContext, this.dialogLeft, this.dialogTop, this.dialogWidth, this.dialogHeight, true);
-        RenderUtils.drawOutlinedBox(this.dialogLeft, this.dialogTop, this.dialogWidth, this.dialogHeight, 0xFF000000, COLOR_HORIZONTAL_BAR);
+//        super.drawTexturedBG(drawContext, this.dialogLeft, this.dialogTop, this.dialogWidth, this.dialogHeight, true);
+//        RenderUtils.applyLayer(drawContext, GuiLayer.BLUR);
+        RenderUtils.drawOutlinedBox(drawContext, this.dialogLeft, this.dialogTop, this.dialogWidth, this.dialogHeight, 0xFF000000, COLOR_HORIZONTAL_BAR);
     }
 
     @Override

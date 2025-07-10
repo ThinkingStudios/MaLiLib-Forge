@@ -8,14 +8,14 @@ import net.minecraft.util.math.Vec3i;
  */
 public class MathUtils
 {
-    private static final int[] MULTIPLY_DE_BRUIJN_BIT_POSITION = new int[] { 0, 1, 28, 2, 29, 14, 24, 3, 30, 22, 20, 15, 25, 17, 4, 8, 31, 27, 13, 23, 21, 19, 16, 7, 26, 12, 18, 6, 11, 5, 10, 9 };
+    private static final int[] MULTIPLY_DE_BRUIJN_BIT_POSITION = new int[]{0, 1, 28, 2, 29, 14, 24, 3, 30, 22, 20, 15, 25, 17, 4, 8, 31, 27, 13, 23, 21, 19, 16, 7, 26, 12, 18, 6, 11, 5, 10, 9};
 
     /**
      * @return The average value of the elements in the given array
      */
-    public static double average(int[] arr)
+    public static double average(int[] values)
     {
-        final int size = arr.length;
+        final int size = values.length;
 
         if (size == 0)
         {
@@ -24,9 +24,9 @@ public class MathUtils
 
         long sum = 0;
 
-        for (int i = 0; i < size; ++i)
+        for (int value : values)
         {
-            sum += arr[i];
+            sum += value;
         }
 
         return (double) sum / (double) size;
@@ -35,9 +35,9 @@ public class MathUtils
     /**
      * @return The average value of the elements in the given array
      */
-    public static double average(long[] arr)
+    public static double average(long[] values)
     {
-        final int size = arr.length;
+        final int size = values.length;
 
         if (size == 0)
         {
@@ -46,9 +46,9 @@ public class MathUtils
 
         long sum = 0;
 
-        for (int i = 0; i < size; ++i)
+        for (long value : values)
         {
-            sum += arr[i];
+            sum += value;
         }
 
         return (double) sum / (double) size;
@@ -57,9 +57,9 @@ public class MathUtils
     /**
      * @return The average value of the elements in the given array
      */
-    public static double average(double[] arr)
+    public static double average(double[] values)
     {
-        final int size = arr.length;
+        final int size = values.length;
 
         if (size == 0)
         {
@@ -68,9 +68,9 @@ public class MathUtils
 
         double sum = 0;
 
-        for (int i = 0; i < size; ++i)
+        for (double value : values)
         {
-            sum += arr[i];
+            sum += value;
         }
 
         return sum / (double) size;
@@ -134,6 +134,38 @@ public class MathUtils
     {
         int i = (int) value;
         return value < (double) i ? i - 1 : i;
+    }
+
+    public static float round(float value, int decimalPlaces)
+    {
+        if (decimalPlaces < 0 || decimalPlaces > 9)
+        {
+            decimalPlaces = 0;
+        }
+
+        float fixedDec = value;
+        double scale = Math.pow(10.0, decimalPlaces);
+
+        fixedDec *= (float) scale;
+        fixedDec = Math.round(fixedDec);
+
+        return (fixedDec / (float) scale);
+    }
+
+    public static double round(double value, int decimalPlaces)
+    {
+        if (decimalPlaces < 0 || decimalPlaces > 9)
+        {
+            decimalPlaces = 0;
+        }
+
+        int scale = (int) Math.pow(10, decimalPlaces);
+        double scaledUp = value * scale;
+        double dec = scaledUp % 1d;
+        double fixedDec = Math.round(dec * 10) / 10.;
+        double newValue = scaledUp + fixedDec;
+
+        return (double) Math.round(newValue) / scale;
     }
 
     public static int roundDown(int value, int interval)
@@ -454,7 +486,7 @@ public class MathUtils
 
     public static long getCoordinateRandom(int x, int y, int z)
     {
-        long l = (long)(x * 3129871) ^ (long) z * 116129781L ^ (long) y;
+        long l = (long) (x * 3129871) ^ (long) z * 116129781L ^ (long) y;
         return l * l * 42317861L + l * 11L;
     }
 
@@ -463,7 +495,8 @@ public class MathUtils
         return getCoordinateRandom(pos.getX(), pos.getY(), pos.getZ());
     }
 
-    public static int smallestEncompassingPowerOfTwo(int value) {
+    public static int smallestEncompassingPowerOfTwo(int value)
+    {
         int i = value - 1;
         i |= i >> 1;
         i |= i >> 2;

@@ -3,8 +3,6 @@ package fi.dy.masa.malilib.gui.widgets;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.util.Identifier;
 
 import fi.dy.masa.malilib.gui.GuiBase;
 import fi.dy.masa.malilib.render.RenderUtils;
@@ -156,51 +154,56 @@ public abstract class WidgetBase
         return this.isMouseOver(mouseX, mouseY);
     }
 
-    public VertexConsumer bindTexture(Identifier texture, DrawContext context)
-    {
-        return RenderUtils.bindGuiTexture(texture, context);
-    }
-
-    public VertexConsumer bindOverlayTexture(Identifier texture, DrawContext context)
-    {
-        return RenderUtils.bindGuiOverlayTexture(texture, context);
-    }
+//    public VertexConsumer bindTexture(Identifier texture, DrawContext context)
+//    {
+//        return RenderUtils.bindGuiTexture(texture, context);
+//    }
+//
+//    public VertexConsumer bindOverlayTexture(Identifier texture, DrawContext context)
+//    {
+//        return RenderUtils.bindGuiOverlayTexture(texture, context);
+//    }
 
     public int getStringWidth(String text)
     {
         return this.textRenderer.getWidth(text);
     }
 
-    public void drawString(int x, int y, int color, String text, DrawContext drawContext)
+    public void drawString(DrawContext drawContext, int x, int y, int color, String text)
     {
         drawContext.drawText(this.textRenderer, text, x, y, color, false);
-        RenderUtils.forceDraw(drawContext);
     }
 
-    public void drawCenteredString(int x, int y, int color, String text, DrawContext drawContext)
+    public void drawCenteredString(DrawContext drawContext, int x, int y, int color, String text)
     {
         drawContext.drawText(this.textRenderer, text, x - this.getStringWidth(text) / 2, y, color, false);
-        RenderUtils.forceDraw(drawContext);
     }
 
-    public void drawStringWithShadow(int x, int y, int color, String text, DrawContext drawContext)
+    public void drawStringWithShadow(DrawContext drawContext, int x, int y, int color, String text)
     {
         drawContext.drawTextWithShadow(this.textRenderer, text, x, y, color);
-        RenderUtils.forceDraw(drawContext);
     }
 
-    public void drawCenteredStringWithShadow(int x, int y, int color, String text, DrawContext drawContext)
+    public void drawCenteredStringWithShadow(DrawContext drawContext, int x, int y, int color, String text)
     {
+//        final int startX = x + 2;
+//        final int endX = x + width - 2;
+//        final int endY = y + height;
+//        final int centerX = (startX + endX) / 2;
+//        final int textWidth = this.getStringWidth(text);
+////        final int xAdj = endX - startX;
+//        final int yAdj = (y + endY - 9) / 2 + 1;
+//        final int centerAdj = MathHelper.clamp(centerX, startX + textWidth / 2, endX - textWidth / 2);
+
         drawContext.drawCenteredTextWithShadow(this.textRenderer, text, x, y, color);
-        RenderUtils.forceDraw(drawContext);
     }
 
     public void drawBackgroundMask(DrawContext drawContext)
     {
-        RenderUtils.drawTexturedRectAndDraw(GuiBase.BG_TEXTURE, this.x + 1, this.y + 1, 0, 0, this.width - 2, this.height - 2, drawContext);
+        RenderUtils.drawTexturedRect(drawContext, GuiBase.BG_TEXTURE, this.x + 1, this.y + 1, 0, 0, this.width - 2, this.height - 2);
     }
 
-    public void render(int mouseX, int mouseY, boolean selected, DrawContext drawContext)
+    public void render(DrawContext drawContext, int mouseX, int mouseY, boolean selected)
     {
         if (this.drawContext == null || !this.drawContext.equals(drawContext))
         {
@@ -208,7 +211,7 @@ public abstract class WidgetBase
         }
     }
 
-    public void postRenderHovered(int mouseX, int mouseY, boolean selected, DrawContext drawContext)
+    public void postRenderHovered(DrawContext drawContext, int mouseX, int mouseY, boolean selected)
     {
         if (this.drawContext == null || !this.drawContext.equals(drawContext))
         {

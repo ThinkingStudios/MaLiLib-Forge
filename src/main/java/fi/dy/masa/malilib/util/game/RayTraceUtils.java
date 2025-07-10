@@ -31,6 +31,7 @@ public class RayTraceUtils
 {
     public static final BlockState BLOCK_STATE_AIR = Blocks.AIR.getDefaultState();
 
+    @Nullable
     public static HitResult getRayTraceFromEntity(World world, Entity entity, RaycastContext.FluidHandling fluidHandling)
     {
         return getRayTraceFromEntity(world, entity, fluidHandling, true, entity instanceof PlayerEntity pe ? pe.getBlockInteractionRange() + 1.0d : 5.0d);
@@ -45,6 +46,7 @@ public class RayTraceUtils
      * @param maxRange the maximum distance to ray trace from the entity's eye position
      * @return the trace result, with type = MISS if the trace didn't hit anything
      */
+    @Nullable
     public static HitResult getRayTraceFromEntity(World world, Entity entity,
                                                   RaycastContext.FluidHandling fluidHandling,
                                                   boolean includeEntities, double maxRange)
@@ -56,7 +58,7 @@ public class RayTraceUtils
         Vec3d rangedLook = MathUtils.scale(MathUtils.getRotationVector(entity.getYaw(), entity.getPitch()), maxRange);
         Vec3d lookEndPos = eyesPos.add(rangedLook);
 
-        // RaycastContext.ShapeType.COLLIDER
+        // Something broke with the Block Collider code.
 //        HitResult result = rayTraceBlocks(world, eyesPos, lookEndPos, fluidHandling, false, false, null, 1000);
         RaycastContext context = new RaycastContext(eyesPos, lookEndPos, RaycastContext.ShapeType.COLLIDER, fluidHandling, entity);
         HitResult result = world.raycast(context);
@@ -153,7 +155,7 @@ public class RayTraceUtils
                                            @Nullable LayerRange layerRange, int maxSteps)
     {
         if (Double.isNaN(start.x) || Double.isNaN(start.y) || Double.isNaN(start.z) ||
-                Double.isNaN(end.x) || Double.isNaN(end.y) || Double.isNaN(end.z))
+            Double.isNaN(end.x) || Double.isNaN(end.y) || Double.isNaN(end.z))
         {
             return null;
         }
@@ -194,7 +196,7 @@ public class RayTraceUtils
             BlockState state = world.getBlockState(data.mutablePos);
 
             if (data.isValidBlock(state) &&
-                ((ignoreNonCollidable == false && state.getBlock().getDefaultState() != BLOCK_STATE_AIR) ||
+                ((!ignoreNonCollidable && state.getBlock().getDefaultState() != BLOCK_STATE_AIR) ||
                         //|| state.getCollisionBoundingBox(world, data.mutablePos) != Block.NULL_AABB))
                 (state.getCollisionShape(world, data.mutablePos) != VoxelShapes.empty())))
             {
@@ -405,7 +407,7 @@ public class RayTraceUtils
 
         public boolean checkRayCollision(World world, boolean ignoreNonCollidable)
         {
-            if (this.isPositionWithinRange() == false)
+            if (!this.isPositionWithinRange())
             {
                 return false;
             }
@@ -413,9 +415,9 @@ public class RayTraceUtils
             BlockState state = world.getBlockState(this.mutablePos);
 
             if (state == BLOCK_STATE_AIR ||
-                this.isValidBlock(state) == false ||
+                !this.isValidBlock(state) ||
                 // (ignoreNonCollidable == false && state.getCollisionBoundingBox(world, this.mutablePos) == Block.NULL_AABB))
-                (ignoreNonCollidable == false && state.getCollisionShape(world, this.mutablePos) == VoxelShapes.empty()))
+                (!ignoreNonCollidable && state.getCollisionShape(world, this.mutablePos) == VoxelShapes.empty()))
             {
                 return false;
             }
