@@ -2,19 +2,19 @@ package fi.dy.masa.malilib.datagen;
 
 import java.util.concurrent.CompletableFuture;
 
+import fi.dy.masa.malilib.MaLiLibReference;
 import net.minecraft.block.Blocks;
 import net.minecraft.data.DataOutput;
 import net.minecraft.registry.RegistryWrapper;
 import net.neoforged.neoforge.common.data.BlockTagsProvider;
 
-import fi.dy.masa.malilib.MaLiLibReference;
 import fi.dy.masa.malilib.data.MaLiLibTag;
 
 public class BlockTagDataGenerator extends BlockTagsProvider
 {
     public BlockTagDataGenerator(DataOutput output, CompletableFuture<RegistryWrapper.WrapperLookup> registriesFuture)
     {
-        super(output, registriesFuture, MaLiLibReference.MOD_ID);
+        super(output, registriesFuture, MaLiLibReference.PORT_ID);
     }
 
     @Override

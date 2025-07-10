@@ -2082,6 +2082,32 @@ public class RenderUtils
         }
     }
 
+    public static boolean stateModelHasQuads(BlockState state)
+    {
+        return modelHasQuads(Objects.requireNonNull(MinecraftClient.getInstance().getBlockRenderManager().getModel(state)));
+    }
+
+    public static boolean modelHasQuads(@Nonnull BlockStateModel model)
+    {
+        return hasQuads(model.getParts(new LocalRandom(0)));
+    }
+
+    public static boolean hasQuads(List<BlockModelPart> modelParts)
+    {
+        if (modelParts.isEmpty()) return false;
+        int totalSize = 0;
+
+        for (BlockModelPart part : modelParts)
+        {
+            for (Direction face : PositionUtils.ALL_DIRECTIONS)
+            {
+                totalSize += part.getQuads(face).size();
+            }
+        }
+
+        return totalSize > 0;
+    }
+
     @SuppressWarnings("deprecation")
     public static void renderModelInGui(int x, int y, BlockStateModel model, BlockState state, float zLevel, DrawContext context)
     {
@@ -2277,7 +2303,7 @@ public class RenderUtils
 
     public static void renderBlockOutline(BlockPos pos, float expand, float lineWidth, Color4f color)
     {
-        renderBlockOutline(pos, expand, lineWidth, color, true);
+        renderBlockOutline(pos, expand, lineWidth, color, false);
     }
 
     public static void renderBlockOutline(BlockPos pos, float expand, float lineWidth, Color4f color, boolean renderThrough)
@@ -2373,7 +2399,7 @@ public class RenderUtils
     public static void renderBlockOutlineOverlapping(BlockPos pos, float expand, float lineWidth,
                                                      Color4f color1, Color4f color2, Color4f color3, Matrix4f matrix4f)
     {
-        renderBlockOutlineOverlapping(pos, expand, lineWidth, color1, color2, color3, matrix4f, true);
+        renderBlockOutlineOverlapping(pos, expand, lineWidth, color1, color2, color3, matrix4f, false);
     }
 
     public static void renderBlockOutlineOverlapping(BlockPos pos, float expand, float lineWidth,

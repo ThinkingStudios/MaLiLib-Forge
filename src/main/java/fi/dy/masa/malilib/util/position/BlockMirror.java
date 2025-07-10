@@ -40,7 +40,7 @@ public enum BlockMirror implements IConfigOptionListEntry, StringIdentifiable
         this.index = index;
         this.name = name;
         this.vanillaMirror = vanillaMirror;
-        this.translationKey = MaLiLibReference.ID + ".label.block_mirror." + name;
+        this.translationKey = MaLiLibReference.MOD_ID + ".label.block_mirror." + name;
         this.axis = axis;
     }
 

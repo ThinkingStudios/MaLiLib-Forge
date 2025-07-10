@@ -21,6 +21,7 @@ import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -224,12 +225,18 @@ public interface IDataSyncer
         else
         {
             BlockEntity be = pair.getLeft();
+            BlockState state = world.getBlockState(pos);
+
+            if (state.isIn(BlockTags.AIR) || !state.hasBlockEntity())
+            {
+                // Don't keep requesting if we're tick warping or something.
+                return null;
+            }
 
             if (be instanceof Inventory inv1)
             {
-                if (be instanceof ChestBlockEntity)
+                if (be instanceof ChestBlockEntity && state.contains(ChestBlock.CHEST_TYPE))
                 {
-                    BlockState state = world.getBlockState(pos);
                     ChestType type = state.get(ChestBlock.CHEST_TYPE);
 
                     if (type != ChestType.SINGLE)

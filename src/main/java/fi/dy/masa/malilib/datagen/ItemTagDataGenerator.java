@@ -15,7 +15,7 @@ public class ItemTagDataGenerator extends ItemTagProvider
 {
     public ItemTagDataGenerator(DataOutput output, CompletableFuture<RegistryWrapper.WrapperLookup> completableFuture, CompletableFuture<TagProvider.TagLookup<Item>> parentTagLookupFuture, CompletableFuture<TagProvider.TagLookup<Block>> blockTagLookupFuture)
     {
-        super(output, completableFuture, parentTagLookupFuture, blockTagLookupFuture, MaLiLibReference.MOD_ID);
+        super(output, completableFuture, parentTagLookupFuture, blockTagLookupFuture, MaLiLibReference.PORT_ID);
     }
 
     @Override

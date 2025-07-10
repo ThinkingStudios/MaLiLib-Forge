@@ -69,7 +69,7 @@ public class ConfigTestLockedList implements IConfigLockedListType
         Entry(String configKey, String translationKey)
         {
             this.configKey = configKey;
-            this.translationKey = MaLiLibReference.ID+".gui.label.locked_test."+translationKey;
+            this.translationKey = MaLiLibReference.MOD_ID+".gui.label.locked_test."+translationKey;
         }
 
 //        @Override
