@@ -14,7 +14,7 @@ import net.neoforged.fml.loading.FMLLoader;
 import org.thinkingstudio.mafglib.loader.entrypoints.ConfigScreenEntrypoint;
 import org.thinkingstudio.mafglib.loader.entrypoints.EntrypointHandler;
 
-@Mod(value = MaLiLibReference.MOD_ID, dist = Dist.CLIENT)
+@Mod(value = MaLiLibReference.PORT_ID, dist = Dist.CLIENT)
 public class MaFgLib {
     public MaFgLib(ModContainer modContainer, IEventBus modEventBus) {
         EntrypointHandler.init(modEventBus);
