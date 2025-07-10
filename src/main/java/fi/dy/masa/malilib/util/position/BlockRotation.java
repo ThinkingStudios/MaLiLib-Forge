@@ -38,7 +38,7 @@ public enum BlockRotation implements IConfigOptionListEntry, StringIdentifiable
         this.index = index;
         this.vanillaRotation = vanillaRotation;
         this.configString = name;
-        this.translationKey = MaLiLibReference.ID + ".label.block_rotation." + name;
+        this.translationKey = MaLiLibReference.MOD_ID + ".label.block_rotation." + name;
     }
 
     public int getIndex()

@@ -4,10 +4,10 @@ import fi.dy.masa.malilib.util.StringUtils;
 
 public class MaLiLibReference
 {
-    public static final String ID = "malilib";
-    public static final String MOD_ID = "mafglib";
-    public static final String MOD_NAME = "MaFgLib";
-    public static final String MOD_VERSION = StringUtils.getModVersionString(MOD_ID);
+    public static final String PORT_ID = "mafglib";
+    public static final String MOD_ID = "malilib";
+    public static final String MOD_NAME = "MaLiLib";
+    public static final String MOD_VERSION = StringUtils.getModVersionString(PORT_ID);
     public static final boolean DEBUG_MODE = false;
     public static final boolean ANSI_MODE = DEBUG_MODE;
     public static final boolean EXPERIMENTAL_MODE = false;
