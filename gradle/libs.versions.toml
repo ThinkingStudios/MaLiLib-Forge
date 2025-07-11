@@ -17,7 +17,7 @@ iris="1.9.1+1.21.7-neoforge"
 # Publish properties
 id-modrinth="SKI34J7B"
 id-curseforge="910766"
-release_type="release"
+release_type="alpha"
 
 # Libraries
 jsr305="3.0.2"
