@@ -1,6 +1,8 @@
 package fi.dy.masa.malilib.util.nbt;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -131,9 +133,8 @@ public class NbtInventory implements AutoCloseable
             return null;
         }
 
-        NbtInventory newInv = new NbtInventory();
-
         size = MathHelper.clamp(size, 1, MAX_SIZE);
+        NbtInventory newInv = new NbtInventory();
         newInv.items = new HashSet<>();
 
         for (int i = 0; i < size; i++)
@@ -198,8 +199,10 @@ public class NbtInventory implements AutoCloseable
     public static NbtInventory fromInventory(@Nonnull Inventory inv)
     {
         NbtInventory newInv = new NbtInventory();
-
+        List<Integer> slotsUsed = new ArrayList<>();
         int size = inv.size();
+        int maxSlot = 0;
+
         size = MathHelper.clamp(size, 1, MAX_SIZE);
         newInv.items = new HashSet<>();
 
@@ -208,7 +211,15 @@ public class NbtInventory implements AutoCloseable
             StackWithSlot slot = new StackWithSlot(i, inv.getStack(i));
 //            LOGGER.info("fromInventory():[{}]: slot [{}], stack: [{}]", i, slot.slot(), slot.stack().toString());
             newInv.items.add(slot);
+            slotsUsed.add(slot.slot());
+
+            if (slot.slot() > maxSlot)
+            {
+                maxSlot = slot.slot();
+            }
         }
+
+        newInv.verifySize(slotsUsed, maxSlot);
 
         return newInv;
     }
@@ -388,7 +399,7 @@ public class NbtInventory implements AutoCloseable
 
         newInv.items = new HashSet<>();
         StackWithSlot slot = StackWithSlot.CODEC.parse(registry.getOps(NbtOps.INSTANCE), nbt).getPartialOrThrow();
-        //LOGGER.info("fromNbtSingle(): slot [{}], stack: [{}]", slot.slot(), slot.stack().toString());
+//        LOGGER.info("fromNbtSingle(): slot [{}], stack: [{}]", slot.slot(), slot.stack().toString());
         newInv.items.add(slot);
 
         return newInv;
@@ -414,12 +425,14 @@ public class NbtInventory implements AutoCloseable
 
         int size = list.size();
         size = MathHelper.clamp(size, 1, MAX_SIZE);
-        NbtInventory newInv = NbtInventory.create(size);
-        newInv.items = new HashSet<>();
+        NbtInventory newInv = new NbtInventory();
+        List<Integer> slotsUsed = new ArrayList<>();
+        int maxSlot = 0;
 
+        newInv.items = new HashSet<>();
 //        LOGGER.info("fromNbtList(): listSize: [{}], invSize: [{}]", list.size(), size);
 
-        for (int i = 0; i < size; i++)
+        for (int i = 0; i < list.size(); i++)
         {
             StackWithSlot slot;
 
@@ -435,9 +448,50 @@ public class NbtInventory implements AutoCloseable
 
 //            LOGGER.info("fromNbtList(): [{}]: slot [{}], stack: [{}]", i, slot.slot(), slot.stack().toString());
             newInv.items.add(slot);
+            slotsUsed.add(slot.slot());
+
+            if (slot.slot() > maxSlot)
+            {
+                maxSlot = slot.slot();
+            }
         }
 
+        newInv.verifySize(slotsUsed, maxSlot);
+//        newInv.dumpInv();
+
         return newInv;
+    }
+
+    /**
+     * This exists because an NBT List can have empty slots not accounted for in the middle of its current size;
+     * Such as an empty slot in the middle of a Hopper Minecart.  This code fixes this problem.
+     * @param slotsUsed ()
+     */
+    private void verifySize(List<Integer> slotsUsed, int maxSlot)
+    {
+        int size = Math.max(this.size(), maxSlot);
+
+        if (size > 8 && size <= DEFAULT_SIZE)
+        {
+            size = DEFAULT_SIZE;
+        }
+        else if (size > DEFAULT_SIZE && size < DOUBLE_SIZE)
+        {
+            size = DOUBLE_SIZE;
+        }
+        else if (size > DOUBLE_SIZE && size < MAX_SIZE)
+        {
+            size = MAX_SIZE;
+        }
+
+        for (int i = 0; i < size; i++)
+        {
+            if (!slotsUsed.contains(i))
+            {
+//                LOGGER.info("verifySize(): [{}]: found unused slot Number; adding Empty slot...", i);
+                this.items.add(new StackWithSlot(i, ItemStack.EMPTY));
+            }
+        }
     }
 
     public void dumpInv()
@@ -447,9 +501,7 @@ public class NbtInventory implements AutoCloseable
 
         this.items.forEach(
                 (slot ->
-                {
-                    LOGGER.info("[{}]: slot [{}], stack: [{}]", i, slot.slot(), slot.stack().toString());
-                })
+                        LOGGER.info("[{}]: slot [{}], stack: [{}]", i, slot.slot(), slot.stack().toString()))
         );
 
         LOGGER.info("dumpInv() --> END");
