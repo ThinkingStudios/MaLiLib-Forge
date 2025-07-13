@@ -1,2 +1,2 @@
 ## Changelog
-- fix compat
+- add Key Binding Parch incompatibility check
